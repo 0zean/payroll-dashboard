@@ -1,0 +1,21 @@
+[project]
+name = "payroll-dashboard"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12.8"
+dependencies = [
+    "reflex>=0.7.14",
+    "reflex-calendar>=0.0.6",
+    "requests>=2.32.4",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.0",
+]
+
+[tool.ruff]
+exclude = [".venv"]
+respect-gitignore = true
+line-length = 120
