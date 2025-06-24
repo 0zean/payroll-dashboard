@@ -1,17 +1,17 @@
-from typing import List
 from datetime import datetime
+from typing import List
 
 import reflex as rx
 
+from ..backend.api_routes import add_employee, delete_employee, fetch_employees, update_employee
 from ..backend.schemas import Employee, EmployeeEntry
-from ..backend.api_routes import delete_employee, fetch_employees, update_employee, add_employee
 
 
 class TableState(rx.State):
     """The state class."""
 
     users: list[Employee] = []
-    
+
     current_user: Employee = Employee(id=0, employee_name="", hours_worked=0.0, date="", extra=0.0, notes="")
 
     name: str = current_user.employee_name
@@ -19,7 +19,7 @@ class TableState(rx.State):
     date: str = current_user.date
     extra: float = current_user.extra
     notes: str = current_user.notes
-    
+
     date_format: str = ""
     edit_dialog_employee_id: int | None = None
 
@@ -74,16 +74,14 @@ class TableState(rx.State):
 
     @rx.var(cache=True)
     def total_pages(self) -> int:
-        return (self.total_items // self.limit) + (
-            1 if self.total_items % self.limit else 1
-        )
+        return (self.total_items // self.limit) + (1 if self.total_items % self.limit else 1)
 
     @rx.var(cache=True, initial_value=[])
     def get_current_page(self) -> list[Employee]:
         start_index = self.offset
         end_index = start_index + self.limit
         return self.filtered_sorted_items[start_index:end_index]
-    
+
     def sort_values(self, sort_value: str):
         self.sort_value = sort_value
         self.load_entries()
@@ -94,7 +92,7 @@ class TableState(rx.State):
 
     def get_user(self, user: Employee):
         self.date_format = datetime.strptime(user.date, "%m/%d/%Y").strftime("%Y-%m-%d")
-        
+
         self.current_user = user
         self.name = user.employee_name
         self.hours_worked = user.hours_worked
@@ -128,25 +126,22 @@ class TableState(rx.State):
     def toggle_sort(self):
         self.sort_reverse = not self.sort_reverse
         self.load_entries()
-        
+
     def add_employee_entry(self, employee_entry: EmployeeEntry):
         add_employee(employee_entry=employee_entry)
-    
+
     def update_employee_entry(self, employee_id: int, employee_entry: EmployeeEntry):
-        update_employee(
-            employee_id=employee_id,
-            employee_entry=employee_entry
-        )
-    
+        update_employee(employee_id=employee_id, employee_entry=employee_entry)
+
     def delete_entry(self, employee_id: int):
         delete_employee(employee_id=employee_id)
         self.load_entries()
-    
+
     @rx.event
     async def change_value(self, value: str):
         """Change the select value var."""
         self.name = value
-        
+
     @rx.event
     def set_date(self, value: str):
         # Convert "yyyy-mm-dd" to "mm/dd/yyyy"
@@ -167,7 +162,7 @@ class TableState(rx.State):
     @rx.event
     def set_notes(self, value: str):
         self.notes = value
-        
+
     @rx.event
     async def submit_update_employee(self):
         """Gather current state and send update."""
@@ -180,7 +175,7 @@ class TableState(rx.State):
         )
         self.update_employee_entry(self.current_user.id, entry)
         self.load_entries()
-        
+
     @rx.event
     async def submit_add_employee(self):
         """Gather current state and send add."""
@@ -193,7 +188,7 @@ class TableState(rx.State):
         )
         self.add_employee_entry(entry)
         self.load_entries()
-        
+
     @rx.event
     def open_edit_dialog(self, user: Employee):
         self.get_user(user)
