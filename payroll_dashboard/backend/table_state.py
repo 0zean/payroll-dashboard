@@ -39,7 +39,7 @@ class TableState(rx.State):
 
         # Filter items based on selected item
         if self.sort_value:
-            if self.sort_value in ["hours, extra_hours"]:
+            if self.sort_value in ["hours_worked", "extra"]:
                 items = sorted(
                     items,
                     key=lambda item: float(getattr(item, self.sort_value)),
@@ -101,7 +101,7 @@ class TableState(rx.State):
         self.current_entry.date = user.date
         self.current_entry.extra = user.extra
         self.current_entry.notes = user.notes
-        
+
     def reset_form_fields(self) -> None:
         self.current_entry = EmployeeEntry(
             employee_name="",
@@ -128,7 +128,11 @@ class TableState(rx.State):
     def load_entries(self):
         entries = fetch_employees()
         if entries:
-            self.users = [Employee(**entry) for entry in entries if entry]
+            self.users = [
+                Employee(**entry)
+                for entry in entries
+                if isinstance(entry, dict) and all(isinstance(k, str) for k in entry.keys())
+            ]
             self.total_items = len(self.users)
         else:
             self.users = []
