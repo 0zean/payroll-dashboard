@@ -1,4 +1,3 @@
-import reflex as rx
 from pydantic import BaseModel, Field
 
 
@@ -11,6 +10,7 @@ class Employee(BaseModel):
     date: str = Field(description="Date employee worked")
     extra: float = Field(0.0, description="Extra hours worked")
     notes: str = Field("", description="Employee notes")
+    # pay_rate: float | None = Field(None, description="Pay rate of the employee")
 
 
 class EmployeeEntry(BaseModel):
@@ -19,18 +19,18 @@ class EmployeeEntry(BaseModel):
     employee_name: str
     hours_worked: float
     date: str
-    extra_hours: float | None
-    notes: str | None
+    extra: float
+    notes: str
 
 
-class EmployeeWithPayRate(rx.Model, table=True):
+class EmployeeWithPayRate(BaseModel):
     """The employee model with pay rate."""
 
     employee_name: str
     pay_rate: str
 
 
-class PayrollStats(rx.Model, table=True):
+class PayrollStats(BaseModel):
     """The payroll statistics model."""
 
     totalEntries: int
