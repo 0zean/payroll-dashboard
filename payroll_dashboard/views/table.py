@@ -11,8 +11,8 @@ def show_employee(user: Employee):
         rx.table.cell(user.employee_name),
         rx.table.cell(user.date),
         rx.table.cell(user.hours_worked),
-        rx.table.cell(user.extra),
-        rx.table.cell(user.notes),
+        rx.table.cell(rx.cond(user.extra == 0, "-", user.extra)),
+        rx.table.cell(rx.cond(user.notes == "", "-", user.notes)),
         rx.table.cell(
             rx.hstack(
                 update_employee_dialog(user),
@@ -88,7 +88,7 @@ def add_employee_button() -> rx.Component:
                         # Date
                         form_field("Date", "Date Worked", "date", "date", "calendar-days", on=TableState.set_date),
                         # Hours
-                        form_field("Hours", "Hours worked", "number", "hours", "clock", on=TableState.set_hours_worked),
+                        form_field("Hours", "Hours worked", "number", "hours_worked", "clock", on=TableState.set_hours_worked),
                         # Extra Hours
                         form_field(
                             "Extra Hours",
@@ -105,7 +105,6 @@ def add_employee_button() -> rx.Component:
                             "text",
                             "notes",
                             "notebook-pen",
-                            "",
                             on=TableState.set_notes,
                         ),
                         direction="column",
@@ -218,7 +217,7 @@ def update_employee_dialog(user):
                             "Hours",
                             "Enter Hours Worked",
                             "number",
-                            "hours",
+                            "hours_worked",
                             "clock",
                             user.hours_worked.to(str),
                             on=TableState.set_hours_worked,
