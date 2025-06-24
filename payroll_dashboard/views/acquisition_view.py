@@ -13,9 +13,7 @@ def flag(initials: str) -> rx.Component:
     )
 
 
-def item(
-    country: str, initials: str, progress: int, color: LiteralAccentColor
-) -> rx.Component:
+def item(country: str, initials: str, progress: int, color: LiteralAccentColor) -> rx.Component:
     return (
         rx.hstack(
             rx.hstack(

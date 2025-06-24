@@ -21,9 +21,7 @@ def menu_item(text: str, url: str) -> rx.Component:
 
     """
     # Whether the item is active.
-    active = (rx.State.router.page.path == url.lower()) | (
-        (rx.State.router.page.path == "/") & text == "Overview"
-    )
+    active = (rx.State.router.page.path == url.lower()) | ((rx.State.router.page.path == "/") & text == "Overview")
 
     return rx.link(
         rx.hstack(
@@ -114,11 +112,7 @@ def menu_button() -> rx.Component:
         "/settings",
     ]
 
-    pages = [
-        page_dict
-        for page_list in DECORATED_PAGES.values()
-        for _, page_dict in page_list
-    ]
+    pages = [page_dict for page_list in DECORATED_PAGES.values() for _, page_dict in page_list]
 
     ordered_pages = sorted(
         pages,
@@ -146,9 +140,7 @@ def menu_button() -> rx.Component:
                     rx.divider(),
                     *[
                         menu_item(
-                            text=page.get(
-                                "title", page["route"].strip("/").capitalize()
-                            ),
+                            text=page.get("title", page["route"].strip("/").capitalize()),
                             url=page["route"],
                         )
                         for page in ordered_pages

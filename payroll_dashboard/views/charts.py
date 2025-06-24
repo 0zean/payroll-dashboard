@@ -32,18 +32,14 @@ class StatsState(rx.State):
         for i in range(30, -1, -1):  # Include today's data
             self.revenue_data.append(
                 {
-                    "Date": (
-                        datetime.datetime.now() - datetime.timedelta(days=i)
-                    ).strftime("%m-%d"),
+                    "Date": (datetime.datetime.now() - datetime.timedelta(days=i)).strftime("%m-%d"),
                     "Revenue": random.randint(1000, 5000),
                 }
             )
         for i in range(30, -1, -1):
             self.orders_data.append(
                 {
-                    "Date": (
-                        datetime.datetime.now() - datetime.timedelta(days=i)
-                    ).strftime("%m-%d"),
+                    "Date": (datetime.datetime.now() - datetime.timedelta(days=i)).strftime("%m-%d"),
                     "Orders": random.randint(100, 500),
                 }
             )
@@ -51,9 +47,7 @@ class StatsState(rx.State):
         for i in range(30, -1, -1):
             self.users_data.append(
                 {
-                    "Date": (
-                        datetime.datetime.now() - datetime.timedelta(days=i)
-                    ).strftime("%m-%d"),
+                    "Date": (datetime.datetime.now() - datetime.timedelta(days=i)).strftime("%m-%d"),
                     "Users": random.randint(100, 500),
                 }
             )
@@ -97,12 +91,8 @@ def _create_gradient(color: LiteralAccentColor, id: str) -> rx.Component:
     return (
         rx.el.svg.defs(
             rx.el.svg.linear_gradient(
-                rx.el.svg.stop(
-                    stop_color=rx.color(color, 7), offset="5%", stop_opacity=0.8
-                ),
-                rx.el.svg.stop(
-                    stop_color=rx.color(color, 7), offset="95%", stop_opacity=0
-                ),
+                rx.el.svg.stop(stop_color=rx.color(color, 7), offset="5%", stop_opacity=0.8),
+                rx.el.svg.stop(stop_color=rx.color(color, 7), offset="95%", stop_opacity=0),
                 x1=0,
                 x2=0,
                 y1=0,

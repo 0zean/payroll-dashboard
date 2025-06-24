@@ -1,11 +1,8 @@
 import reflex as rx
 
-from ..backend.table_state import TableState, Employee
-
-from ..components.form_field import form_field
 from ..backend.api_routes import fetch_employee_names
-
-from datetime import datetime
+from ..backend.table_state import Employee, TableState
+from ..components.form_field import form_field
 
 
 def show_employee(user: Employee):
@@ -89,14 +86,17 @@ def add_employee_button() -> rx.Component:
                             ),
                         ),
                         # Date
-                        form_field(
-                            "Date", "Date Worked", "date", "date", "calendar-days", on=TableState.set_date
-                        ),
+                        form_field("Date", "Date Worked", "date", "date", "calendar-days", on=TableState.set_date),
                         # Hours
                         form_field("Hours", "Hours worked", "number", "hours", "clock", on=TableState.set_hours_worked),
                         # Extra Hours
                         form_field(
-                            "Extra Hours", "Extra hours worked", "number", "extra", "clock-arrow-up", on=TableState.set_extra
+                            "Extra Hours",
+                            "Extra hours worked",
+                            "number",
+                            "extra",
+                            "clock-arrow-up",
+                            on=TableState.set_extra,
                         ),
                         # Notes
                         form_field(
@@ -105,6 +105,7 @@ def add_employee_button() -> rx.Component:
                             "text",
                             "notes",
                             "notebook-pen",
+                            "",
                             on=TableState.set_notes,
                         ),
                         direction="column",
@@ -322,8 +323,8 @@ def main_table():
                 ),
             ),
             rx.select(
-                ["Employee", "Date", "Hours", "Extra Hours", "Notes"],
-                placeholder="Sort By: Name",
+                {"employee_name", "date", "hours", "extra", "notes"},
+                placeholder="Sort By: ...",
                 size="3",
                 on_change=lambda sort_value: TableState.sort_values(sort_value),
             ),
@@ -336,7 +337,6 @@ def main_table():
                 variant="surface",
                 on_change=lambda value: TableState.filter_values(value),
             ),
-            
             justify="end",
             align="center",
             spacing="3",

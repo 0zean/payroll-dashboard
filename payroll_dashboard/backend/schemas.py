@@ -15,7 +15,7 @@ class Employee(BaseModel):
 
 class EmployeeEntry(BaseModel):
     """The employee entry model."""
-    
+
     employee_name: str
     hours_worked: float
     date: str
@@ -23,16 +23,16 @@ class EmployeeEntry(BaseModel):
     notes: str | None
 
 
-class EmployeeWithPayRate (rx.Model, table=True):
+class EmployeeWithPayRate(rx.Model, table=True):
     """The employee model with pay rate."""
-    
+
     employee_name: str
     pay_rate: str
 
 
 class PayrollStats(rx.Model, table=True):
     """The payroll statistics model."""
-    
+
     totalEntries: int
     totalHours: int
     employeesCount: int

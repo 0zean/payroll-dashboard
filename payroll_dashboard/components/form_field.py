@@ -19,9 +19,7 @@ def form_field(
                 spacing="2",
             ),
             rx.form.control(
-                rx.input(
-                    placeholder=placeholder, type=type, default_value=default_value, on_change=on,
-                ),
+                rx.input(placeholder=placeholder, type=type, default_value=default_value, on_change=on),
                 as_child=True,
             ),
             direction="column",

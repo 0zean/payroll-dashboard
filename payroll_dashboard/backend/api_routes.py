@@ -25,7 +25,7 @@ def fetch_employee_names() -> list[str | None]:
 def fetch_employees() -> list[Employee | None]:
     """
     Fetches employee data from the API.
-    
+
     Returns:
         list: A list of employee data dictionaries or an empty list if the request fails.
     """
@@ -37,7 +37,7 @@ def fetch_employees() -> list[Employee | None]:
     except requests.RequestException as e:
         print(f"Error fetching employees: {e}")
         return []
-    
+
 
 def delete_employee(employee_id: int) -> None:
     """
@@ -45,7 +45,7 @@ def delete_employee(employee_id: int) -> None:
 
     Args:
         employee_id (int): The ID of the employee to delete.
-    """    
+    """
     try:
         response = requests.delete(f"{url_base}employees", params={"employee_id": employee_id})
         response.raise_for_status()
@@ -60,9 +60,11 @@ def update_employee(employee_id: int, employee_entry: EmployeeEntry) -> None:
 
     Args:
         employee_id (int): The ID of the employee to update.
-    """    
+    """
     try:
-        response = requests.put(f"{url_base}employees", params={"employee_id": employee_id}, json=employee_entry.model_dump())
+        response = requests.put(
+            f"{url_base}employees", params={"employee_id": employee_id}, json=employee_entry.model_dump()
+        )
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Error updating employee with ID {employee_id}: {e}")
@@ -72,7 +74,7 @@ def update_employee(employee_id: int, employee_entry: EmployeeEntry) -> None:
 def add_employee(employee_entry: EmployeeEntry) -> None:
     """
     Adds a new employee entry to the database.
-    
+
     Args:
         employee_entry (EmployeeEntry): The employee entry to add.
     """
