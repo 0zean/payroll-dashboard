@@ -12,13 +12,15 @@ class TableState(rx.State):
 
     users: list[Employee] = []
 
-    current_user: Employee = Employee(id=0, employee_name="", hours_worked=0.0, date="", extra=0.0, notes="")
+    current_employee: Employee = Employee(id=0, employee_name="", hours_worked=0.0, date="", extra=0.0, notes="")
 
-    name: str = current_user.employee_name
-    hours_worked: float = current_user.hours_worked
-    date: str = current_user.date
-    extra: float = current_user.extra
-    notes: str = current_user.notes
+    current_entry: EmployeeEntry = EmployeeEntry(
+        employee_name="",
+        hours_worked=0.0,
+        date="",
+        extra=0.0,
+        notes="",
+    )
 
     date_format: str = ""
     edit_dialog_employee_id: int | None = None
@@ -93,12 +95,21 @@ class TableState(rx.State):
     def get_user(self, user: Employee):
         self.date_format = datetime.strptime(user.date, "%m/%d/%Y").strftime("%Y-%m-%d")
 
-        self.current_user = user
-        self.name = user.employee_name
-        self.hours_worked = user.hours_worked
-        self.date = user.date
-        self.extra = user.extra
-        self.notes = user.notes
+        self.current_employee = user
+        self.current_entry.employee_name = user.employee_name
+        self.current_entry.hours_worked = user.hours_worked
+        self.current_entry.date = user.date
+        self.current_entry.extra = user.extra
+        self.current_entry.notes = user.notes
+        
+    def reset_form_fields(self) -> None:
+        self.current_entry = EmployeeEntry(
+            employee_name="",
+            hours_worked=0.0,
+            date="",
+            extra=0.0,
+            notes="",
+        )
 
     def prev_page(self):
         if self.page_number > 1:
@@ -140,54 +151,53 @@ class TableState(rx.State):
     @rx.event
     async def change_value(self, value: str):
         """Change the select value var."""
-        self.name = value
+        self.current_entry.employee_name = value
 
     @rx.event
     def set_date(self, value: str):
         # Convert "yyyy-mm-dd" to "mm/dd/yyyy"
         try:
             formatted = datetime.strptime(value, "%Y-%m-%d").strftime("%m/%d/%Y")
-            self.date = formatted
+            self.current_entry.date = formatted
         except Exception:
-            self.date = value
+            self.current_entry.date = value
 
     @rx.event
     def set_hours_worked(self, value: str):
-        self.hours_worked = float(value)
+        try:
+            self.current_entry.hours_worked = float(value) if value.strip() != "" else 0.0
+        except ValueError:
+            self.current_entry.hours_worked = 0.0
 
     @rx.event
     def set_extra(self, value: str):
-        self.extra = float(value)
+        try:
+            self.current_entry.extra = float(value) if value.strip() != "" else 0.0
+        except ValueError:
+            self.current_entry.extra = 0.0
 
     @rx.event
     def set_notes(self, value: str):
-        self.notes = value
+        self.current_entry.notes = value
 
     @rx.event
     async def submit_update_employee(self):
         """Gather current state and send update."""
-        entry = EmployeeEntry(
-            employee_name=self.name,
-            hours_worked=self.hours_worked,
-            date=self.date,
-            extra_hours=self.extra,
-            notes=self.notes,
-        )
-        self.update_employee_entry(self.current_user.id, entry)
+        entry = self.current_entry.model_copy()
+        self.update_employee_entry(self.current_employee.id, entry)
         self.load_entries()
 
     @rx.event
     async def submit_add_employee(self):
         """Gather current state and send add."""
-        entry = EmployeeEntry(
-            employee_name=self.name,
-            hours_worked=self.hours_worked,
-            date=self.date,
-            extra_hours=self.extra,
-            notes=self.notes,
-        )
+        entry = self.current_entry.model_copy()
+        if entry.extra is None:
+            entry.extra = 0.0
+        if entry.notes is None:
+            entry.notes = ""
         self.add_employee_entry(entry)
         self.load_entries()
+        self.reset_form_fields()
 
     @rx.event
     def open_edit_dialog(self, user: Employee):
