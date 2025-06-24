@@ -88,7 +88,9 @@ def add_employee_button() -> rx.Component:
                         # Date
                         form_field("Date", "Date Worked", "date", "date", "calendar-days", on=TableState.set_date),
                         # Hours
-                        form_field("Hours", "Hours worked", "number", "hours_worked", "clock", on=TableState.set_hours_worked),
+                        form_field(
+                            "Hours", "Hours worked", "number", "hours_worked", "clock", on=TableState.set_hours_worked
+                        ),
                         # Extra Hours
                         form_field(
                             "Extra Hours",
@@ -288,7 +290,7 @@ def update_employee_dialog(user):
     )
 
 
-def _header_cell(text: str, icon: str):
+def _header_cell(text: str, icon: str) -> rx.Component:
     return rx.table.column_header_cell(
         rx.hstack(
             rx.icon(icon, size=18),
@@ -299,7 +301,64 @@ def _header_cell(text: str, icon: str):
     )
 
 
-def main_table():
+def _pagination_view() -> rx.Component:
+    return rx.hstack(
+        rx.text(
+            "Page ",
+            rx.code(TableState.page_number),
+            f" of {TableState.total_pages}",
+            justify="end",
+        ),
+        rx.hstack(
+            rx.icon_button(
+                rx.icon("chevrons-left", size=18),
+                on_click=TableState.first_page,
+                opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
+                color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
+                variant="soft",
+            ),
+            rx.icon_button(
+                rx.icon("chevron-left", size=18),
+                on_click=TableState.prev_page,
+                opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
+                color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
+                variant="soft",
+            ),
+            rx.icon_button(
+                rx.icon("chevron-right", size=18),
+                on_click=TableState.next_page,
+                opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
+                color_scheme=rx.cond(
+                    TableState.page_number == TableState.total_pages,
+                    "gray",
+                    "accent",
+                ),
+                variant="soft",
+            ),
+            rx.icon_button(
+                rx.icon("chevrons-right", size=18),
+                on_click=TableState.last_page,
+                opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
+                color_scheme=rx.cond(
+                    TableState.page_number == TableState.total_pages,
+                    "gray",
+                    "accent",
+                ),
+                variant="soft",
+            ),
+            align="center",
+            spacing="2",
+            justify="end",
+        ),
+        spacing="5",
+        margin_top="1em",
+        align="center",
+        width="100%",
+        justify="end",
+    )
+
+
+def main_table() -> rx.Component:
     return rx.fragment(
         rx.flex(
             add_employee_button(),
@@ -322,7 +381,7 @@ def main_table():
                 ),
             ),
             rx.select(
-                {"employee_name", "date", "hours", "extra", "notes"},
+                {"employee_name", "date", "hours_worked", "extra", "notes"},
                 placeholder="Sort By: ...",
                 size="3",
                 on_change=lambda sort_value: TableState.sort_values(sort_value),
@@ -354,10 +413,11 @@ def main_table():
                     _header_cell("Actions", "cog"),
                 ),
             ),
-            rx.table.body(rx.foreach(TableState.users, show_employee)),
+            rx.table.body(rx.foreach(TableState.get_current_page, show_employee)),
             variant="surface",
             size="3",
             width="100%",
             on_mount=TableState.load_entries,
         ),
+        _pagination_view(),
     )
