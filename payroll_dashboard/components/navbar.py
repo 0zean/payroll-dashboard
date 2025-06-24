@@ -32,6 +32,7 @@ def menu_item(text: str, url: str) -> rx.Component:
                 ("About", menu_item_icon("book-open")),
                 ("Profile", menu_item_icon("user")),
                 ("Settings", menu_item_icon("settings")),
+                ("Login", menu_item_icon("log-in")),
                 menu_item_icon("layout-dashboard"),
             ),
             rx.text(text, size="4", weight="regular"),
@@ -110,6 +111,7 @@ def menu_button() -> rx.Component:
         "/about",
         "/profile",
         "/settings",
+        "/login",
     ]
 
     pages = [page_dict for page_list in DECORATED_PAGES.values() for _, page_dict in page_list]

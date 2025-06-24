@@ -82,6 +82,7 @@ def sidebar_item(text: str, url: str) -> rx.Component:
                 ("About", sidebar_item_icon("book-open")),
                 ("Profile", sidebar_item_icon("user")),
                 ("Settings", sidebar_item_icon("settings")),
+                ("Login", sidebar_item_icon("log-in")),
                 sidebar_item_icon("layout-dashboard"),
             ),
             rx.text(text, size="3", weight="regular"),
@@ -136,6 +137,7 @@ def sidebar() -> rx.Component:
         "/about",
         "/profile",
         "/settings",
+        "/login",
     ]
 
     pages = [page_dict for page_list in DECORATED_PAGES.values() for _, page_dict in page_list]
