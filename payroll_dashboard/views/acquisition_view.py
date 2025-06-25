@@ -14,43 +14,41 @@ def flag(initials: str) -> rx.Component:
 
 
 def item(country: str, initials: str, progress: int, color: LiteralAccentColor) -> rx.Component:
-    return (
+    return rx.hstack(
         rx.hstack(
-            rx.hstack(
-                flag(initials),
-                rx.text(
-                    country,
-                    size="3",
-                    weight="medium",
-                    display=["none", "none", "none", "none", "flex"],
-                ),
-                width=["10%", "10%", "10%", "10%", "25%"],
-                align="center",
-                spacing="3",
+            flag(initials),
+            rx.text(
+                country,
+                size="3",
+                weight="medium",
+                display=["none", "none", "none", "none", "flex"],
             ),
-            rx.flex(
-                rx.text(
-                    f"{progress}%",
-                    position="absolute",
-                    top="50%",
-                    left=["90%", "90%", "90%", "90%", "95%"],
-                    transform="translate(-50%, -50%)",
-                    size="1",
-                ),
-                rx.progress(
-                    value=progress,
-                    height="19px",
-                    color_scheme=color,
-                    width="100%",
-                ),
-                position="relative",
+            width=["10%", "10%", "10%", "10%", "25%"],
+            align="center",
+            spacing="3",
+        ),
+        rx.flex(
+            rx.text(
+                f"{progress}%",
+                position="absolute",
+                top="50%",
+                left=["90%", "90%", "90%", "90%", "95%"],
+                transform="translate(-50%, -50%)",
+                size="1",
+            ),
+            rx.progress(
+                value=progress,
+                height="19px",
+                color_scheme=color,
                 width="100%",
             ),
+            position="relative",
             width="100%",
-            border_radius="10px",
-            align="center",
-            justify="between",
         ),
+        width="100%",
+        border_radius="10px",
+        align="center",
+        justify="between",
     )
 
 
