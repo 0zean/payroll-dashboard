@@ -1,5 +1,7 @@
 import reflex as rx
 
+from ..backend.auth_state import AuthState
+
 
 def login_view() -> rx.Component:
     return rx.center(
@@ -32,8 +34,8 @@ def login_view() -> rx.Component:
                         type="email",
                         size="3",
                         width="100%",
-                        # on_change=State.set_username,
-                        # value=State.username,
+                        on_change=AuthState.set_email,
+                        value=AuthState.email,
                     ),
                     spacing="2",
                     width="100%",
@@ -54,8 +56,8 @@ def login_view() -> rx.Component:
                         type="password",
                         size="3",
                         width="100%",
-                        # on_change=State.set_password,
-                        # value=State.password,
+                        on_change=AuthState.set_password,
+                        value=AuthState.password,
                     ),
                     spacing="2",
                     width="100%",
@@ -64,7 +66,15 @@ def login_view() -> rx.Component:
                     "Sign in",
                     size="3",
                     width="100%",
-                    # on_click=State.handle_login,
+                    on_click=AuthState.handle_login,
+                    is_loading=AuthState.is_loading,
+                ),
+                rx.center(
+                    rx.text("New here?", size="3"),
+                    rx.link("Sign up", href="#", size="3"),
+                    opacity="0.8",
+                    spacing="2",
+                    direction="row",
                 ),
                 spacing="6",
                 width="100%",
