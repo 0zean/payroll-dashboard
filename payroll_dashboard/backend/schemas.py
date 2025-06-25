@@ -10,7 +10,6 @@ class Employee(BaseModel):
     date: str = Field(description="Date employee worked")
     extra: float = Field(0.0, description="Extra hours worked")
     notes: str = Field("", description="Employee notes")
-    # pay_rate: float | None = Field(None, description="Pay rate of the employee")
 
 
 class EmployeeEntry(BaseModel):
