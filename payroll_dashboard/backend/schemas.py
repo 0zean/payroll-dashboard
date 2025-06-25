@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Awaitable, Callable
 
 
 class Employee(BaseModel):
@@ -36,3 +37,9 @@ class PayrollStats(BaseModel):
     totalEntries: int
     totalHours: int
     employeesCount: int
+
+
+class PayrollUser(BaseModel):
+    id: str
+    email: str
+    name: str | None = None
