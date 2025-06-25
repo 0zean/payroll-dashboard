@@ -66,7 +66,7 @@ def login_view() -> rx.Component:
                     "Sign in",
                     size="3",
                     width="100%",
-                    on_click=AuthState.handle_login,
+                    on_click=AuthState.handle_login, # type: ignore
                     is_loading=AuthState.is_loading,
                 ),
                 rx.center(
