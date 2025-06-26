@@ -3,6 +3,7 @@
 import reflex as rx
 
 from .. import styles
+from ..backend.auth_state import AuthState
 
 
 def sidebar_header() -> rx.Component:
@@ -59,7 +60,7 @@ def sidebar_item_icon(icon: str) -> rx.Component:
     return rx.icon(icon, size=18)
 
 
-def sidebar_item(text: str, url: str) -> rx.Component:
+def sidebar_item(text: str, url: str = "", on_click=None) -> rx.Component:
     """Sidebar item.
 
     Args:
@@ -82,7 +83,7 @@ def sidebar_item(text: str, url: str) -> rx.Component:
                 ("About", sidebar_item_icon("book-open")),
                 ("Profile", sidebar_item_icon("user")),
                 ("Settings", sidebar_item_icon("settings")),
-                ("Login", sidebar_item_icon("log-in")),
+                ("Logout", sidebar_item_icon("log-out")),
                 sidebar_item_icon("layout-dashboard"),
             ),
             rx.text(text, size="3", weight="regular"),
@@ -118,8 +119,9 @@ def sidebar_item(text: str, url: str) -> rx.Component:
             padding="0.35em",
         ),
         underline="none",
-        href=url,
+        href=url if not on_click else None,
         width="100%",
+        on_click=on_click,
     )
 
 
@@ -162,6 +164,7 @@ def sidebar() -> rx.Component:
                     )
                     for page in ordered_pages
                 ],
+                sidebar_item("Logout", on_click=AuthState.logout()),
                 spacing="1",
                 width="100%",
             ),

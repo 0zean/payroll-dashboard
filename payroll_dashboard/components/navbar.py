@@ -3,13 +3,14 @@
 import reflex as rx
 
 from payroll_dashboard import styles
+from ..backend.auth_state import AuthState
 
 
 def menu_item_icon(icon: str) -> rx.Component:
     return rx.icon(icon, size=20)
 
 
-def menu_item(text: str, url: str) -> rx.Component:
+def menu_item(text: str, url: str = "", on_click=None) -> rx.Component:
     """Menu item.
 
     Args:
@@ -32,7 +33,7 @@ def menu_item(text: str, url: str) -> rx.Component:
                 ("About", menu_item_icon("book-open")),
                 ("Profile", menu_item_icon("user")),
                 ("Settings", menu_item_icon("settings")),
-                ("Login", menu_item_icon("log-in")),
+                ("Logout", menu_item_icon("log-out")),
                 menu_item_icon("layout-dashboard"),
             ),
             rx.text(text, size="4", weight="regular"),
@@ -68,8 +69,9 @@ def menu_item(text: str, url: str) -> rx.Component:
             padding="0.35em",
         ),
         underline="none",
-        href=url,
+        href=url if not on_click else None,
         width="100%",
+        on_click=on_click,
     )
 
 
@@ -111,7 +113,6 @@ def menu_button() -> rx.Component:
         "/about",
         "/profile",
         "/settings",
-        "/login",
     ]
 
     pages = [page_dict for page_list in DECORATED_PAGES.values() for _, page_dict in page_list]
@@ -147,6 +148,7 @@ def menu_button() -> rx.Component:
                         )
                         for page in ordered_pages
                     ],
+                    menu_item("Logout", on_click=AuthState.logout()),
                     rx.spacer(),
                     navbar_footer(),
                     spacing="4",
