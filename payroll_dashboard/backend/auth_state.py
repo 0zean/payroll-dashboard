@@ -23,6 +23,9 @@ class AuthState(rx.State):
     
     email: str = ""
     password: str = ""
+    
+    toast_message: str = ""
+    toast_type: str = ""
 
     def handle_user_session(self, supabase_user: User):
         try:
@@ -31,7 +34,8 @@ class AuthState(rx.State):
             )
             data = response.data
             if not data or data.get("status") != "approved":
-                rx.toast.error("Your account is pending approval by an administrator.")
+                self.toast_message = "Your account is pending approval by an administrator."
+                self.toast_type = "warning"
                 supabase.auth.sign_out()
                 self.user = None
                 self.is_authenticated = False
@@ -46,6 +50,8 @@ class AuthState(rx.State):
             print("Error in handle_user_session:", e)
             self.user = None
             self.is_authenticated = False
+            self.toast_message = "Error getting user info"
+            self.toast_type = "error"
 
     def login(self, email: str, password: str):
         self.is_loading = True
@@ -57,19 +63,22 @@ class AuthState(rx.State):
             self.handle_user_session(user)
         except AuthApiError as e:
             print("Login error:", e)
-            rx.toast.error(str(e))
-            raise
+            self.toast_message = str(e)
+            self.toast_type = "error"
         except Exception as e:
             print("Login failed:", e)
-            rx.toast.error(str(e))
-            raise
+            self.toast_message = str(e)
+            self.toast_type = "error"
         finally:
             self.is_loading = False
     
     def handle_login(self):
         self.login(self.email, self.password)
         if self.is_authenticated:
-            rx.toast.success("Login Successfull!")
+            self.email = ""
+            self.password = ""
+            self.toast_message = "Login Successfull!"
+            self.toast_type = "success"
 
     def signup(self, email: str, password: str, name: str):
         self.is_loading = True
@@ -146,3 +155,7 @@ class AuthState(rx.State):
             self.password = value
         except ValueError:
             self.password = ""
+            
+    @rx.event
+    def set_toast_message(self, value: str):
+        self.toast_message = value
