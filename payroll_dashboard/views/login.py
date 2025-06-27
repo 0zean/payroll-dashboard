@@ -22,7 +22,11 @@ def login_view() -> rx.Component:
                     rx.center(
                         rx.icon(tag="badge-dollar-sign", size=28),
                         rx.heading(
-                            "Sign in to your account",
+                            rx.cond(
+                                AuthState.show_signup,
+                                "Create an account",
+                                "Sign in to your account"
+                            ),
                             size="6",
                             as_="h2",
                             text_align="center",
@@ -32,16 +36,43 @@ def login_view() -> rx.Component:
                         spacing="5",
                         width="100%",
                     ),
+                    # Name field (only for signup)
+                    rx.cond(
+                        AuthState.show_signup,
+                        rx.vstack(
+                            rx.text(
+                                "Full name",
+                                rx.text.span("*", color="red"),
+                                size="3",
+                                weight="medium",
+                                text_align="left",
+                                width="100%",
+                            ),
+                            rx.input(
+                                rx.input.slot(rx.icon("user")),
+                                placeholder="Enter your full name",
+                                size="3",
+                                width="100%",
+                                on_change=AuthState.set_name,
+                                value=AuthState.name,
+                                style={"pointer-events": "auto"},
+                                required=True,
+                            ),
+                            spacing="2",
+                            width="100%",
+                        ),
+                    ),
                     rx.vstack(
                         rx.text(
                             "Email address",
+                            rx.text.span("*", color="red"),
                             size="3",
                             weight="medium",
                             text_align="left",
                             width="100%",
                         ),
                         rx.input(
-                            rx.input.slot(rx.icon("user")),
+                            rx.input.slot(rx.icon("mail")),
                             placeholder="user@reflex.dev",
                             type="email",
                             size="3",
@@ -49,6 +80,7 @@ def login_view() -> rx.Component:
                             on_change=AuthState.set_email,
                             value=AuthState.email,
                             style={"pointer-events": "auto"},
+                            required=True,
                         ),
                         spacing="2",
                         width="100%",
@@ -57,6 +89,7 @@ def login_view() -> rx.Component:
                         rx.hstack(
                             rx.text(
                                 "Password",
+                                rx.text.span("*", color="red"),
                                 size="3",
                                 weight="medium",
                             ),
@@ -72,21 +105,59 @@ def login_view() -> rx.Component:
                             on_change=AuthState.set_password,
                             value=AuthState.password,
                             style={"pointer-events": "auto"},
+                            required=True,
                         ),
                         spacing="2",
                         width="100%",
                     ),
+                    # Terms checkbox (only for signup)
+                    rx.cond(
+                        AuthState.show_signup,
+                        rx.box(
+                            rx.checkbox(
+                                "Agree to Terms and Conditions",
+                                default_checked=True,
+                                spacing="2",
+                                style={"pointer-events": "auto"},
+                            ),
+                            width="100%",
+                        ),
+                    ),
                     rx.button(
-                        "Sign in",
+                        rx.cond(
+                            AuthState.show_signup,
+                            "Create account",
+                            "Sign in"
+                        ),
                         size="3",
                         width="100%",
-                        on_click=AuthState.handle_login, # type: ignore
+                        on_click=rx.cond(
+                            AuthState.show_signup,
+                            AuthState.handle_signup,
+                            AuthState.handle_login
+                        ),
                         is_loading=AuthState.is_loading,
                         style={"pointer-events": "auto"},
                     ),
                     rx.center(
-                        rx.text("New here?", size="3"),
-                        rx.link("Sign up", href="#", size="3"),
+                        rx.text(
+                            rx.cond(
+                                AuthState.show_signup,
+                                "Already have an account?",
+                                "New here?"
+                            ),
+                            size="3"
+                        ),
+                        rx.link(
+                            rx.cond(
+                                AuthState.show_signup,
+                                "Sign in",
+                                "Sign up"
+                            ),
+                            on_click=AuthState.toggle_auth_mode,
+                            size="3",
+                            style={"pointer-events": "auto"},
+                        ),
                         opacity="0.8",
                         spacing="2",
                         direction="row",
