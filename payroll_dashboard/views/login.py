@@ -42,7 +42,7 @@ def login_view() -> rx.Component:
                         rx.vstack(
                             rx.text(
                                 "Full name",
-                                rx.text.span("*", color="red"),
+                                rx.text.span(" *", color="tomato"),
                                 size="3",
                                 weight="medium",
                                 text_align="left",
@@ -65,7 +65,7 @@ def login_view() -> rx.Component:
                     rx.vstack(
                         rx.text(
                             "Email address",
-                            rx.text.span("*", color="red"),
+                            rx.cond(AuthState.show_signup,rx.text.span(" *", color="tomato"),),
                             size="3",
                             weight="medium",
                             text_align="left",
@@ -89,7 +89,7 @@ def login_view() -> rx.Component:
                         rx.hstack(
                             rx.text(
                                 "Password",
-                                rx.text.span("*", color="red"),
+                                rx.cond(AuthState.show_signup,rx.text.span(" *", color="tomato"),),
                                 size="3",
                                 weight="medium",
                             ),

@@ -20,8 +20,8 @@ def show_employee(user: Employee):
                     rx.icon("trash-2", size=22),
                     on_click=lambda: TableState.delete_entry(employee_id=user.id),
                     size="2",
-                    variant="solid",
-                    color_scheme="red",
+                    variant="surface",
+                    color_scheme="tomato",
                 ),
             )
         ),
@@ -37,6 +37,7 @@ def add_employee_button() -> rx.Component:
                 rx.icon("plus", size=26),
                 rx.text("Add Employee", size="4", display=["none", "none", "block"]),
                 size="3",
+                variant="surface",
             ),
         ),
         rx.dialog.content(
@@ -151,10 +152,10 @@ def update_employee_dialog(user):
         rx.dialog.trigger(
             rx.button(
                 rx.icon("square-pen", size=22),
-                rx.text("Edit", size="3"),
+                #rx.text("Edit", size="3"),
                 color_scheme="blue",
                 size="2",
-                variant="solid",
+                variant="surface",
             ),
         ),
         rx.dialog.content(
