@@ -139,7 +139,6 @@ def sidebar() -> rx.Component:
         "/about",
         "/profile",
         "/settings",
-        "/login",
     ]
 
     pages = [page_dict for page_list in DECORATED_PAGES.values() for _, page_dict in page_list]
