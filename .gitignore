@@ -9,4 +9,5 @@ assets/external/
 __pycache__/
 venv/
 .python-version
+.tool-versions
 .env
