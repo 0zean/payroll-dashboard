@@ -21,11 +21,11 @@ class AuthState(rx.State):
     is_loading: bool = False
     session: Session | None = None
     
+    # Auth form state
+    show_signup: bool = False
     email: str = ""
     password: str = ""
-    
-    toast_message: str = ""
-    toast_type: str = ""
+    name: str = ""
 
     def handle_user_session(self, supabase_user: User):
         try:
@@ -34,8 +34,7 @@ class AuthState(rx.State):
             )
             data = response.data
             if not data or data.get("status") != "approved":
-                self.toast_message = "Your account is pending approval by an administrator."
-                self.toast_type = "warning"
+                rx.toast.warning("Your account is pending approval by an administrator.")
                 supabase.auth.sign_out()
                 self.user = None
                 self.is_authenticated = False
@@ -50,8 +49,7 @@ class AuthState(rx.State):
             print("Error in handle_user_session:", e)
             self.user = None
             self.is_authenticated = False
-            self.toast_message = "Error getting user info"
-            self.toast_type = "error"
+            rx.toast.error("Error getting user info")
 
     def login(self, email: str, password: str):
         self.is_loading = True
@@ -63,12 +61,8 @@ class AuthState(rx.State):
             self.handle_user_session(user)
         except AuthApiError as e:
             print("Login error:", e)
-            self.toast_message = str(e)
-            self.toast_type = "error"
         except Exception as e:
             print("Login failed:", e)
-            self.toast_message = str(e)
-            self.toast_type = "error"
         finally:
             self.is_loading = False
     
@@ -77,8 +71,20 @@ class AuthState(rx.State):
         if self.is_authenticated:
             self.email = ""
             self.password = ""
-            self.toast_message = "Login Successfull!"
-            self.toast_type = "success"
+            return rx.toast.success("Login successful!")
+        else:
+            return rx.toast.error("Login failed, please check your credentials.")
+
+    def handle_signup(self):
+        self.signup(self.email, self.password, self.name)
+        if not self.is_authenticated:  # Signup successful but needs approval
+            self.email = ""
+            self.password = ""
+            self.name = ""
+            self.show_signup = False  # Switch back to login view
+            return rx.toast.info("Your account has been created and is pending approval by an administrator.")
+        else:
+            return rx.toast.error("Signup failed, please try again.")
 
     def signup(self, email: str, password: str, name: str):
         self.is_loading = True
@@ -157,5 +163,16 @@ class AuthState(rx.State):
             self.password = ""
             
     @rx.event
-    def set_toast_message(self, value: str):
-        self.toast_message = value
+    def set_name(self, value: str):
+        try:
+            self.name = value
+        except ValueError:
+            self.name = ""
+
+    def toggle_auth_mode(self):
+        """Toggle between login and signup modes."""
+        self.show_signup = not self.show_signup
+        # Clear form fields when switching modes
+        self.email = ""
+        self.password = ""
+        self.name = ""
