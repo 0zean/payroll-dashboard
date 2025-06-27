@@ -20,6 +20,7 @@ class AuthState(rx.State):
     is_authenticated: bool = False
     is_loading: bool = False
     session: Session | None = None
+    first_name: str = ""
     
     # Auth form state
     show_signup: bool = False
@@ -30,7 +31,7 @@ class AuthState(rx.State):
     def handle_user_session(self, supabase_user: User):
         try:
             response = (
-                supabase.table("profiles").select("status, email").eq("id", supabase_user.id).single().execute()
+                supabase.table("profiles").select("status, email", "full_name").eq("id", supabase_user.id).single().execute()
             )
             data = response.data
             if not data or data.get("status") != "approved":
@@ -42,7 +43,7 @@ class AuthState(rx.State):
             self.user = PayrollUser(
                 id=supabase_user.id,
                 email=data.get("email") or supabase_user.email, # type: ignore
-                name=supabase_user.user_metadata.get("name"),
+                name=data.get("full_name"),
             )
             self.is_authenticated = True
         except Exception as e:
@@ -59,6 +60,7 @@ class AuthState(rx.State):
             if not user:
                 raise Exception("User not found")
             self.handle_user_session(user)
+            print(self.user.name)
         except AuthApiError as e:
             print("Login error:", e)
         except Exception as e:
@@ -126,10 +128,10 @@ class AuthState(rx.State):
             supabase.auth.sign_out()
             self.user = None
             self.is_authenticated = False
+            return rx.redirect("/")
         except Exception as e:
             print("Logout failed:", e)
-            rx.toast.error(str(e))
-            raise
+            return rx.toast.error(str(e))
 
     def load_session(self):
         self.is_loading = True
