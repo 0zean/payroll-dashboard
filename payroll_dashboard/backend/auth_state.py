@@ -59,8 +59,6 @@ class AuthState(rx.State):
             user = result.user
             if not user:
                 raise Exception("User not found")
-            self.handle_user_session(user)
-            print(self.user.name)
         except AuthApiError as e:
             print("Login error:", e)
         except Exception as e:
