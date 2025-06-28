@@ -154,7 +154,7 @@ def login_view() -> rx.Component:
                                 "Sign in",
                                 "Sign up"
                             ),
-                            on_click=AuthState.toggle_auth_mode,
+                            on_click=AuthState.toggle_auth_mode, # type: ignore
                             size="3",
                             style={"pointer-events": "auto"},
                         ),

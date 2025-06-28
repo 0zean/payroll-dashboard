@@ -99,10 +99,10 @@ def template(
                                 rx.vstack(
                                     page_content(),
                                     width="100%",
-                                    **styles.template_content_style,
+                                    **styles.template_content_style, # type: ignore
                                 ),
                                 width="100%",
-                                **styles.template_page_style,
+                                **styles.template_page_style, # type: ignore
                                 max_width=[
                                     "100%",
                                     "100%",
