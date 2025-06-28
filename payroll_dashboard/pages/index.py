@@ -55,7 +55,7 @@ def index() -> rx.Component:
 
     """
     return rx.vstack(
-        rx.heading(f"Welcome, {AuthState.user.name}", size="5"),
+        rx.heading(f"Welcome, {AuthState.user.name.split(" ")[0]}", size="5"),
         rx.flex(
             rx.input(
                 rx.input.slot(rx.icon("search"), padding_left="0"),
