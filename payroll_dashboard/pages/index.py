@@ -22,7 +22,6 @@ from ..views.charts import (
 from ..views.stats_cards import stats_cards
 
 
-
 def _time_data() -> rx.Component:
     return rx.hstack(
         rx.tooltip(
