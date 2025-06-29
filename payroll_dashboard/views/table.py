@@ -84,13 +84,15 @@ def add_employee_button() -> rx.Component:
                                 required=True,
                                 placeholder="Select Employee",
                                 width="100%",
+                                error_message=TableState.name_error,
+                                name="employee_name",
                             ),
                         ),
                         # Date
-                        form_field("Date", "Date Worked", "date", "date", "calendar-days", on=TableState.set_date),
+                        form_field("Date", "Date Worked", "date", "date", "calendar-days", on=TableState.set_date, required=True, error_message=TableState.date_error),
                         # Hours
                         form_field(
-                            "Hours", "Hours worked", "number", "hours_worked", "clock", on=TableState.set_hours_worked
+                            "Hours", "Hours worked", "number", "hours_worked", "clock", on=TableState.set_hours_worked, required=True, error_message=TableState.hours_error
                         ),
                         # Extra Hours
                         form_field(
@@ -122,9 +124,7 @@ def add_employee_button() -> rx.Component:
                             ),
                         ),
                         rx.form.submit(
-                            rx.dialog.close(
-                                rx.button("Submit Customer"),
-                            ),
+                            rx.button("Submit Employee"),
                             as_child=True,
                         ),
                         padding_top="2em",
@@ -144,6 +144,12 @@ def add_employee_button() -> rx.Component:
             border=f"2px solid {rx.color('accent', 7)}",
             border_radius="25px",
         ),
+        open=TableState.add_dialog_open,
+        on_open_change=lambda open: rx.cond(
+            open,
+            TableState.open_add_dialog(),
+            TableState.close_add_dialog(),
+        ),
     )
 
 
@@ -152,7 +158,7 @@ def update_employee_dialog(user):
         rx.dialog.trigger(
             rx.button(
                 rx.icon("square-pen", size=22),
-                #rx.text("Edit", size="3"),
+                # rx.text("Edit", size="3"),
                 color_scheme="blue",
                 size="2",
                 variant="surface",
@@ -214,6 +220,8 @@ def update_employee_dialog(user):
                             "calendar-days",
                             TableState.date_format,
                             on=TableState.set_date,
+                            required=True,
+                            error_message=TableState.date_error,
                         ),
                         # Hours
                         form_field(
@@ -224,6 +232,8 @@ def update_employee_dialog(user):
                             "clock",
                             user.hours_worked.to(str),
                             on=TableState.set_hours_worked,
+                            required=True,
+                            error_message=TableState.hours_error,
                         ),
                         # Extra Hours
                         form_field(
