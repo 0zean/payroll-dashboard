@@ -33,6 +33,13 @@ class TableState(rx.State):
     offset: int = 0
     limit: int = 12  # Number of rows per page
 
+    show_validation_errors: bool = False
+    name_error: str = ""
+    date_error: str = ""
+    hours_error: str = ""
+
+    add_dialog_open: bool = False
+
     @rx.var(cache=True)
     def filtered_sorted_items(self) -> List[Employee]:
         items = self.users
@@ -103,6 +110,7 @@ class TableState(rx.State):
         self.current_entry.notes = user.notes
 
     def reset_form_fields(self) -> None:
+        """Reset all form fields to their default values."""
         self.current_entry = EmployeeEntry(
             employee_name="",
             hours_worked=0.0,
@@ -110,6 +118,14 @@ class TableState(rx.State):
             extra=0.0,
             notes="",
         )
+        self.date_format = ""
+
+    def _reset_validation_errors(self, dialog: bool = False):
+        self.add_dialog_open = dialog
+        self.show_validation_errors = False
+        self.name_error = ""
+        self.date_error = ""
+        self.hours_error = ""
 
     def prev_page(self):
         if self.page_number > 1:
@@ -170,14 +186,14 @@ class TableState(rx.State):
     def set_hours_worked(self, value: str):
         try:
             self.current_entry.hours_worked = float(value) if value.strip() != "" else 0.0
-        except ValueError:
+        except (ValueError, TypeError):
             self.current_entry.hours_worked = 0.0
 
     @rx.event
     def set_extra(self, value: str):
         try:
             self.current_entry.extra = float(value) if value.strip() != "" else 0.0
-        except ValueError:
+        except (ValueError, TypeError):
             self.current_entry.extra = 0.0
 
     @rx.event
@@ -188,20 +204,64 @@ class TableState(rx.State):
     async def submit_update_employee(self):
         """Gather current state and send update."""
         entry = self.current_entry.model_copy()
+        
+        if entry.extra is None:
+            entry.extra = 0.0
+        if entry.notes is None:
+            entry.notes = ""
+            
         self.update_employee_entry(self.current_employee.id, entry)
         self.load_entries()
 
     @rx.event
-    async def submit_add_employee(self):
+    async def submit_add_employee(self, form_data: dict):
         """Gather current state and send add."""
+        self._reset_validation_errors(dialog=True)
+
+        is_valid = True
+
+        if not form_data.get("employee_name").strip():
+            self.name_error = "Employee name is required"
+            is_valid = False
+
+        if not form_data.get("date").strip():
+            self.date_error = "Date is required"
+            is_valid = False
+
+        try:
+            hours_worked = float(form_data.get("hours_worked"))
+            if hours_worked <= 0:
+                self.hours_error = "Hours worked must be greater than 0"
+                is_valid = False
+        except (ValueError, TypeError):
+            self.hours_error = "Hours worked must be a valid number"
+            is_valid = False
+
+        if not is_valid:
+            self.show_validation_errors = True
+            return
+
         entry = self.current_entry.model_copy()
         if entry.extra is None:
             entry.extra = 0.0
         if entry.notes is None:
             entry.notes = ""
+            
         self.add_employee_entry(entry)
         self.load_entries()
         self.reset_form_fields()
+        self.add_dialog_open = False
+        return rx.toast.success("Employee added successfully!", position="top-center")
+    
+    @rx.event
+    def open_add_dialog(self):
+        """Open the add employee dialog."""
+        self._reset_validation_errors(dialog=True)
+
+    @rx.event
+    def close_add_dialog(self):
+        """Close the add employee dialog."""
+        self._reset_validation_errors(dialog=False)
 
     @rx.event
     def open_edit_dialog(self, user: Employee):
