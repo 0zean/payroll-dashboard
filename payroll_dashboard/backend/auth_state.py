@@ -59,10 +59,11 @@ class AuthState(rx.State):
             user = result.user
             if not user:
                 raise Exception("User not found")
+            self.handle_user_session(user)
         except AuthApiError as e:
-            print("Login error:", e)
+            return print("Login error:", e)
         except Exception as e:
-            print("Login failed:", e)
+            return print("Login failed:", e)
         finally:
             self.is_loading = False
     
@@ -73,7 +74,7 @@ class AuthState(rx.State):
             self.password = ""
             return rx.toast.success("Login successful!")
         else:
-            return rx.toast.error("Login failed, please check your credentials.")
+            return rx.toast.error(f"Login failed, please check your credentials.")
 
     def handle_signup(self):
         self.signup(self.email, self.password, self.name)
@@ -130,23 +131,6 @@ class AuthState(rx.State):
         except Exception as e:
             print("Logout failed:", e)
             return rx.toast.error(str(e))
-
-    def load_session(self):
-        self.is_loading = True
-        try:
-            session = supabase.auth.get_session()
-            self.session = session
-            if session and hasattr(session, "user"):
-                self.handle_user_session(session.user)
-            else:
-                self.user = None
-                self.is_authenticated = False
-        except Exception as e:
-            print("Error loading session:", e)
-            self.user = None
-            self.is_authenticated = False
-        finally:
-            self.is_loading = False
 
     @rx.event
     def set_email(self, value: str):
