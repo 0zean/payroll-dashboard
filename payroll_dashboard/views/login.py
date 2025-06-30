@@ -1,10 +1,10 @@
 import reflex as rx
 
 from ..backend.auth_state import AuthState
-from ..components.spline import spline, scene
+from ..components.spline import scene, spline
 
 
-def login_view() -> rx.Component:    
+def login_view() -> rx.Component:
     return rx.box(
         rx.box(
             spline(scene=scene),
@@ -22,11 +22,7 @@ def login_view() -> rx.Component:
                     rx.center(
                         rx.icon(tag="badge-dollar-sign", size=28),
                         rx.heading(
-                            rx.cond(
-                                AuthState.show_signup,
-                                "Create an account",
-                                "Sign in to your account"
-                            ),
+                            rx.cond(AuthState.show_signup, "Create an account", "Sign in to your account"),
                             size="6",
                             as_="h2",
                             text_align="center",
@@ -65,7 +61,10 @@ def login_view() -> rx.Component:
                     rx.vstack(
                         rx.text(
                             "Email address",
-                            rx.cond(AuthState.show_signup,rx.text.span(" *", color="tomato"),),
+                            rx.cond(
+                                AuthState.show_signup,
+                                rx.text.span(" *", color="tomato"),
+                            ),
                             size="3",
                             weight="medium",
                             text_align="left",
@@ -89,7 +88,10 @@ def login_view() -> rx.Component:
                         rx.hstack(
                             rx.text(
                                 "Password",
-                                rx.cond(AuthState.show_signup,rx.text.span(" *", color="tomato"),),
+                                rx.cond(
+                                    AuthState.show_signup,
+                                    rx.text.span(" *", color="tomato"),
+                                ),
                                 size="3",
                                 weight="medium",
                             ),
@@ -124,37 +126,18 @@ def login_view() -> rx.Component:
                         ),
                     ),
                     rx.button(
-                        rx.cond(
-                            AuthState.show_signup,
-                            "Create account",
-                            "Sign in"
-                        ),
+                        rx.cond(AuthState.show_signup, "Create account", "Sign in"),
                         size="3",
                         width="100%",
-                        on_click=rx.cond(
-                            AuthState.show_signup,
-                            AuthState.handle_signup,
-                            AuthState.handle_login
-                        ),
+                        on_click=rx.cond(AuthState.show_signup, AuthState.handle_signup, AuthState.handle_login),
                         is_loading=AuthState.is_loading,
                         style={"pointer-events": "auto"},
                     ),
                     rx.center(
-                        rx.text(
-                            rx.cond(
-                                AuthState.show_signup,
-                                "Already have an account?",
-                                "New here?"
-                            ),
-                            size="3"
-                        ),
+                        rx.text(rx.cond(AuthState.show_signup, "Already have an account?", "New here?"), size="3"),
                         rx.link(
-                            rx.cond(
-                                AuthState.show_signup,
-                                "Sign in",
-                                "Sign up"
-                            ),
-                            on_click=AuthState.toggle_auth_mode, # type: ignore
+                            rx.cond(AuthState.show_signup, "Sign in", "Sign up"),
+                            on_click=AuthState.toggle_auth_mode,  # type: ignore
                             size="3",
                             style={"pointer-events": "auto"},
                         ),

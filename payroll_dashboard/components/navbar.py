@@ -3,6 +3,7 @@
 import reflex as rx
 
 from payroll_dashboard import styles
+
 from ..backend.auth_state import AuthState
 
 

@@ -7,10 +7,10 @@ from typing import Callable
 import reflex as rx
 
 from .. import styles
+from ..backend.auth_state import AuthState
 from ..components.navbar import navbar
 from ..components.sidebar import sidebar
 from ..views.login import login_view
-from ..backend.auth_state import AuthState
 
 # Meta tags for the app.
 default_meta = [
@@ -93,37 +93,37 @@ def template(
                     ~AuthState.is_authenticated,
                     login_view(),
                     rx.flex(
-                            navbar(),
-                            sidebar(),
-                            rx.flex(
-                                rx.vstack(
-                                    page_content(),
-                                    width="100%",
-                                    **styles.template_content_style, # type: ignore
-                                ),
+                        navbar(),
+                        sidebar(),
+                        rx.flex(
+                            rx.vstack(
+                                page_content(),
                                 width="100%",
-                                **styles.template_page_style, # type: ignore
-                                max_width=[
-                                    "100%",
-                                    "100%",
-                                    "100%",
-                                    "100%",
-                                    "100%",
-                                    styles.max_width,
-                                ],
+                                **styles.template_content_style,  # type: ignore
                             ),
-                            flex_direction=[
-                                "column",
-                                "column",
-                                "column",
-                                "column",
-                                "column",
-                                "row",
-                            ],
                             width="100%",
-                            margin="auto",
-                            position="relative",
-                        )
+                            **styles.template_page_style,  # type: ignore
+                            max_width=[
+                                "100%",
+                                "100%",
+                                "100%",
+                                "100%",
+                                "100%",
+                                styles.max_width,
+                            ],
+                        ),
+                        flex_direction=[
+                            "column",
+                            "column",
+                            "column",
+                            "column",
+                            "column",
+                            "row",
+                        ],
+                        width="100%",
+                        margin="auto",
+                        position="relative",
+                    ),
                 ),
             )
 

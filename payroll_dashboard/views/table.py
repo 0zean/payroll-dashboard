@@ -89,10 +89,26 @@ def add_employee_button() -> rx.Component:
                             ),
                         ),
                         # Date
-                        form_field("Date", "Date Worked", "date", "date", "calendar-days", on=TableState.set_date, required=True, error_message=TableState.date_error),
+                        form_field(
+                            "Date",
+                            "Date Worked",
+                            "date",
+                            "date",
+                            "calendar-days",
+                            on=TableState.set_date,
+                            required=True,
+                            error_message=TableState.date_error,
+                        ),
                         # Hours
                         form_field(
-                            "Hours", "Hours worked", "number", "hours_worked", "clock", on=TableState.set_hours_worked, required=True, error_message=TableState.hours_error
+                            "Hours",
+                            "Hours worked",
+                            "number",
+                            "hours_worked",
+                            "clock",
+                            on=TableState.set_hours_worked,
+                            required=True,
+                            error_message=TableState.hours_error,
                         ),
                         # Extra Hours
                         form_field(

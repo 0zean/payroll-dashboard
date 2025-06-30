@@ -5,9 +5,9 @@ import datetime
 import reflex as rx
 
 from .. import styles
+from ..backend.auth_state import AuthState
 from ..components.card import card
 from ..components.notification import notification
-from ..backend.auth_state import AuthState
 from ..templates import template
 from ..views.acquisition_view import acquisition
 from ..views.charts import (
@@ -45,7 +45,7 @@ def tab_content_header() -> rx.Component:
     )
 
 
-@template(route="/", title="Overview", on_load=StatsState.randomize_data) # type: ignore
+@template(route="/", title="Overview", on_load=StatsState.randomize_data)  # type: ignore
 def index() -> rx.Component:
     """The overview page.
 
@@ -54,7 +54,7 @@ def index() -> rx.Component:
 
     """
     return rx.vstack(
-        rx.heading(f"Welcome, {AuthState.user.name.split(" ")[0]}", size="5"),
+        rx.heading(f"Welcome, {AuthState.user.name.split(' ')[0]}", size="5"),
         rx.flex(
             rx.input(
                 rx.input.slot(rx.icon("search"), padding_left="0"),

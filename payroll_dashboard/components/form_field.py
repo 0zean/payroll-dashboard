@@ -19,13 +19,13 @@ def form_field(
         "on_change": on,
         "name": name,
     }
-    
+
     if type == "number":
         input_props["step"] = "0.5"
 
     if required:
         input_props["required"] = True
-    
+
     return rx.form.field(
         rx.flex(
             rx.hstack(

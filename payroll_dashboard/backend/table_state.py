@@ -204,12 +204,12 @@ class TableState(rx.State):
     async def submit_update_employee(self):
         """Gather current state and send update."""
         entry = self.current_entry.model_copy()
-        
+
         if entry.extra is None:
             entry.extra = 0.0
         if entry.notes is None:
             entry.notes = ""
-            
+
         self.update_employee_entry(self.current_employee.id, entry)
         self.load_entries()
 
@@ -230,8 +230,8 @@ class TableState(rx.State):
 
         try:
             hours_worked = float(form_data.get("hours_worked"))
-            if hours_worked <= 0:
-                self.hours_error = "Hours worked must be greater than 0"
+            if hours_worked <= 0 or hours_worked % 0.5 != 0:
+                self.hours_error = "Hours must be greater than 0 and a multiple of 0.5"
                 is_valid = False
         except (ValueError, TypeError):
             self.hours_error = "Hours worked must be a valid number"
@@ -246,13 +246,13 @@ class TableState(rx.State):
             entry.extra = 0.0
         if entry.notes is None:
             entry.notes = ""
-            
+
         self.add_employee_entry(entry)
         self.load_entries()
         self.reset_form_fields()
         self.add_dialog_open = False
         return rx.toast.success("Employee added successfully!", position="top-center")
-    
+
     @rx.event
     def open_add_dialog(self):
         """Open the add employee dialog."""

@@ -21,7 +21,7 @@ class AuthState(rx.State):
     is_loading: bool = False
     session: Session | None = None
     first_name: str = ""
-    
+
     # Auth form state
     show_signup: bool = False
     email: str = ""
@@ -31,7 +31,11 @@ class AuthState(rx.State):
     def handle_user_session(self, supabase_user: User):
         try:
             response = (
-                supabase.table("profiles").select("status, email", "full_name").eq("id", supabase_user.id).single().execute()
+                supabase.table("profiles")
+                .select("status, email", "full_name")
+                .eq("id", supabase_user.id)
+                .single()
+                .execute()
             )
             data = response.data
             if not data or data.get("status") != "approved":
@@ -42,7 +46,7 @@ class AuthState(rx.State):
                 return
             self.user = PayrollUser(
                 id=supabase_user.id,
-                email=data.get("email") or supabase_user.email, # type: ignore
+                email=data.get("email") or supabase_user.email,  # type: ignore
                 name=data.get("full_name"),
             )
             self.is_authenticated = True
@@ -66,7 +70,7 @@ class AuthState(rx.State):
             return print("Login failed:", e)
         finally:
             self.is_loading = False
-    
+
     def handle_login(self):
         self.login(self.email, self.password)
         if self.is_authenticated:
@@ -74,7 +78,7 @@ class AuthState(rx.State):
             self.password = ""
             return rx.toast.success("Login successful!")
         else:
-            return rx.toast.error(f"Login failed, please check your credentials.")
+            return rx.toast.error("Login failed, please check your credentials.")
 
     def handle_signup(self):
         self.signup(self.email, self.password, self.name)
@@ -138,14 +142,14 @@ class AuthState(rx.State):
             self.email = value
         except ValueError:
             self.email = ""
-            
+
     @rx.event
     def set_password(self, value: str):
         try:
             self.password = value
         except ValueError:
             self.password = ""
-            
+
     @rx.event
     def set_name(self, value: str):
         try:
