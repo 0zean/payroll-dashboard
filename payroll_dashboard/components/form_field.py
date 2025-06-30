@@ -21,7 +21,7 @@ def form_field(
     }
 
     if type == "number":
-        input_props["step"] = "0.5"
+        input_props["step"] = "0.1"
 
     if required:
         input_props["required"] = True
