@@ -76,7 +76,7 @@ class AuthState(rx.State):
         if self.is_authenticated:
             self.email = ""
             self.password = ""
-            return rx.toast.success("Login successful!")
+            return rx.toast.success("Login successful! 🎉")
         else:
             return rx.toast.error("Login failed, please check your credentials.")
 
