@@ -18,7 +18,7 @@ def show_employee(user: Employee):
                 update_employee_dialog(user),
                 rx.icon_button(
                     rx.icon("trash-2", size=22),
-                    on_click=lambda: TableState.delete_entry(employee_id=user.id),
+                    on_click=lambda: TableState.delete_entry(employee_id=user.id),  # type: ignore
                     size="2",
                     variant="surface",
                     color_scheme="tomato",
@@ -80,7 +80,7 @@ def add_employee_button() -> rx.Component:
                             ),
                             rx.select(
                                 fetch_employee_names(),
-                                on_change=TableState.change_value,
+                                on_change=TableState.set_name,
                                 required=True,
                                 placeholder="Select Employee",
                                 width="100%",
@@ -160,7 +160,7 @@ def add_employee_button() -> rx.Component:
             border=f"2px solid {rx.color('accent', 7)}",
             border_radius="25px",
         ),
-        open=TableState.add_dialog_open,
+        open=TableState.dialog_open,
         on_open_change=lambda open: rx.cond(
             open,
             TableState.open_add_dialog(),
@@ -221,7 +221,7 @@ def update_employee_dialog(user):
                             rx.select(
                                 fetch_employee_names(),
                                 default_value=user.employee_name,
-                                on_change=TableState.change_value,
+                                on_change=TableState.set_name,
                                 required=True,
                                 placeholder="Select Employee",
                                 width="100%",
@@ -283,9 +283,7 @@ def update_employee_dialog(user):
                             ),
                         ),
                         rx.form.submit(
-                            rx.dialog.close(
-                                rx.button("Update Employee"),
-                            ),
+                            rx.button("Update Employee"),
                             as_child=True,
                         ),
                         padding_top="2em",
@@ -339,21 +337,21 @@ def _pagination_view() -> rx.Component:
         rx.hstack(
             rx.icon_button(
                 rx.icon("chevrons-left", size=18),
-                on_click=TableState.first_page,
+                on_click=TableState.first_page,  # type: ignore
                 opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
                 color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
                 variant="soft",
             ),
             rx.icon_button(
                 rx.icon("chevron-left", size=18),
-                on_click=TableState.prev_page,
+                on_click=TableState.prev_page,  # type: ignore
                 opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
                 color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
                 variant="soft",
             ),
             rx.icon_button(
                 rx.icon("chevron-right", size=18),
-                on_click=TableState.next_page,
+                on_click=TableState.next_page,  # type: ignore
                 opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
                 color_scheme=rx.cond(
                     TableState.page_number == TableState.total_pages,
@@ -364,7 +362,7 @@ def _pagination_view() -> rx.Component:
             ),
             rx.icon_button(
                 rx.icon("chevrons-right", size=18),
-                on_click=TableState.last_page,
+                on_click=TableState.last_page,  # type: ignore
                 opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
                 color_scheme=rx.cond(
                     TableState.page_number == TableState.total_pages,
@@ -397,21 +395,21 @@ def main_table() -> rx.Component:
                     size=28,
                     stroke_width=1.5,
                     cursor="pointer",
-                    on_click=TableState.toggle_sort,
+                    on_click=TableState.toggle_sort,  # type: ignore
                 ),
                 rx.icon(
                     "arrow-down-a-z",
                     size=28,
                     stroke_width=1.5,
                     cursor="pointer",
-                    on_click=TableState.toggle_sort,
+                    on_click=TableState.toggle_sort,  # type: ignore
                 ),
             ),
             rx.select(
                 {"employee_name", "date", "hours_worked", "extra", "notes"},
                 placeholder="Sort By: ...",
                 size="3",
-                on_change=lambda sort_value: TableState.sort_values(sort_value),
+                on_change=lambda sort_value: TableState.sort_values(sort_value),  # type: ignore
             ),
             rx.input(
                 rx.input.slot(rx.icon("search")),
@@ -420,7 +418,7 @@ def main_table() -> rx.Component:
                 max_width="225px",
                 width="100%",
                 variant="surface",
-                on_change=lambda value: TableState.filter_values(value),
+                on_change=lambda value: TableState.filter_values(value),  # type: ignore
             ),
             justify="end",
             align="center",
@@ -444,7 +442,7 @@ def main_table() -> rx.Component:
             variant="surface",
             size="3",
             width="100%",
-            on_mount=TableState.load_entries,
+            on_mount=TableState.load_entries,  # type: ignore
         ),
         _pagination_view(),
     )
