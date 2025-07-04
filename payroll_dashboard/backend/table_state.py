@@ -311,3 +311,4 @@ class TableState(rx.State):
         """Close the edit employee dialog."""
         self.edit_dialog_employee_id = None
         self._reset_validation_errors(dialog=False)
+        self.reset_form_fields()
