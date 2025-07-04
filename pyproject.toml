@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12.8"
 dependencies = [
     "dotenv>=0.9.9",
-    "reflex>=0.7.14",
+    "reflex>=0.8.0",
     "reflex-calendar>=0.0.6",
     "requests>=2.32.4",
     "supabase>=2.16.0",
