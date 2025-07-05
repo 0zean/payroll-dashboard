@@ -167,10 +167,12 @@ class TableState(rx.State):
         self.sort_reverse = not self.sort_reverse
         self.load_entries()
 
-    def add_employee_entry(self, employee_entry: EmployeeEntry) -> None:
+    @staticmethod
+    def add_employee_entry(employee_entry: EmployeeEntry) -> None:
         add_employee(employee_entry=employee_entry)
 
-    def update_employee_entry(self, employee_id: int, employee_entry: EmployeeEntry) -> None:
+    @staticmethod
+    def update_employee_entry(employee_id: int, employee_entry: EmployeeEntry) -> None:
         update_employee(employee_id=employee_id, employee_entry=employee_entry)
 
     def delete_entry(self, employee_id: int) -> None:
