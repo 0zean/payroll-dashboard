@@ -60,6 +60,7 @@ def update_employee(employee_id: int, employee_entry: EmployeeEntry) -> None:
 
     Args:
         employee_id (int): The ID of the employee to update.
+        employee_entry (EmployeeEntry): Updated employee info.
     """
     try:
         response = requests.put(
