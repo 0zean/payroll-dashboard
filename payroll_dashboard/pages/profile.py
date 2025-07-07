@@ -64,7 +64,7 @@ def profile() -> rx.Component:
                     width="100%",
                     spacing="5",
                 ),
-                on_submit=ProfileState.handle_submit,
+                on_submit=ProfileState.handle_submit,  # type: ignore
                 reset_on_submit=True,
                 width="100%",
                 max_width="325px",
@@ -87,7 +87,7 @@ def profile() -> rx.Component:
                 "Receive product updates",
                 size="3",
                 checked=ProfileState.profile.notifications,
-                on_change=ProfileState.toggle_notifications(),
+                on_change=ProfileState.toggle_notifications(),  # type: ignore
             ),
             width="100%",
             spacing="4",

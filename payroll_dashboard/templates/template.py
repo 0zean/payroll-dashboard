@@ -87,7 +87,7 @@ def template(
         # Get the meta tags for the page.
         all_meta = [*default_meta, *(meta or [])]
 
-        def templated_page():
+        def templated_page() -> rx.Component:
             return rx.flex(
                 rx.cond(
                     ~AuthState.is_authenticated,
@@ -135,14 +135,14 @@ def template(
             script_tags=script_tags,
             on_load=on_load,
         )
-        def theme_wrap():
+        def theme_wrap() -> rx.Component:
             return rx.theme(
                 templated_page(),
                 has_background=True,
-                accent_color=ThemeState.accent_color,
-                gray_color=ThemeState.gray_color,
-                radius=ThemeState.radius,
-                scaling=ThemeState.scaling,
+                accent_color=ThemeState.accent_color,  # type: ignore
+                gray_color=ThemeState.gray_color,  # type: ignore
+                radius=ThemeState.radius,  # type: ignore
+                scaling=ThemeState.scaling,  # type: ignore
             )
 
         ALL_PAGES.append(
@@ -152,6 +152,6 @@ def template(
             | ({"title": title} if title is not None else {})
         )
 
-        return theme_wrap
+        return theme_wrap()
 
     return decorator
