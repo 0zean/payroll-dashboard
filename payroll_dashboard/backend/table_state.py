@@ -3,7 +3,7 @@ from typing import List
 
 import reflex as rx
 
-from ..backend.api_routes import add_employee, delete_employee, fetch_employees, update_employee
+from ..backend.api_routes import add_employee, delete_employee, fetch_employees, fetch_employee_names, update_employee
 from ..backend.schemas import Employee, EmployeeEntry
 
 
@@ -11,6 +11,7 @@ class TableState(rx.State):
     """The state class."""
 
     users: list[Employee] = []
+    employee_names: list[str] = [name for name in fetch_employee_names() if name is not None]
 
     current_employee: Employee = Employee(id=0, employee_name="", hours_worked=0.0, date="", extra=0.0, notes="")
 
@@ -183,6 +184,10 @@ class TableState(rx.State):
     async def set_name(self, value: str) -> None:
         """Set the employee name."""
         self.current_entry.employee_name = value
+        
+    @rx.event
+    async def set_employee_names(self) -> None:
+        self.employee_names = [name for name in fetch_employee_names() if name is not None]
 
     @rx.event
     def set_date(self, value: str) -> None:
