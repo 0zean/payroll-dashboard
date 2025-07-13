@@ -57,10 +57,7 @@ def onboard() -> rx.Component:
                     required=True,
                 ),
                 rx.hstack(
-                    rx.box(
-                        rx.link("Go to Payroll Entry", href="/table", font_weight="medium"),
-                        align="start"
-                    ),
+                    rx.box(rx.link("Go to Payroll Entry", href="/table", font_weight="medium"), align="start"),
                     rx.button(
                         "Add Employee",
                         align="end",
@@ -81,7 +78,7 @@ def onboard() -> rx.Component:
             width="100%",
             justify="center",
             position="center",
-            align="center"
+            align="center",
         ),
         # Link to return to Payroll Entry page
         min_h="100vh",
