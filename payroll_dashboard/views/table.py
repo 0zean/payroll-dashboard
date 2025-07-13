@@ -50,12 +50,12 @@ def add_employee_button() -> rx.Component:
                 ),
                 rx.vstack(
                     rx.dialog.title(
-                        "Add New Customer",
+                        "Add New Employee",
                         weight="bold",
                         margin="0",
                     ),
                     rx.dialog.description(
-                        "Fill the form with the customer's info",
+                        "Fill the form with the employee's info",
                     ),
                     spacing="1",
                     height="100%",
