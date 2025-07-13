@@ -7,7 +7,7 @@ from ..templates import template
 from ..views.table import main_table
 
 
-@template(route="/table", title="Table", on_load=TableState.load_entries)
+@template(route="/table", title="Table", on_load=TableState.load_entries)  # type: ignore
 def table() -> rx.Component:
     """The table page.
 
