@@ -11,3 +11,4 @@ venv/
 .python-version
 .tool-versions
 .env
+.ruff_cache
