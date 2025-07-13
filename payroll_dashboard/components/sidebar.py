@@ -81,7 +81,7 @@ def sidebar_item(text: str, url: str = "", on_click=None) -> rx.Component:
                 ("Overview", sidebar_item_icon("home")),
                 ("Table", sidebar_item_icon("table-2")),
                 ("About", sidebar_item_icon("book-open")),
-                ("Profile", sidebar_item_icon("user")),
+                ("Onboard", sidebar_item_icon("user-plus")),
                 ("Settings", sidebar_item_icon("settings")),
                 ("Logout", sidebar_item_icon("log-out")),
                 sidebar_item_icon("layout-dashboard"),
@@ -137,7 +137,7 @@ def sidebar() -> rx.Component:
         "/",
         "/table",
         "/about",
-        "/profile",
+        "/onboard",
         "/settings",
     ]
 
@@ -163,7 +163,7 @@ def sidebar() -> rx.Component:
                     )
                     for page in ordered_pages
                 ],
-                sidebar_item("Logout", on_click=AuthState.logout()),
+                sidebar_item("Logout", on_click=AuthState.logout()),  # type: ignore
                 spacing="1",
                 width="100%",
             ),

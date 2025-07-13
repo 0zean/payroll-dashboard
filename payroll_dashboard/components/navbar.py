@@ -32,7 +32,7 @@ def menu_item(text: str, url: str = "", on_click=None) -> rx.Component:
                 ("Overview", menu_item_icon("home")),
                 ("Table", menu_item_icon("table-2")),
                 ("About", menu_item_icon("book-open")),
-                ("Profile", menu_item_icon("user")),
+                ("Onboard", menu_item_icon("user-plus")),
                 ("Settings", menu_item_icon("settings")),
                 ("Logout", menu_item_icon("log-out")),
                 menu_item_icon("layout-dashboard"),
@@ -112,7 +112,7 @@ def menu_button() -> rx.Component:
         "/",
         "/table",
         "/about",
-        "/profile",
+        "/onboard",
         "/settings",
     ]
 
@@ -149,7 +149,7 @@ def menu_button() -> rx.Component:
                         )
                         for page in ordered_pages
                     ],
-                    menu_item("Logout", on_click=AuthState.logout()),
+                    menu_item("Logout", on_click=AuthState.logout()),  # type: ignore
                     rx.spacer(),
                     navbar_footer(),
                     spacing="4",
