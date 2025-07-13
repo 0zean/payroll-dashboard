@@ -1,6 +1,5 @@
 import reflex as rx
 
-from ..backend.api_routes import fetch_employee_names
 from ..backend.table_state import Employee, TableState
 from ..components.form_field import form_field
 
@@ -79,7 +78,7 @@ def add_employee_button() -> rx.Component:
                                 spacing="2",
                             ),
                             rx.select(
-                                fetch_employee_names(),
+                                TableState.employee_names,
                                 on_change=TableState.set_name,
                                 required=True,
                                 placeholder="Select Employee",
@@ -219,7 +218,7 @@ def update_employee_dialog(user):
                                 spacing="2",
                             ),
                             rx.select(
-                                fetch_employee_names(),
+                                TableState.employee_names,
                                 default_value=user.employee_name,
                                 on_change=TableState.set_name,
                                 required=True,
