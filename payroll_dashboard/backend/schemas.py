@@ -22,11 +22,11 @@ class EmployeeEntry(BaseModel):
     notes: str
 
 
-class EmployeeWithPayRate(BaseModel):
-    """The employee model with pay rate."""
+class EmployeeOnboarding(BaseModel):
+    """The employee onboarding model with pay rate."""
 
     employee_name: str
-    pay_rate: str
+    pay_rate: float
 
 
 class PayrollStats(BaseModel):
