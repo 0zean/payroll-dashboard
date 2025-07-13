@@ -1,16 +1,14 @@
-import os
-
 import reflex as rx
-from dotenv import load_dotenv
 from gotrue import Session, User
+from starlette.config import Config
 from supabase import AuthApiError, Client, create_client
 
 from ..backend.schemas import PayrollUser
 
-load_dotenv()
+config = Config(".env")
 
-url: str = os.environ.get("SUPABASE_URL")  # type: ignore
-key: str = os.environ.get("SUPABASE_KEY")  # type: ignore
+url: str = config.get("SUPABASE_URL")
+key: str = config.get("SUPABASE_KEY")
 
 supabase: Client = create_client(url, key)
 
