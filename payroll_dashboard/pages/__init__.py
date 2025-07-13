@@ -1,7 +1,7 @@
 from .about import about
 from .index import index
-from .profile import profile
+from .onboard import onboard
 from .settings import settings
 from .table import table
 
-__all__ = ["about", "index", "profile", "settings", "table"]
+__all__ = ["about", "index", "onboard", "settings", "table"]
