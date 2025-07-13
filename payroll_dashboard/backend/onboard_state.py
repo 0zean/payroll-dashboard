@@ -2,6 +2,7 @@ import reflex as rx
 
 from .api_routes import onboard_employee
 from .schemas import EmployeeOnboarding
+from .table_state import TableState
 
 
 class OnboardingState(rx.State):
@@ -19,7 +20,8 @@ class OnboardingState(rx.State):
         try:
             await onboard_employee(self.onboarding)
             self.loading = False
-            return rx.toast.success("Onboarding updated successfully", position="top-center")
+            yield rx.toast.success("Onboarding updated successfully", position="top-center")
+            yield TableState.set_employee_names()
         except Exception as e:
             self.loading = False
-            return rx.toast.error(f"Error onboarding employee: {e}", position="top-center")
+            yield rx.toast.error(f"Error onboarding employee: {e}", position="top-center")
