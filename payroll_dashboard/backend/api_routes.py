@@ -1,6 +1,7 @@
+import aiohttp
 import requests
 
-from ..backend.schemas import Employee, EmployeeEntry
+from ..backend.schemas import Employee, EmployeeEntry, EmployeeOnboarding
 
 url_base = "http://127.0.0.1:8000/api/"
 
@@ -84,4 +85,20 @@ def add_employee(employee_entry: EmployeeEntry) -> None:
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Error adding employee: {e}")
+        raise e
+
+
+async def onboard_employee(new_employee: EmployeeOnboarding) -> None:
+    """
+    Onboard a new employee into the Master List asynchronously
+
+    Args:
+        new_employee (EmployeeOnboarding): The new employee's info.
+    """
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{url_base}new-employee", json=new_employee.model_dump()) as response:
+                response.raise_for_status()
+    except requests.RequestException as e:
+        print(f"Error adding new employee: {e}")
         raise e
