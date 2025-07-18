@@ -168,7 +168,7 @@ def add_employee_button() -> rx.Component:
     )
 
 
-def update_employee_dialog(user):
+def update_employee_dialog(user: Employee):
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
@@ -245,7 +245,7 @@ def update_employee_dialog(user):
                             "number",
                             "hours_worked",
                             "clock",
-                            user.hours_worked.to(str),
+                            f"{user.hours_worked}",
                             on=TableState.set_hours_worked,
                             required=True,
                             error_message=TableState.hours_error,
@@ -257,7 +257,7 @@ def update_employee_dialog(user):
                             "number",
                             "extra",
                             "clock-arrow-up",
-                            user.extra.to(str),
+                            f"{user.extra}",
                             on=TableState.set_extra,
                         ),
                         # Notes
