@@ -252,6 +252,7 @@ class TableState(rx.State):
 
         self.update_employee_entry(self.current_employee.id, entry)
         self.load_entries()
+        self.reset_form_fields()
         self.dialog_open = False
         self.edit_dialog_employee_id = None
         return rx.toast.success("Entry updated successfully! 🎉", position="top-center")
