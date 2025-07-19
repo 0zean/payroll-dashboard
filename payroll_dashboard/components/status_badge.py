@@ -11,7 +11,7 @@ def _badge(status: str):
     return rx.badge(
         rx.icon(icon, size=16),
         text,
-        color_scheme=color_scheme,
+        color_scheme=color_scheme,  # type: ignore
         radius="large",
         variant="surface",
         size="2",
