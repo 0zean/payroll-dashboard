@@ -32,9 +32,9 @@ class EmployeeOnboarding(BaseModel):
 class PayrollStats(BaseModel):
     """The payroll statistics model."""
 
-    totalEntries: int
-    totalHours: int
-    employeesCount: int
+    total_entries: float
+    total_hours: float
+    employees_count: float
 
 
 class PayrollUser(BaseModel):

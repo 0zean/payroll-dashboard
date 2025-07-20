@@ -2,22 +2,16 @@ import reflex as rx
 from reflex.components.radix.themes.base import LiteralAccentColor
 
 from .. import styles
+from ..backend.table_state import TableState
 
 
 def stats_card(
     stat_name: str,
-    value: int,
-    prev_value: int,
+    value: float,
     icon: str,
     icon_color: LiteralAccentColor,
     extra_char: str = "",
 ) -> rx.Component:
-    percentage_change = (
-        round(((value - prev_value) / prev_value) * 100, 2) if prev_value != 0 else 0 if value == 0 else float("inf")
-    )
-    change = "increase" if value > prev_value else "decrease"
-    arrow_icon = "trending-up" if value > prev_value else "trending-down"
-    arrow_color = "grass" if value > prev_value else "tomato"
     return rx.card(
         rx.vstack(
             rx.hstack(
@@ -43,31 +37,7 @@ def stats_card(
                 spacing="4",
                 align="center",
                 width="100%",
-            ),
-            rx.hstack(
-                rx.hstack(
-                    rx.icon(
-                        tag=arrow_icon,
-                        size=24,
-                        color=rx.color(arrow_color, 9),
-                    ),
-                    rx.text(
-                        f"{percentage_change}%",
-                        size="3",
-                        color=rx.color(arrow_color, 9),
-                        weight="medium",
-                    ),
-                    spacing="2",
-                    align="center",
-                ),
-                rx.text(
-                    f"{change} from last month",
-                    size="2",
-                    color=rx.color("gray", 10),
-                ),
-                align="center",
-                width="100%",
-            ),
+            ), 
             spacing="3",
         ),
         size="3",
@@ -79,25 +49,21 @@ def stats_card(
 def stats_cards() -> rx.Component:
     return rx.grid(
         stats_card(
-            stat_name="Users",
-            value=4200,
-            prev_value=3000,
-            icon="users",
+            stat_name="Total Entries",
+            value=TableState.stats.total_entries,
+            icon="notebook-pen",
             icon_color="blue",
         ),
         stats_card(
-            stat_name="Revenue",
-            value=12000,
-            prev_value=15000,
-            icon="dollar-sign",
+            stat_name="Total Hours",
+            value=TableState.stats.total_hours,
+            icon="hourglass",
             icon_color="green",
-            extra_char="$",
         ),
         stats_card(
-            stat_name="Orders",
-            value=300,
-            prev_value=250,
-            icon="shopping-cart",
+            stat_name="Total Employees",
+            value=TableState.stats.employees_count,
+            icon="id-card",
             icon_color="purple",
         ),
         gap="1rem",

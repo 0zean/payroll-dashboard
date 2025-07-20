@@ -66,8 +66,8 @@ def index() -> rx.Component:
                 style=styles.ghost_input_style,
             ),
             rx.flex(
-                notification("bell", "cyan", 12),
-                notification("message-square-text", "plum", 6),
+                notification("brush-cleaning", "cyan", 12),
+                notification("download", "plum", 6),
                 spacing="4",
                 width="100%",
                 wrap="nowrap",

@@ -4,7 +4,8 @@ from typing import List
 import reflex as rx
 
 from ..backend.api_routes import add_employee, delete_employee, fetch_employee_names, fetch_employees, update_employee
-from ..backend.schemas import Employee, EmployeeEntry
+from ..backend.schemas import Employee, EmployeeEntry, PayrollStats
+from ..backend.utils import calculate_stats
 
 
 class TableState(rx.State):
@@ -22,6 +23,8 @@ class TableState(rx.State):
         extra=0.0,
         notes="",
     )
+
+    stats = PayrollStats(total_entries=0.0, total_hours=0.0, employees_count=0.0)
 
     date_format: str = ""
 
@@ -179,6 +182,7 @@ class TableState(rx.State):
     def delete_entry(self, employee_id: int) -> None:
         delete_employee(employee_id=employee_id)
         self.load_entries()
+        self.stats = calculate_stats(self.users)
 
     @rx.event
     async def set_name(self, value: str) -> None:
@@ -253,6 +257,7 @@ class TableState(rx.State):
         self.update_employee_entry(self.current_employee.id, entry)
         self.load_entries()
         self.reset_form_fields()
+        self.stats = calculate_stats(self.users)
         self.dialog_open = False
         self.edit_dialog_employee_id = None
         return rx.toast.success("Entry updated successfully! 🎉", position="top-center")
@@ -294,6 +299,7 @@ class TableState(rx.State):
         self.add_employee_entry(entry)
         self.load_entries()
         self.reset_form_fields()
+        self.stats = calculate_stats(self.users)
         self.dialog_open = False
         return rx.toast.success("Employee added successfully! 🎉", position="top-center")
 
