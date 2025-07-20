@@ -38,6 +38,7 @@ class PayrollStats(BaseModel):
 
 
 class PayrollUser(BaseModel):
+    """The user auth model."""
     id: str
     email: str
     name: str | None = None
