@@ -1,6 +1,7 @@
 import reflex as rx
 
 from ..backend.table_state import Employee, TableState
+from ..backend.utils import header_cell
 from ..components.form_field import form_field
 
 
@@ -314,17 +315,6 @@ def update_employee_dialog(user: Employee):
     )
 
 
-def _header_cell(text: str, icon: str) -> rx.Component:
-    return rx.table.column_header_cell(
-        rx.hstack(
-            rx.icon(icon, size=18),
-            rx.text(text),
-            align="center",
-            spacing="2",
-        ),
-    )
-
-
 def _pagination_view() -> rx.Component:
     return rx.hstack(
         rx.text(
@@ -429,12 +419,12 @@ def main_table() -> rx.Component:
         rx.table.root(
             rx.table.header(
                 rx.table.row(
-                    _header_cell("Employee", "user"),
-                    _header_cell("Date", "calendar-days"),
-                    _header_cell("Hours", "clock"),
-                    _header_cell("Extra Hours", "clock-arrow-up"),
-                    _header_cell("Notes", "notebook-pen"),
-                    _header_cell("Actions", "cog"),
+                    header_cell("Employee", "user"),
+                    header_cell("Date", "calendar-days"),
+                    header_cell("Hours", "clock"),
+                    header_cell("Extra Hours", "clock-arrow-up"),
+                    header_cell("Notes", "notebook-pen"),
+                    header_cell("Actions", "cog"),
                 ),
             ),
             rx.table.body(rx.foreach(TableState.get_current_page, show_employee)),
