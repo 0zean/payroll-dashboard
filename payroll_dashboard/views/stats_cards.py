@@ -37,7 +37,7 @@ def stats_card(
                 spacing="4",
                 align="center",
                 width="100%",
-            ), 
+            ),
             spacing="3",
         ),
         size="3",
