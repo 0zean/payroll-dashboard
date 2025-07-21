@@ -88,35 +88,31 @@ def area_toggle() -> rx.Component:
 
 
 def _create_gradient(color: LiteralAccentColor, id: str) -> rx.Component:
-    return (
-        rx.el.svg.defs(
-            rx.el.svg.linear_gradient(
-                rx.el.svg.stop(stop_color=rx.color(color, 7), offset="5%", stop_opacity=0.8),
-                rx.el.svg.stop(stop_color=rx.color(color, 7), offset="95%", stop_opacity=0),
-                x1=0,
-                x2=0,
-                y1=0,
-                y2=1,
-                id=id,
-            ),
+    return rx.el.svg.defs(
+        rx.el.svg.linear_gradient(
+            rx.el.svg.stop(stop_color=rx.color(color, 7), offset="5%", stop_opacity=0.8),
+            rx.el.svg.stop(stop_color=rx.color(color, 7), offset="95%", stop_opacity=0),
+            x1=0,
+            x2=0,
+            y1=0,
+            y2=1,
+            id=id,
         ),
     )
 
 
 def _custom_tooltip(color: LiteralAccentColor) -> rx.Component:
-    return (
-        rx.recharts.graphing_tooltip(
-            separator=" : ",
-            content_style={
-                "backgroundColor": rx.color("gray", 1),
-                "borderRadius": "var(--radius-2)",
-                "borderWidth": "1px",
-                "borderColor": rx.color(color, 7),
-                "padding": "0.5rem",
-                "boxShadow": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-            },
-            is_animation_active=True,
-        ),
+    return rx.recharts.graphing_tooltip(
+        separator=" : ",
+        content_style={
+            "backgroundColor": rx.color("gray", 1),
+            "borderRadius": "var(--radius-2)",
+            "borderWidth": "1px",
+            "borderColor": rx.color(color, 7),
+            "padding": "0.5rem",
+            "boxShadow": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        },
+        is_animation_active=True,
     )
 
 
