@@ -6,19 +6,11 @@ import reflex as rx
 
 from .. import styles
 from ..backend.auth_state import AuthState
+from ..components.buttons import remote_button
 from ..components.card import card
-from ..components.notification import notification
 from ..templates import template
-from ..views.acquisition_view import acquisition
-from ..views.charts import (
-    StatsState,
-    area_toggle,
-    orders_chart,
-    pie_chart,
-    revenue_chart,
-    timeframe_select,
-    users_chart,
-)
+from ..views.charts import StatsState, area_toggle
+from ..views.overview_table import overview_table
 from ..views.stats_cards import stats_cards
 
 
@@ -54,7 +46,10 @@ def index() -> rx.Component:
 
     """
     return rx.vstack(
-        rx.heading(f"Welcome, {AuthState.user.name.split(' ')[0]}", size="5"),
+        rx.heading(
+            f"Welcome, {AuthState.user.name.split(' ')[0]}",  # type: ignore
+            size="5",
+        ),
         rx.flex(
             rx.input(
                 rx.input.slot(rx.icon("search"), padding_left="0"),
@@ -66,8 +61,8 @@ def index() -> rx.Component:
                 style=styles.ghost_input_style,
             ),
             rx.flex(
-                notification("brush-cleaning", "cyan", 12),
-                notification("download", "plum", 6),
+                remote_button("brush-cleaning", "cyan", "Clean-up Master List"),
+                remote_button("download", "plum", "Download Master List"),
                 spacing="4",
                 width="100%",
                 wrap="nowrap",
@@ -78,63 +73,19 @@ def index() -> rx.Component:
             width="100%",
         ),
         stats_cards(),
-        card(
+        rx.vstack(
             rx.hstack(
-                tab_content_header(),
-                rx.segmented_control.root(
-                    rx.segmented_control.item("Users", value="users"),
-                    rx.segmented_control.item("Revenue", value="revenue"),
-                    rx.segmented_control.item("Orders", value="orders"),
-                    margin_bottom="1.5em",
-                    default_value="users",
-                    on_change=StatsState.set_selected_tab,
+                rx.box(rx.link("Go to Payroll Entry", href="/table", font_weight="medium"), align="start"),
+                rx.button(
+                    rx.icon("sheet"),
+                    "Sync to Sheets",
+                    align="end",
+                    type="submit",
                 ),
                 width="100%",
                 justify="between",
             ),
-            rx.match(
-                StatsState.selected_tab,
-                ("users", users_chart()),
-                ("revenue", revenue_chart()),
-                ("orders", orders_chart()),
-            ),
-        ),
-        rx.grid(
-            card(
-                rx.hstack(
-                    rx.hstack(
-                        rx.icon("user-round-search", size=20),
-                        rx.text("Visitors Analytics", size="4", weight="medium"),
-                        align="center",
-                        spacing="2",
-                    ),
-                    timeframe_select(),
-                    align="center",
-                    width="100%",
-                    justify="between",
-                ),
-                pie_chart(),
-            ),
-            card(
-                rx.hstack(
-                    rx.icon("globe", size=20),
-                    rx.text("Acquisition Overview", size="4", weight="medium"),
-                    align="center",
-                    spacing="2",
-                    margin_bottom="2.5em",
-                ),
-                rx.vstack(
-                    acquisition(),
-                ),
-            ),
-            gap="1rem",
-            grid_template_columns=[
-                "1fr",
-                "repeat(1, 1fr)",
-                "repeat(2, 1fr)",
-                "repeat(2, 1fr)",
-                "repeat(2, 1fr)",
-            ],
+            card(overview_table()),
             width="100%",
         ),
         spacing="8",
