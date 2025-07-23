@@ -3,7 +3,7 @@ from typing import List
 
 import reflex as rx
 
-from ..backend.api_routes import add_employee, delete_employee, fetch_employee_names, fetch_employees, update_employee
+from ..backend.api_routes import add_employee, delete_employee, fetch_employee_names, fetch_employees, update_employee, sync_table
 from ..backend.schemas import Employee, EmployeeEntry, PayrollStats
 from ..backend.utils import calculate_stats
 
@@ -31,6 +31,7 @@ class TableState(rx.State):
     # Dialog options
     dialog_open: bool = False
     edit_dialog_employee_id: int | None = None
+    loading: bool = False
 
     # Table sorting
     search_value: str = ""
@@ -163,9 +164,11 @@ class TableState(rx.State):
                 if isinstance(entry, dict) and all(isinstance(k, str) for k in entry.keys())
             ]
             self.total_items = len(self.users)
+            self.stats = calculate_stats(self.users)
         else:
             self.users = []
             self.total_items = len(self.users)
+            self.stats = PayrollStats(total_entries=0.0, total_hours=0.0, employees_count=0.0)
 
     def toggle_sort(self) -> None:
         self.sort_reverse = not self.sort_reverse
@@ -326,3 +329,20 @@ class TableState(rx.State):
         self.edit_dialog_employee_id = None
         self._reset_validation_errors(dialog=False)
         self.reset_form_fields()
+        
+    @rx.event
+    async def start_sync(self):
+        self.loading = True
+        yield type(self).finish_sync()
+
+    @rx.event
+    async def finish_sync(self):
+        try:
+            await sync_table()
+            self.loading = False
+            yield rx.toast.success("Sync to Sheets successful", position="top-center")
+            yield TableState.load_entries
+        except Exception as e:
+            self.loading = False
+            yield rx.toast.error(f"Error syncing employees: {e}", position="top-center")
+
