@@ -102,3 +102,12 @@ async def onboard_employee(new_employee: EmployeeOnboarding) -> None:
     except requests.RequestException as e:
         print(f"Error adding new employee: {e}")
         raise e
+
+
+async def sync_table() -> None:
+    try:
+        async with aiohttp.ClientSession() as session:
+            await session.post(f"{url_base}sync")
+    except requests.RequestException as e:
+        print(f"Error syncing employees to Sheets: {e}")
+        raise e
