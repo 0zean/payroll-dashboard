@@ -1,43 +1,18 @@
 """The overview page of the app."""
 
-import datetime
-
 import reflex as rx
 
 from .. import styles
 from ..backend.auth_state import AuthState
+from ..backend.table_state import TableState
 from ..components.buttons import remote_button
 from ..components.card import card
 from ..templates import template
-from ..views.charts import StatsState, area_toggle
 from ..views.overview_table import overview_table
 from ..views.stats_cards import stats_cards
 
 
-def _time_data() -> rx.Component:
-    return rx.hstack(
-        rx.tooltip(
-            rx.icon("info", size=20),
-            content=f"{(datetime.datetime.now() - datetime.timedelta(days=30)).strftime('%b %d, %Y')} - {datetime.datetime.now().strftime('%b %d, %Y')}",
-        ),
-        rx.text("Last 30 days", size="4", weight="medium"),
-        align="center",
-        spacing="2",
-        display=["none", "none", "flex"],
-    )
-
-
-def tab_content_header() -> rx.Component:
-    return rx.hstack(
-        _time_data(),
-        area_toggle(),
-        align="center",
-        width="100%",
-        spacing="4",
-    )
-
-
-@template(route="/", title="Overview", on_load=StatsState.randomize_data)  # type: ignore
+@template(route="/", title="Overview")  # type: ignore
 def index() -> rx.Component:
     """The overview page.
 
@@ -81,6 +56,9 @@ def index() -> rx.Component:
                     "Sync to Sheets",
                     align="end",
                     type="submit",
+                    loading=TableState.loading,
+                    on_click=TableState.start_sync,
+                    disabled=rx.cond(TableState.users.length()>0, False, True)  # type: ignore
                 ),
                 width="100%",
                 justify="between",
