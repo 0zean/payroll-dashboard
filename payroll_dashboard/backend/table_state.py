@@ -3,7 +3,14 @@ from typing import List
 
 import reflex as rx
 
-from ..backend.api_routes import add_employee, delete_employee, fetch_employee_names, fetch_employees, update_employee, sync_table
+from ..backend.api_routes import (
+    add_employee,
+    delete_employee,
+    fetch_employee_names,
+    fetch_employees,
+    sync_table,
+    update_employee,
+)
 from ..backend.schemas import Employee, EmployeeEntry, PayrollStats
 from ..backend.utils import calculate_stats
 
