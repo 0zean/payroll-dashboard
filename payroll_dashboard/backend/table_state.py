@@ -336,7 +336,7 @@ class TableState(rx.State):
         self.edit_dialog_employee_id = None
         self._reset_validation_errors(dialog=False)
         self.reset_form_fields()
-        
+
     @rx.event
     async def start_sync(self):
         self.loading = True
@@ -352,4 +352,3 @@ class TableState(rx.State):
         except Exception as e:
             self.loading = False
             yield rx.toast.error(f"Error syncing employees: {e}", position="top-center")
-

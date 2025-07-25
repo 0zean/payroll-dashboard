@@ -58,7 +58,7 @@ def index() -> rx.Component:
                     type="submit",
                     loading=TableState.loading,
                     on_click=TableState.start_sync,
-                    disabled=rx.cond(TableState.users.length()>0, False, True)  # type: ignore
+                    disabled=rx.cond(TableState.users.length() > 0, False, True),  # type: ignore
                 ),
                 width="100%",
                 justify="between",
