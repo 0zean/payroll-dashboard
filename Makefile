@@ -2,7 +2,7 @@
 
 # Install dependencies
 install:
-	@echo "🚀 Creating virtual environment using uv
+	@echo "🚀 Creating virtual environment using uv"
 	uv sync --frozen
 
 # Format code with Black and isort
