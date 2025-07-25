@@ -21,3 +21,6 @@ dev = [
 exclude = [".venv"]
 respect-gitignore = true
 line-length = 120
+ignore = [
+    "F403"
+]
