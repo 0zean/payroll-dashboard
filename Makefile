@@ -2,7 +2,7 @@
 
 # Install dependencies
 install:
-	uv sync --freeze
+	uv sync --frozen
 
 # Format code with Black and isort
 format:
