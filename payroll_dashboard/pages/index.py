@@ -36,7 +36,7 @@ def index() -> rx.Component:
                 style=styles.ghost_input_style,
             ),
             rx.flex(
-                remote_button("brush-cleaning", "cyan", "Clean-up Master List"),
+                remote_button("brush-cleaning", "cyan", "Clean-up Master List", alert_dialog=True),
                 remote_button("download", "plum", "Download Master List"),
                 spacing="4",
                 width="100%",
