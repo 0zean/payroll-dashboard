@@ -14,7 +14,11 @@ format:
 lint:
 	uv run ruff check ./payroll_dashboard ./main.py ./rxconfig.py
 
-# Run all checks
-check: format lint
+# Run tests
+test:
+	uv run pytest ./payroll_dashboard/tests/
 
-.PHONY: install format lint check
+# Run all checks
+check: format lint test
+
+.PHONY: install format lint test check
