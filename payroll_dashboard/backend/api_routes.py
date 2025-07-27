@@ -2,6 +2,7 @@ import aiohttp
 import requests
 
 from ..backend.schemas import Employee, EmployeeEntry, EmployeeOnboarding
+from ..backend.utils import get_session
 
 url_base = "http://127.0.0.1:8000/api/"
 
@@ -52,7 +53,18 @@ def delete_employee(employee_id: int) -> None:
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Error deleting employee with ID {employee_id}: {e}")
-        raise e
+        raise
+
+
+async def clear_payroll() -> None:
+    """Clears total hours and pay from masterlist sheet."""
+    try:
+        session = await get_session()
+        async with session.post(f"{url_base}clear-payroll") as response:
+            response.raise_for_status()
+    except aiohttp.ClientError as e:
+        print(f"Error clearing payroll masterlist: {e}")
+        raise
 
 
 def update_employee(employee_id: int, employee_entry: EmployeeEntry) -> None:
@@ -70,7 +82,7 @@ def update_employee(employee_id: int, employee_entry: EmployeeEntry) -> None:
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Error updating employee with ID {employee_id}: {e}")
-        raise e
+        raise
 
 
 def add_employee(employee_entry: EmployeeEntry) -> None:
@@ -85,7 +97,7 @@ def add_employee(employee_entry: EmployeeEntry) -> None:
         response.raise_for_status()
     except requests.RequestException as e:
         print(f"Error adding employee: {e}")
-        raise e
+        raise
 
 
 async def onboard_employee(new_employee: EmployeeOnboarding) -> None:
@@ -96,18 +108,19 @@ async def onboard_employee(new_employee: EmployeeOnboarding) -> None:
         new_employee (EmployeeOnboarding): The new employee's info.
     """
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.post(f"{url_base}new-employee", json=new_employee.model_dump()) as response:
-                response.raise_for_status()
+        session = await get_session()
+        async with session.post(f"{url_base}new-employee", json=new_employee.model_dump()) as response:
+            response.raise_for_status()
     except requests.RequestException as e:
         print(f"Error adding new employee: {e}")
-        raise e
+        raise
 
 
 async def sync_table() -> None:
     try:
-        async with aiohttp.ClientSession() as session:
-            await session.post(f"{url_base}sync")
+        session = await get_session()
+        async with session.post(f"{url_base}sync") as response:
+            response.raise_for_status()
     except requests.RequestException as e:
         print(f"Error syncing employees to Sheets: {e}")
-        raise e
+        raise
