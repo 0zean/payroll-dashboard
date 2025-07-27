@@ -4,6 +4,7 @@ import reflex as rx
 
 from .. import styles
 from ..backend.auth_state import AuthState
+from ..backend.index_state import IndexState
 from ..backend.table_state import TableState
 from ..components.buttons import remote_button
 from ..components.card import card
@@ -36,8 +37,21 @@ def index() -> rx.Component:
                 style=styles.ghost_input_style,
             ),
             rx.flex(
-                remote_button("brush-cleaning", "cyan", "Clean-up Master List", alert_dialog=True),
-                remote_button("download", "plum", "Download Master List"),
+                remote_button(
+                    "brush-cleaning",
+                    "cyan",
+                    "Clean-up Master List",
+                    alert_dialog=True,
+                    event=IndexState.start_clean,
+                    loading=IndexState.clear_loading,
+                ),
+                remote_button(
+                    "download",
+                    "plum",
+                    "Download Master List",
+                    event=IndexState.start_download,
+                    loading=IndexState.download_loading,
+                ),
                 spacing="4",
                 width="100%",
                 wrap="nowrap",
@@ -56,6 +70,7 @@ def index() -> rx.Component:
                     "Sync to Sheets",
                     align="end",
                     type="submit",
+                    variant="surface",
                     loading=TableState.loading,
                     on_click=TableState.start_sync,
                     disabled=rx.cond(TableState.users.length() > 0, False, True),  # type: ignore
