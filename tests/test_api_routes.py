@@ -1,7 +1,7 @@
 import pytest
 from aioresponses import aioresponses
 
-from ..payroll_dashboard.backend.api_routes import (
+from payroll_dashboard.backend.api_routes import (
     add_employee,
     clear_payroll,
     delete_employee,
@@ -11,7 +11,7 @@ from ..payroll_dashboard.backend.api_routes import (
     sync_table,
     update_employee,
 )
-from ..payroll_dashboard.backend.schemas import EmployeeEntry, EmployeeOnboarding
+from payroll_dashboard.backend.schemas import EmployeeEntry, EmployeeOnboarding
 
 
 def test_fetch_employee_names_success(requests_mock):
