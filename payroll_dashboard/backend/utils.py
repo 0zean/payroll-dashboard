@@ -1,6 +1,26 @@
+import atexit
+
+import aiohttp
 import reflex as rx
 
 from ..backend.schemas import Employee, PayrollStats
+
+_session: aiohttp.ClientSession | None = None
+
+
+async def get_session() -> aiohttp.ClientSession:
+    global _session
+    if _session is None or _session.closed:
+        _session = aiohttp.ClientSession()
+    return _session
+
+
+@atexit.register
+def close_session_on_exit():
+    if _session and not _session.closed:
+        import asyncio
+
+        asyncio.run(_session.close())
 
 
 def calculate_stats(data: list[Employee]) -> PayrollStats:
