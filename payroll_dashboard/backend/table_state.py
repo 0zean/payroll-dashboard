@@ -16,7 +16,7 @@ from ..backend.utils import calculate_stats
 
 
 class TableState(rx.State):
-    """The state class."""
+    """The table state class."""
 
     users: list[Employee] = []
     employee_names: list[str] = [name for name in fetch_employee_names() if name is not None]

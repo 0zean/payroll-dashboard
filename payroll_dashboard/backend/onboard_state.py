@@ -6,6 +6,8 @@ from .table_state import TableState
 
 
 class OnboardingState(rx.State):
+    """The onboarding state class."""
+
     onboarding: EmployeeOnboarding = EmployeeOnboarding(employee_name="", pay_rate=0)
     loading: bool = False
 
