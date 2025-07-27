@@ -16,7 +16,7 @@ lint:
 
 # Run tests
 test:
-	uv run pytest ./payroll_dashboard/tests/
+	uv run pytest ./tests/
 
 # Run all checks
 check: format lint test
