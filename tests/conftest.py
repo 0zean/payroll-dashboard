@@ -8,16 +8,25 @@ from payroll_dashboard.backend.table_state import TableState
 
 
 @pytest.fixture(autouse=True)
+def mock_env_config():
+    with patch("payroll_dashboard.backend.auth_state.Config") as mock_config:
+        mock_config.return_value.get.side_effect = lambda key: {
+            "SUPABASE_URL": "http://mocked-url",
+            "SUPABASE_KEY": "mocked-key",
+        }[key]
+        yield
+
+
+@pytest.fixture(autouse=True)
 def mock_supabase_env(monkeypatch):
-    # Mock environment variables
-    monkeypatch.setenv("SUPABASE_URL", "http://mocked-url")
-    monkeypatch.setenv("SUPABASE_KEY", "mocked-key")
+    #monkeypatch.setenv("SUPABASE_URL", "http://mocked-url")
+    #monkeypatch.setenv("SUPABASE_KEY", "mocked-key")
 
     # Patch create_client before importing auth_state
     with patch("payroll_dashboard.backend.auth_state.create_client") as mock_create_client:
         mock_supabase = MagicMock()
         mock_create_client.return_value = mock_supabase
-        yield mock_supabase  # yields to allow test code to run with the mock
+        yield mock_supabase
 
 
 @pytest.fixture
