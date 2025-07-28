@@ -21,6 +21,11 @@ dev = [
     "ruff>=0.12.5",
 ]
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:Config file.*not found.*:UserWarning"
+]
+
 [tool.ruff]
 exclude = [".venv"]
 respect-gitignore = true
