@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from payroll_dashboard.backend.auth_state import AuthState
+# from payroll_dashboard.backend.auth_state import AuthState
 from payroll_dashboard.backend.schemas import PayrollUser
 
 
@@ -31,7 +31,7 @@ def test_handle_user_session_not_approved(auth_state):
             assert not auth_state.is_authenticated
 
 
-def test_login_success():
+def test_login_success(auth_state):
     with (
         patch("payroll_dashboard.backend.auth_state.supabase.auth.sign_in_with_password") as mock_sign_in,
         patch("payroll_dashboard.backend.auth_state.supabase.table") as mock_table,
@@ -60,7 +60,6 @@ def test_login_success():
 
         mock_table.return_value.select.return_value = mock_select
 
-        auth_state = AuthState()
         auth_state.login("test@example.com", "password123")
 
         mock_sign_in.assert_called_once_with({"email": "test@example.com", "password": "password123"})

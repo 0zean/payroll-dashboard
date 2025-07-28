@@ -14,7 +14,7 @@ def mock_supabase_env(monkeypatch):
     monkeypatch.setenv("SUPABASE_KEY", "mocked-key")
 
     # Patch create_client before importing auth_state
-    with patch("auth_state.create_client") as mock_create_client:
+    with patch("payroll_dashboard.backend.auth_state.create_client") as mock_create_client:
         mock_supabase = MagicMock()
         mock_create_client.return_value = mock_supabase
         yield mock_supabase  # yields to allow test code to run with the mock
