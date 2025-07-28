@@ -21,7 +21,7 @@ async def test_finish_onboard_success(monkeypatch):
     state = OnboardingState()
     state.onboarding = mock.Mock()
     monkeypatch.setattr("payroll_dashboard.backend.onboard_state.onboard_employee", mock.AsyncMock())
-    monkeypatch.setattr("payroll_dashboard.backend.onboard_state.TableState.set_employee_names", mock.AsyncMock())
+    monkeypatch.setattr("payroll_dashboard.backend.onboard_state.TableState.set_employee_names", mock.Mock())
     result = []
     async for x in state.finish_onboard():
         result.append(x)
