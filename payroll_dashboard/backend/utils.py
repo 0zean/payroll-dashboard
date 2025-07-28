@@ -1,3 +1,4 @@
+import asyncio
 import atexit
 
 import aiohttp
@@ -18,8 +19,6 @@ async def get_session() -> aiohttp.ClientSession:
 @atexit.register
 def close_session_on_exit():
     if _session and not _session.closed:
-        import asyncio
-
         asyncio.run(_session.close())
 
 
