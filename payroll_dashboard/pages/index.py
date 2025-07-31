@@ -6,7 +6,7 @@ from .. import styles
 from ..backend.auth_state import AuthState
 from ..backend.index_state import IndexState
 from ..backend.table_state import TableState
-from ..components.buttons import remote_button
+from ..components.buttons import clean_button, download_button
 from ..components.card import card
 from ..templates import template
 from ..views.overview_table import overview_table
@@ -37,15 +37,13 @@ def index() -> rx.Component:
                 style=styles.ghost_input_style,
             ),
             rx.flex(
-                remote_button(
+                clean_button(
                     "brush-cleaning",
                     "cyan",
-                    "Clean-up Master List",
-                    alert_dialog=True,
                     event=IndexState.start_clean,
                     loading=IndexState.clear_loading,
                 ),
-                remote_button(
+                download_button(
                     "download",
                     "plum",
                     "Download Master List",
