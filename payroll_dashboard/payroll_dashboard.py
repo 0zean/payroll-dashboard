@@ -8,6 +8,6 @@ from .pages import *
 
 # Create the app.
 app = rx.App(
-    style=styles.base_style,
+    style=styles.base_style,  # type: ignore
     stylesheets=styles.base_stylesheets,
 )
