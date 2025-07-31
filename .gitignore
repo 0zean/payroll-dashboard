@@ -12,3 +12,4 @@ venv/
 .tool-versions
 .env
 .ruff_cache
+.pytest_cache
