@@ -17,7 +17,13 @@ async def test_start_download_sets_loading():
 async def test_finish_download_success(monkeypatch):
     state = IndexState()
     monkeypatch.setattr("payroll_dashboard.backend.index_state.url_base", "/test/")
-    monkeypatch.setattr("payroll_dashboard.backend.index_state.asyncio.sleep", mock.AsyncMock())
+    
+    class MockResponse:
+        status_code = 200
+        content = b"fake_excel_data"
+
+    monkeypatch.setattr("payroll_dashboard.backend.index_state.requests.get", lambda url: MockResponse())
+    
     result = []
     async for x in state.finish_download():
         result.append(x)
@@ -29,9 +35,13 @@ async def test_finish_download_success(monkeypatch):
 async def test_finish_download_error(monkeypatch):
     state = IndexState()
     monkeypatch.setattr("payroll_dashboard.backend.index_state.url_base", "/test/")
-    monkeypatch.setattr(
-        "payroll_dashboard.backend.index_state.asyncio.sleep", mock.AsyncMock(side_effect=Exception("fail"))
-    )
+    
+    class MockResponse:
+        status_code = 500
+        content = b"fake_excel_data"
+
+    monkeypatch.setattr("payroll_dashboard.backend.index_state.requests.get", lambda url: MockResponse())
+    
     result = []
     async for x in state.finish_download():
         result.append(x)
