@@ -1,5 +1,5 @@
 import aiohttp
-import requests
+import httpx
 
 from ..backend.schemas import Employee, EmployeeEntry, EmployeeOnboarding
 from ..backend.utils import get_session
@@ -15,11 +15,11 @@ def fetch_employee_names() -> list[str | None]:
         list: A list of employee names or an empty list if the request fails.
     """
     try:
-        response = requests.get(f"{url_base}employee-names")
+        response = httpx.get(f"{url_base}employee-names")
         response.raise_for_status()
         data = response.json()
         return data
-    except requests.RequestException as e:
+    except httpx.RequestError as e:
         print(f"Error fetching employee names: {e}")
         return []
 
@@ -32,11 +32,11 @@ def fetch_employees() -> list[Employee | None]:
         list: A list of employee data dictionaries or an empty list if the request fails.
     """
     try:
-        response = requests.get(f"{url_base}employees")
+        response = httpx.get(f"{url_base}employees")
         response.raise_for_status()
         data = response.json()
         return data
-    except requests.RequestException as e:
+    except httpx.RequestError as e:
         print(f"Error fetching employees: {e}")
         return []
 
@@ -49,9 +49,9 @@ def delete_employee(employee_id: int) -> None:
         employee_id (int): The ID of the employee to delete.
     """
     try:
-        response = requests.delete(f"{url_base}employees", params={"employee_id": employee_id})
+        response = httpx.delete(f"{url_base}employees", params={"employee_id": employee_id})
         response.raise_for_status()
-    except requests.RequestException as e:
+    except httpx.RequestError as e:
         print(f"Error deleting employee with ID {employee_id}: {e}")
         raise
 
@@ -76,11 +76,11 @@ def update_employee(employee_id: int, employee_entry: EmployeeEntry) -> None:
         employee_entry (EmployeeEntry): Updated employee info.
     """
     try:
-        response = requests.put(
+        response = httpx.put(
             f"{url_base}employees", params={"employee_id": employee_id}, json=employee_entry.model_dump()
         )
         response.raise_for_status()
-    except requests.RequestException as e:
+    except httpx.RequestError as e:
         print(f"Error updating employee with ID {employee_id}: {e}")
         raise
 
@@ -93,9 +93,9 @@ def add_employee(employee_entry: EmployeeEntry) -> None:
         employee_entry (EmployeeEntry): The employee entry to add.
     """
     try:
-        response = requests.post(f"{url_base}employees", json=employee_entry.model_dump())
+        response = httpx.post(f"{url_base}employees", json=employee_entry.model_dump())
         response.raise_for_status()
-    except requests.RequestException as e:
+    except httpx.RequestError as e:
         print(f"Error adding employee: {e}")
         raise
 
@@ -111,7 +111,7 @@ async def onboard_employee(new_employee: EmployeeOnboarding) -> None:
         session = await get_session()
         async with session.post(f"{url_base}new-employee", json=new_employee.model_dump()) as response:
             response.raise_for_status()
-    except requests.RequestException as e:
+    except aiohttp.ClientError as e:
         print(f"Error adding new employee: {e}")
         raise
 
@@ -121,6 +121,6 @@ async def sync_table() -> None:
         session = await get_session()
         async with session.post(f"{url_base}sync") as response:
             response.raise_for_status()
-    except requests.RequestException as e:
+    except aiohttp.ClientError as e:
         print(f"Error syncing employees to Sheets: {e}")
         raise

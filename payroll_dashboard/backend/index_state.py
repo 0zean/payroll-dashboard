@@ -1,5 +1,5 @@
 import reflex as rx
-import requests
+import httpx
 
 from ..backend.api_routes import clear_payroll, url_base
 
@@ -18,7 +18,7 @@ class IndexState(rx.State):
     @rx.event
     async def finish_download(self):
         try:
-            response = requests.get(f"{url_base}download-payroll")
+            response = httpx.get(f"{url_base}download-payroll")
 
             if response.status_code != 200:
                 raise Exception("Failed to fetch file")
@@ -26,7 +26,6 @@ class IndexState(rx.State):
             yield rx.download(filename="payroll.xlsx", data=response.content)
             self.download_loading = False
             yield rx.toast.success("Downloaded payroll!", position="top-center")
-            # yield rx.call_script(f"triggerPayrollDownload('{url_base}download-payroll')")
         except Exception as e:
             self.download_loading = False
             yield rx.toast.error(f"Error downloading payroll: {e}", position="top-center")
