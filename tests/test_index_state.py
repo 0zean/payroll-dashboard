@@ -22,7 +22,7 @@ async def test_finish_download_success(monkeypatch):
         status_code = 200
         content = b"fake_excel_data"
 
-    monkeypatch.setattr("payroll_dashboard.backend.index_state.requests.get", lambda url: MockResponse())
+    monkeypatch.setattr("payroll_dashboard.backend.index_state.httpx.get", lambda url: MockResponse())
     
     result = []
     async for x in state.finish_download():
@@ -40,7 +40,7 @@ async def test_finish_download_error(monkeypatch):
         status_code = 500
         content = b"fake_excel_data"
 
-    monkeypatch.setattr("payroll_dashboard.backend.index_state.requests.get", lambda url: MockResponse())
+    monkeypatch.setattr("payroll_dashboard.backend.index_state.httpx.get", lambda url: MockResponse())
     
     result = []
     async for x in state.finish_download():
