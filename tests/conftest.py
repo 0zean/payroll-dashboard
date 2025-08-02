@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
+import httpx
 import pytest
-import requests_mock as rm
 
 from payroll_dashboard.backend.schemas import Employee
 from payroll_dashboard.backend.table_state import TableState
@@ -20,9 +20,12 @@ def mock_supabase_env(monkeypatch):
 
 
 @pytest.fixture
-def requests_mock():
-    with rm.Mocker() as m:
-        yield m
+def mock_httpx_client():
+    def _mock_httpx_client(handler: httpx._transports.mock.SyncHandler) -> httpx.Client:
+        transport = httpx.MockTransport(handler=handler)
+        return httpx.Client(transport=transport)
+
+    return _mock_httpx_client
 
 
 @pytest.fixture
