@@ -2,7 +2,7 @@ import aiohttp
 import httpx
 
 from ..backend.schemas import Employee, EmployeeEntry, EmployeeOnboarding
-from ..backend.utils import get_session, get_client
+from ..backend.utils import get_client, get_session
 
 url_base = "http://127.0.0.1:8000/api/"
 
