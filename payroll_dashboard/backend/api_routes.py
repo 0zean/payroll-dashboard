@@ -2,7 +2,7 @@ import aiohttp
 import httpx
 
 from ..backend.schemas import Employee, EmployeeEntry, EmployeeOnboarding
-from ..backend.utils import get_session
+from ..backend.utils import get_session, get_client
 
 url_base = "http://127.0.0.1:8000/api/"
 
@@ -15,7 +15,8 @@ def fetch_employee_names() -> list[str | None]:
         list: A list of employee names or an empty list if the request fails.
     """
     try:
-        response = httpx.get(f"{url_base}employee-names")
+        client = get_client()
+        response = client.get(f"{url_base}employee-names")
         response.raise_for_status()
         data = response.json()
         return data
@@ -32,7 +33,8 @@ def fetch_employees() -> list[Employee | None]:
         list: A list of employee data dictionaries or an empty list if the request fails.
     """
     try:
-        response = httpx.get(f"{url_base}employees")
+        client = get_client()
+        response = client.get(f"{url_base}employees")
         response.raise_for_status()
         data = response.json()
         return data
@@ -49,7 +51,8 @@ def delete_employee(employee_id: int) -> None:
         employee_id (int): The ID of the employee to delete.
     """
     try:
-        response = httpx.delete(f"{url_base}employees", params={"employee_id": employee_id})
+        client = get_client()
+        response = client.delete(f"{url_base}employees", params={"employee_id": employee_id})
         response.raise_for_status()
     except httpx.RequestError as e:
         print(f"Error deleting employee with ID {employee_id}: {e}")
@@ -76,7 +79,8 @@ def update_employee(employee_id: int, employee_entry: EmployeeEntry) -> None:
         employee_entry (EmployeeEntry): Updated employee info.
     """
     try:
-        response = httpx.put(
+        client = get_client()
+        response = client.put(
             f"{url_base}employees", params={"employee_id": employee_id}, json=employee_entry.model_dump()
         )
         response.raise_for_status()
@@ -93,7 +97,8 @@ def add_employee(employee_entry: EmployeeEntry) -> None:
         employee_entry (EmployeeEntry): The employee entry to add.
     """
     try:
-        response = httpx.post(f"{url_base}employees", json=employee_entry.model_dump())
+        client = get_client()
+        response = client.post(f"{url_base}employees", json=employee_entry.model_dump())
         response.raise_for_status()
     except httpx.RequestError as e:
         print(f"Error adding employee: {e}")

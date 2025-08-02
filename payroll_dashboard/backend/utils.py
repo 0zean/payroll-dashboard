@@ -2,11 +2,26 @@ import asyncio
 import atexit
 
 import aiohttp
+import httpx
 import reflex as rx
 
 from ..backend.schemas import Employee, PayrollStats
 
 _session: aiohttp.ClientSession | None = None
+_client: httpx.Client | None = None
+
+
+def get_client() -> httpx.Client:
+    global _client
+    if _client is None or _client.is_closed:
+        _client = httpx.Client()
+    return _client
+
+
+@atexit.register
+def close_client_on_exit():
+    if _client and not _client.is_closed:
+        _client.close()
 
 
 async def get_session() -> aiohttp.ClientSession:
