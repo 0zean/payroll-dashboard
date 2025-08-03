@@ -20,7 +20,7 @@ def scaling_picker() -> rx.Component:
             ],
             size="3",
             value=ThemeState.scaling,
-            on_change=ThemeState.set_scaling,
+            on_change=ThemeState.set_scaling,  # type: ignore
         ),
         width="100%",
     )
