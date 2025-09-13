@@ -1,7 +1,7 @@
 import reflex as rx
-from gotrue import Session, User
 from starlette.config import Config
 from supabase import AuthApiError, Client, create_client
+from supabase_auth.types import Session, User
 
 from ..backend.schemas import PayrollUser
 
