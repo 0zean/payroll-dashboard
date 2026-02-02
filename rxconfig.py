@@ -6,4 +6,5 @@ config = rx.Config(
     disable_plugins=["reflex.plugins.sitemap.SitemapPlugin"],
     frontend_port=3001,
     backend_port=8001,
+    state_auto_setters=True,
 )
