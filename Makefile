@@ -5,7 +5,7 @@ install:
 	@echo "🚀 Creating virtual environment using uv"
 	uv sync --frozen
 
-# Format code with Black and isort
+# Format code with ruff
 format:
 	uv run ruff format --check ./payroll_dashboard ./main.py ./rxconfig.py
 	uv run ruff check --select I ./payroll_dashboard ./main.py ./rxconfig.py
