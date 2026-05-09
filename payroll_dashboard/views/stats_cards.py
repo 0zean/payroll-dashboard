@@ -1,5 +1,5 @@
 import reflex as rx
-from reflex.components.radix.themes.base import LiteralAccentColor
+from reflex_components_radix.themes.base import LiteralAccentColor
 
 from .. import styles
 from ..backend.table_state import TableState

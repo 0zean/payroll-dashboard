@@ -1,5 +1,5 @@
 import reflex as rx
-from reflex.components.radix.themes.base import LiteralAccentColor
+from reflex_components_radix.themes.base import LiteralAccentColor
 from reflex.event import EventCallback
 
 

@@ -1,5 +1,5 @@
 import reflex as rx
-from reflex.components.radix.themes.base import LiteralAccentColor, LiteralGrayColor
+from reflex_components_radix.themes.base import LiteralAccentColor, LiteralGrayColor
 
 from .. import styles
 from ..templates.template import ThemeState
