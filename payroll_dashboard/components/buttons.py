@@ -1,6 +1,6 @@
 import reflex as rx
-from reflex_components_radix.themes.base import LiteralAccentColor
 from reflex.event import EventCallback
+from reflex_components_radix.themes.base import LiteralAccentColor
 
 
 def clean_button(
