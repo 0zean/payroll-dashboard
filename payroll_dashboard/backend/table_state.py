@@ -20,6 +20,7 @@ class TableState(rx.State):
 
     users: list[Employee] = []
     employee_names: list[str] = [name for name in fetch_employee_names() if name is not None]
+    employee_dict: list[dict[str, str]] = [{"value": s, "label": s} for s in employee_names]
 
     current_employee: Employee = Employee(id=0, employee_name="", hours_worked=0.0, date="", extra=0.0, notes="")
 
@@ -257,6 +258,7 @@ class TableState(rx.State):
             self.show_validation_errors = True
             return
 
+        self.current_entry.employee_name = form_data.get("employee_name", "")
         entry = self.current_entry.model_copy()
 
         if entry.extra is None:
@@ -300,6 +302,7 @@ class TableState(rx.State):
             self.show_validation_errors = True
             return
 
+        self.current_entry.employee_name = form_data.get("employee_name", "")
         entry = self.current_entry.model_copy()
         if entry.extra is None:
             entry.extra = 0.0

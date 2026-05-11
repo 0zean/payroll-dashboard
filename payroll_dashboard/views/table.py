@@ -3,6 +3,7 @@ import reflex as rx
 from ..backend.table_state import Employee, TableState
 from ..backend.utils import header_cell
 from ..components.form_field import form_field
+from ..custom_components.reflex_react_select import react_select
 
 
 def show_employee(user: Employee):
@@ -78,14 +79,24 @@ def add_employee_button() -> rx.Component:
                                 align="center",
                                 spacing="2",
                             ),
-                            rx.select(
-                                TableState.employee_names,
-                                on_change=TableState.set_name,
+                            # rx.select(
+                            #     TableState.employee_names,
+                            #     on_change=TableState.set_name,
+                            #     required=True,
+                            #     placeholder="Select Employee",
+                            #     width="100%",
+                            #     error_message=TableState.name_error,
+                            #     name="employee_name",
+                            # ),
+                            react_select(
+                                options=TableState.employee_dict,
                                 required=True,
                                 placeholder="Select Employee",
                                 width="100%",
-                                error_message=TableState.name_error,
                                 name="employee_name",
+                                is_clearable=True,
+                                is_searchable=True,
+                                class_name_prefix="react-select-add",
                             ),
                         ),
                         # Date
@@ -218,13 +229,25 @@ def update_employee_dialog(user: Employee):
                                 align="center",
                                 spacing="2",
                             ),
-                            rx.select(
-                                TableState.employee_names,
-                                default_value=user.employee_name,
-                                on_change=TableState.set_name,
+                            # rx.select(
+                            #     TableState.employee_names,
+                            #     default_value=user.employee_name,
+                            #     on_change=TableState.set_name,
+                            #     required=True,
+                            #     placeholder="Select Employee",
+                            #     width="100%",
+                            # ),
+                            react_select(
+                                input_id="update_id",
+                                options=TableState.employee_dict,
                                 required=True,
+                                default_input_value=user.employee_name,
                                 placeholder="Select Employee",
                                 width="100%",
+                                name="employee_name",
+                                is_clearable=True,
+                                is_searchable=True,
+                                class_name_prefix="react-select-update",
                             ),
                         ),
                         # Date
