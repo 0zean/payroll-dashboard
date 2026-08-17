@@ -1,4 +1,4 @@
-## Payroll Dark UI Overhaul Plan
-- [x] Redesign the shared shell, login experience, and global styling with the cinematic dark Linear-inspired system: near-black canvas, layered ambient lighting, animated gradient blobs, spotlight interactions, accessible contrast, refined typography, and responsive navigation while preserving routes and authentication behavior.
-- [x] Redesign the overview and payroll table experiences with premium glass surfaces, high-precision dark controls, readable data tables, improved responsive behavior, and preserved payroll actions, sorting, filtering, pagination, sync, download, and clean workflows.
-- [x] Redesign onboarding and settings screens to match the same dark system with polished forms, controls, focus states, and micro-interactions while preserving all submitted data, theme controls, and navigation behavior.
+## Material 3 Payroll UI Overhaul Plan
+- [ ] Replace the current cinematic dark visual system with a lightweight Material Design 3 token system, supporting light and dark themes, M3 typography, shape, tonal elevation, motion, accessible focus states, and an M3 navigation shell while preserving all routes and authentication behavior.
+- [ ] Restyle the overview and payroll table workflows with Material 3 cards, tonal surfaces, action buttons, search/sort controls, readable data tables, pagination, and responsive layouts while preserving all payroll actions and data behavior.
+- [ ] Restyle onboarding, dialogs, forms, login, and settings controls with Material 3 text fields, buttons, cards, error/supporting states, theme controls, and responsive UX while preserving submitted payloads and existing state behavior.

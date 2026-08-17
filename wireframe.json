@@ -1,0 +1,227 @@
+{
+  "version": 4,
+  "app_title": "Material 3 Payroll UI Overhaul Plan",
+  "nav": {
+    "placement": "none",
+    "items": []
+  },
+  "pages": [
+    {
+      "id": "page-6f5db2af",
+      "name": "Shared Shell and Login",
+      "route": "/",
+      "item_ref": {
+        "index": 0,
+        "text": "Replace the current cinematic dark visual system with a lightweight Material Design 3 token system, supporting light and dark themes, M3 typography, shape, tonal elevation, motion, accessible focus states, and an M3 navigation shell while preserving all routes and authentication behavior."
+      },
+      "blocks": [
+        {
+          "id": "m3-shell-nav",
+          "type": "sidebar",
+          "label": "Material 3 navigation rail / drawer",
+          "hint": "M3 route navigation with active indicator, app identity, logout action, and responsive behavior",
+          "x": 0,
+          "y": 0,
+          "w": 3,
+          "h": 12,
+          "item_ref": {
+            "index": 0,
+            "text": "Replace the current cinematic dark visual system with a lightweight Material Design 3 token system, supporting light and dark themes, M3 typography, shape, tonal elevation, motion, accessible focus states, and an M3 navigation shell while preserving all routes and authentication behavior."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "m3-shell-content",
+          "type": "hero",
+          "label": "Authenticated page shell",
+          "hint": "Tonal background, top content area, M3 typography, light/dark token-driven surfaces",
+          "x": 3,
+          "y": 0,
+          "w": 9,
+          "h": 4,
+          "item_ref": {
+            "index": 0,
+            "text": "Replace the current cinematic dark visual system with a lightweight Material Design 3 token system, supporting light and dark themes, M3 typography, shape, tonal elevation, motion, accessible focus states, and an M3 navigation shell while preserving all routes and authentication behavior."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "m3-login-form",
+          "type": "form",
+          "label": "Login and signup surface",
+          "hint": "M3 card with text fields, filled button, supporting text, and approval messaging",
+          "x": 3,
+          "y": 4,
+          "w": 5,
+          "h": 6,
+          "item_ref": {
+            "index": 0,
+            "text": "Replace the current cinematic dark visual system with a lightweight Material Design 3 token system, supporting light and dark themes, M3 typography, shape, tonal elevation, motion, accessible focus states, and an M3 navigation shell while preserving all routes and authentication behavior."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "m3-token-system",
+          "type": "text",
+          "label": "Theme foundation",
+          "hint": "Light/dark color roles, typography, shape, elevation, focus, and motion applied globally",
+          "x": 8,
+          "y": 4,
+          "w": 4,
+          "h": 6,
+          "item_ref": {
+            "index": 0,
+            "text": "Replace the current cinematic dark visual system with a lightweight Material Design 3 token system, supporting light and dark themes, M3 typography, shape, tonal elevation, motion, accessible focus states, and an M3 navigation shell while preserving all routes and authentication behavior."
+          },
+          "type_source": "palette"
+        }
+      ],
+      "deleted_ids": []
+    },
+    {
+      "id": "page-2d1cabdd",
+      "name": "Overview and Payroll Table",
+      "route": "/table",
+      "item_ref": {
+        "index": 1,
+        "text": "Restyle the overview and payroll table workflows with Material 3 cards, tonal surfaces, action buttons, search/sort controls, readable data tables, pagination, and responsive layouts while preserving all payroll actions and data behavior."
+      },
+      "blocks": [
+        {
+          "id": "m3-table-nav",
+          "type": "sidebar",
+          "label": "Material 3 navigation",
+          "hint": "Shared navigation rail / drawer visible on dashboard pages",
+          "x": 0,
+          "y": 0,
+          "w": 3,
+          "h": 12,
+          "item_ref": {
+            "index": 1,
+            "text": "Restyle the overview and payroll table workflows with Material 3 cards, tonal surfaces, action buttons, search/sort controls, readable data tables, pagination, and responsive layouts while preserving all payroll actions and data behavior."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "m3-stats",
+          "type": "text",
+          "label": "Payroll summary cards",
+          "hint": "M3 elevated/filled tonal cards for entries, hours, and employees",
+          "x": 3,
+          "y": 0,
+          "w": 9,
+          "h": 3,
+          "item_ref": {
+            "index": 1,
+            "text": "Restyle the overview and payroll table workflows with Material 3 cards, tonal surfaces, action buttons, search/sort controls, readable data tables, pagination, and responsive layouts while preserving all payroll actions and data behavior."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "m3-controls",
+          "type": "form",
+          "label": "Payroll controls",
+          "hint": "Search, sort, add, sync, clean, and download actions styled as M3 controls",
+          "x": 3,
+          "y": 3,
+          "w": 9,
+          "h": 3,
+          "item_ref": {
+            "index": 1,
+            "text": "Restyle the overview and payroll table workflows with Material 3 cards, tonal surfaces, action buttons, search/sort controls, readable data tables, pagination, and responsive layouts while preserving all payroll actions and data behavior."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "m3-data-table",
+          "type": "table",
+          "label": "Payroll data table",
+          "hint": "Readable M3 data surface with hover state, actions, and pagination",
+          "x": 3,
+          "y": 6,
+          "w": 9,
+          "h": 6,
+          "item_ref": {
+            "index": 1,
+            "text": "Restyle the overview and payroll table workflows with Material 3 cards, tonal surfaces, action buttons, search/sort controls, readable data tables, pagination, and responsive layouts while preserving all payroll actions and data behavior."
+          },
+          "type_source": "palette"
+        }
+      ],
+      "deleted_ids": []
+    },
+    {
+      "id": "page-b7746f33",
+      "name": "Onboarding and Settings",
+      "route": "/onboard",
+      "item_ref": {
+        "index": 2,
+        "text": "Restyle onboarding, dialogs, forms, login, and settings controls with Material 3 text fields, buttons, cards, error/supporting states, theme controls, and responsive UX while preserving submitted payloads and existing state behavior."
+      },
+      "blocks": [
+        {
+          "id": "m3-form-nav",
+          "type": "sidebar",
+          "label": "Material 3 navigation",
+          "hint": "Shared navigation rail / drawer visible on form pages",
+          "x": 0,
+          "y": 0,
+          "w": 3,
+          "h": 12,
+          "item_ref": {
+            "index": 2,
+            "text": "Restyle onboarding, dialogs, forms, login, and settings controls with Material 3 text fields, buttons, cards, error/supporting states, theme controls, and responsive UX while preserving submitted payloads and existing state behavior."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "m3-onboard-form",
+          "type": "form",
+          "label": "Employee onboarding form",
+          "hint": "M3 card, text fields, filled submit button, and supporting checklist",
+          "x": 3,
+          "y": 0,
+          "w": 6,
+          "h": 7,
+          "item_ref": {
+            "index": 2,
+            "text": "Restyle onboarding, dialogs, forms, login, and settings controls with Material 3 text fields, buttons, cards, error/supporting states, theme controls, and responsive UX while preserving submitted payloads and existing state behavior."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "m3-settings-controls",
+          "type": "form",
+          "label": "Theme settings controls",
+          "hint": "M3 tonal cards for color, radius, and scaling controls",
+          "x": 3,
+          "y": 7,
+          "w": 6,
+          "h": 5,
+          "item_ref": {
+            "index": 2,
+            "text": "Restyle onboarding, dialogs, forms, login, and settings controls with Material 3 text fields, buttons, cards, error/supporting states, theme controls, and responsive UX while preserving submitted payloads and existing state behavior."
+          },
+          "type_source": "palette"
+        },
+        {
+          "id": "m3-support-panel",
+          "type": "form",
+          "label": "Responsive form guidance panel",
+          "hint": "M3 supporting content explaining payroll workflow results",
+          "x": 9,
+          "y": 0,
+          "w": 3,
+          "h": 7,
+          "item_ref": {
+            "index": 2,
+            "text": "Restyle onboarding, dialogs, forms, login, and settings controls with Material 3 text fields, buttons, cards, error/supporting states, theme controls, and responsive UX while preserving submitted payloads and existing state behavior."
+          },
+          "type_source": "palette"
+        }
+      ],
+      "deleted_ids": []
+    }
+  ],
+  "attached_to_plan": false
+}
