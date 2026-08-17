@@ -1,5 +1,8 @@
 import reflex as rx
-from reflex_components_radix.themes.base import LiteralAccentColor, LiteralGrayColor
+from reflex_components_radix.themes.base import (
+    LiteralAccentColor,
+    LiteralGrayColor,
+)
 
 from .. import styles
 from ..templates.template import ThemeState
@@ -21,27 +24,33 @@ class ColorPickerState(rx.State):
     secondary_color_options: dict[str, str] = secondary_color_dict
 
 
+SWATCH_WRAPPER_CLASS = "focus-ring press rounded-full"
+
+
 def _display_primary_color(color: list) -> rx.Component:
     return rx.tooltip(
         rx.box(
             rx.cond(
                 color[0].lower() == ThemeState.accent_color.lower(),
                 rx.box(
-                    rx.icon("check", color=rx.color("gray", 12)),
+                    rx.icon("check", color="white", size=18),
                     bg=color[1],
                     height=styles.color_box_size,
                     width=styles.color_box_size,
-                    border=f"2px solid  {rx.color('gray', 12)}",
+                    border="2px solid rgba(255, 255, 255, 0.85)",
                     style=styles.color_picker_style,
                 ),
                 rx.box(
                     bg=color[1],
                     height=styles.color_box_size,
                     width=styles.color_box_size,
+                    border="1px solid rgba(255, 255, 255, 0.12)",
                     style=styles.color_picker_style,
                 ),
             ),
             on_click=ThemeState.setvar("accent_color", color[0].lower()),
+            class_name=SWATCH_WRAPPER_CLASS,
+            aria_label=color[0],
         ),
         content=color[0],
     )
@@ -53,21 +62,24 @@ def _display_secondary_color(colors: list) -> rx.Component:
             rx.cond(
                 colors[0].lower() == ThemeState.gray_color.lower(),
                 rx.box(
-                    rx.icon("check", color=rx.color("gray", 12)),
+                    rx.icon("check", color="white", size=18),
                     bg=colors[1],
                     height=styles.color_box_size,
                     width=styles.color_box_size,
-                    border=f"2px solid  {rx.color('gray', 12)}",
+                    border="2px solid rgba(255, 255, 255, 0.85)",
                     style=styles.color_picker_style,
                 ),
                 rx.box(
                     bg=colors[1],
                     height=styles.color_box_size,
                     width=styles.color_box_size,
+                    border="1px solid rgba(255, 255, 255, 0.12)",
                     style=styles.color_picker_style,
                 ),
             ),
             on_click=ThemeState.setvar("gray_color", colors[0].lower()),
+            class_name=SWATCH_WRAPPER_CLASS,
+            aria_label=colors[0],
         ),
         content=colors[0],
     )
@@ -75,19 +87,23 @@ def _display_secondary_color(colors: list) -> rx.Component:
 
 def primary_color_picker() -> rx.Component:
     return rx.flex(
-        rx.foreach(ColorPickerState.primary_color_options, _display_primary_color),
+        rx.foreach(
+            ColorPickerState.primary_color_options, _display_primary_color
+        ),
         width="100%",
-        max_width="40rem",
+        max_width="44rem",
         wrap="wrap",
-        gap=["15px", "15px", "20px"],
+        gap=["12px", "12px", "16px"],
     )
 
 
 def secondary_color_picker() -> rx.Component:
     return rx.flex(
-        rx.foreach(ColorPickerState.secondary_color_options, _display_secondary_color),
+        rx.foreach(
+            ColorPickerState.secondary_color_options, _display_secondary_color
+        ),
         width="100%",
-        max_width="40rem",
+        max_width="44rem",
         wrap="wrap",
-        gap=["15px", "15px", "20px"],
+        gap=["12px", "12px", "16px"],
     )

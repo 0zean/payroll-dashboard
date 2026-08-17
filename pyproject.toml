@@ -6,11 +6,15 @@ readme = "README.md"
 requires-python = ">=3.12.8"
 dependencies = [
     "aiohttp>=3.13.5",
-    "reflex>=0.9.2",
+    "httpx>=0.28.1",
+    "reflex[db]==0.9.8",
     "reflex-calendar>=0.0.6",
     "reflex-components-core>=0.9.2",
     "reflex-components-radix>=0.9.2",
     "supabase==2.30.0",
+    "aioresponses",
+    "pytest-asyncio",
+    "requests-mock",
 ]
 
 [dependency-groups]

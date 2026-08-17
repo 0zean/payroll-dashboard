@@ -4,90 +4,98 @@ from ..backend.schemas import Employee
 from ..backend.table_state import TableState
 from ..backend.utils import header_cell
 
+CELL_STRONG_CLASS = "text-[13px] font-semibold text-white"
+CELL_CLASS = "text-[13px] font-medium text-white/70"
+CELL_NUMERIC_CLASS = "tabular text-[13px] font-medium text-white/70"
+PAGER_BUTTON_CLASS = "press focus-ring"
+
 
 def show_employee(user: Employee):
     """Show an employee in a table row."""
     return rx.table.row(
-        rx.table.cell(user.employee_name),
-        rx.table.cell(user.date),
-        rx.table.cell(user.hours_worked),
-        style={"_hover": {"bg": rx.color("gray", 3)}},
+        rx.table.cell(user.employee_name, class_name=CELL_STRONG_CLASS),
+        rx.table.cell(user.date, class_name=CELL_CLASS),
+        rx.table.cell(user.hours_worked, class_name=CELL_NUMERIC_CLASS),
         align="center",
     )
 
 
+def _pager_button(
+    icon: str, event: rx.event.EventType, dimmed: rx.Var
+) -> rx.Component:
+    return rx.icon_button(
+        rx.icon(icon, size=16),
+        on_click=event,
+        opacity=rx.cond(dimmed, 0.45, 1),
+        color_scheme=rx.cond(dimmed, "gray", "accent"),
+        variant="soft",
+        radius="large",
+        class_name=PAGER_BUTTON_CLASS,
+    )
+
+
 def _pagination_view() -> rx.Component:
-    return rx.hstack(
-        rx.text(
+    return rx.el.div(
+        rx.el.p(
             "Page ",
-            rx.code(TableState.page_number),
+            rx.el.span(
+                TableState.page_number,
+                class_name="tabular font-semibold text-white",
+            ),
             f" of {TableState.total_pages}",
-            justify="end",
+            class_name="text-xs font-medium text-white/50",
         ),
-        rx.hstack(
-            rx.icon_button(
-                rx.icon("chevrons-left", size=18),
-                on_click=TableState.first_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
-                color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
-                variant="soft",
+        rx.el.div(
+            _pager_button(
+                "chevrons-left",
+                TableState.first_page,  # type: ignore
+                TableState.page_number == 1,
             ),
-            rx.icon_button(
-                rx.icon("chevron-left", size=18),
-                on_click=TableState.prev_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
-                color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
-                variant="soft",
+            _pager_button(
+                "chevron-left",
+                TableState.prev_page,  # type: ignore
+                TableState.page_number == 1,
             ),
-            rx.icon_button(
-                rx.icon("chevron-right", size=18),
-                on_click=TableState.next_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
-                color_scheme=rx.cond(
-                    TableState.page_number == TableState.total_pages,
-                    "gray",
-                    "accent",
-                ),
-                variant="soft",
+            _pager_button(
+                "chevron-right",
+                TableState.next_page,  # type: ignore
+                TableState.page_number == TableState.total_pages,
             ),
-            rx.icon_button(
-                rx.icon("chevrons-right", size=18),
-                on_click=TableState.last_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
-                color_scheme=rx.cond(
-                    TableState.page_number == TableState.total_pages,
-                    "gray",
-                    "accent",
-                ),
-                variant="soft",
+            _pager_button(
+                "chevrons-right",
+                TableState.last_page,  # type: ignore
+                TableState.page_number == TableState.total_pages,
             ),
-            align="center",
-            spacing="2",
-            justify="end",
+            class_name="flex items-center gap-2",
         ),
-        spacing="5",
-        margin_top="1em",
-        align="center",
-        width="100%",
-        justify="end",
+        class_name=(
+            "mt-4 flex w-full flex-col items-start gap-3 border-t border-white/8 pt-4 "
+            "sm:flex-row sm:items-center sm:justify-end sm:gap-5"
+        ),
     )
 
 
 def overview_table() -> rx.Component:
     return rx.fragment(
-        rx.table.root(
-            rx.table.header(
-                rx.table.row(
-                    header_cell("Employee", "user"),
-                    header_cell("Date", "calendar-days"),
-                    header_cell("Hours", "clock"),
+        rx.el.div(
+            rx.table.root(
+                rx.table.header(
+                    rx.table.row(
+                        header_cell("Employee", "user"),
+                        header_cell("Date", "calendar-days"),
+                        header_cell("Hours", "clock"),
+                    ),
                 ),
+                rx.table.body(
+                    rx.foreach(TableState.get_current_page, show_employee)
+                ),
+                variant="surface",
+                size="2",
+                width="100%",
+                on_mount=TableState.load_entries,  # type: ignore
+                class_name="min-w-[520px]",
             ),
-            rx.table.body(rx.foreach(TableState.get_current_page, show_employee)),
-            variant="surface",
-            size="3",
-            width="100%",
-            on_mount=TableState.load_entries,  # type: ignore
+            class_name="data-table table-shell w-full overflow-x-auto",
         ),
         rx.cond(TableState.users, _pagination_view()),
     )

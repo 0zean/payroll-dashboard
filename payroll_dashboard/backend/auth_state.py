@@ -26,6 +26,7 @@ class AuthState(rx.State):
     password: str = ""
     name: str = ""
 
+    @rx.event
     def handle_user_session(self, supabase_user: User):
         try:
             response = (
@@ -37,14 +38,16 @@ class AuthState(rx.State):
             )
             data = response.data
             if not data or data.get("status") != "approved":
-                rx.toast.warning("Your account is pending approval by an administrator.")
+                rx.toast.warning(
+                    "Your account is pending approval by an administrator."
+                )
                 supabase.auth.sign_out()
                 self.user = None
                 self.is_authenticated = False
                 return
             self.user = PayrollUser(
                 id=supabase_user.id,
-                email=data.get("email") or supabase_user.email,  # type: ignore
+                email=data.get("email") or supabase_user.email,
                 name=data.get("full_name"),
             )
             self.is_authenticated = True
@@ -54,10 +57,13 @@ class AuthState(rx.State):
             self.is_authenticated = False
             rx.toast.error("Error getting user info")
 
+    @rx.event
     def login(self, email: str, password: str):
         self.is_loading = True
         try:
-            result = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            result = supabase.auth.sign_in_with_password(
+                {"email": email, "password": password}
+            )
             user = result.user
             if not user:
                 raise Exception("User not found")
@@ -69,6 +75,7 @@ class AuthState(rx.State):
         finally:
             self.is_loading = False
 
+    @rx.event
     def handle_login(self):
         self.login(self.email, self.password)
         if self.is_authenticated:
@@ -76,19 +83,25 @@ class AuthState(rx.State):
             self.password = ""
             return rx.toast.success("Login successful! 🎉")
         else:
-            return rx.toast.error("Login failed, please check your credentials.")
+            return rx.toast.error(
+                "Login failed, please check your credentials."
+            )
 
+    @rx.event
     def handle_signup(self):
         self.signup(self.email, self.password, self.name)
-        if not self.is_authenticated:  # Signup successful but needs approval
+        if not self.is_authenticated:
             self.email = ""
             self.password = ""
             self.name = ""
-            self.show_signup = False  # Switch back to login view
-            return rx.toast.info("Your account has been created and is pending approval by an administrator.")
+            self.show_signup = False
+            return rx.toast.info(
+                "Your account has been created and is pending approval by an administrator."
+            )
         else:
             return rx.toast.error("Signup failed, please try again.")
 
+    @rx.event
     def signup(self, email: str, password: str, name: str):
         self.is_loading = True
         try:
@@ -97,33 +110,49 @@ class AuthState(rx.State):
                 raise Exception("Full name is required")
             print("Full name for signup:", trimmed_name)
             result = supabase.auth.sign_up(
-                {"email": email, "password": password, "options": {"data": {"name": trimmed_name}}}
+                {
+                    "email": email,
+                    "password": password,
+                    "options": {"data": {"name": trimmed_name}},
+                }
             )
             user = result.user
             if not user:
                 raise Exception("Failed to create user")
-            # Check if profile exists
-            profile_response = supabase.table("profiles").select("*").eq("id", user.id).single().execute()
+            profile_response = (
+                supabase.table("profiles")
+                .select("*")
+                .eq("id", user.id)
+                .single()
+                .execute()
+            )
             if not profile_response.data:
-                # Create profile manually
                 try:
                     supabase.table("profiles").insert(
-                        {"id": user.id, "email": email, "full_name": trimmed_name, "status": "pending"}
+                        {
+                            "id": user.id,
+                            "email": email,
+                            "full_name": trimmed_name,
+                            "status": "pending",
+                        }
                     ).execute()
                 except Exception as e:
-                    print("Error creating profile manually:", str(e))
+                    print("Error creating profile manually:", e)
                     raise Exception("Error creating user profile")
-            rx.toast.info("Your account has been created and is pending approval by an administrator.")
+            rx.toast.info(
+                "Your account has been created and is pending approval by an administrator."
+            )
             supabase.auth.sign_out()
             self.user = None
             self.is_authenticated = False
         except Exception as e:
             print("Signup failed:", e)
-            rx.toast.error(str(e))
+            rx.toast.error(e)
             raise
         finally:
             self.is_loading = False
 
+    @rx.event
     def logout(self):
         try:
             supabase.auth.sign_out()
@@ -132,7 +161,7 @@ class AuthState(rx.State):
             return rx.redirect("/")
         except Exception as e:
             print("Logout failed:", e)
-            return rx.toast.error(str(e))
+            return rx.toast.error(e)
 
     @rx.event
     def set_email(self, value: str):
@@ -155,10 +184,10 @@ class AuthState(rx.State):
         except ValueError:
             self.name = ""
 
+    @rx.event
     def toggle_auth_mode(self):
         """Toggle between login and signup modes."""
         self.show_signup = not self.show_signup
-        # Clear form fields when switching modes
         self.email = ""
         self.password = ""
         self.name = ""

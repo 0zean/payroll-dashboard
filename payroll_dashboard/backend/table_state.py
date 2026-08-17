@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 import reflex as rx
 
@@ -13,16 +12,19 @@ from ..backend.api_routes import (
 )
 from ..backend.schemas import Employee, EmployeeEntry, PayrollStats
 from ..backend.utils import calculate_stats
+import logging
 
 
 class TableState(rx.State):
     """The table state class."""
 
     users: list[Employee] = []
-    employee_names: list[str] = [name for name in fetch_employee_names() if name is not None]
-    employee_dict: list[dict[str, str]] = [{"value": s, "label": s} for s in employee_names]
+    employee_names: list[str] = []
+    employee_dict: list[dict[str, str]] = []
 
-    current_employee: Employee = Employee(id=0, employee_name="", hours_worked=0.0, date="", extra=0.0, notes="")
+    current_employee: Employee = Employee(
+        id=0, employee_name="", hours_worked=0.0, date="", extra=0.0, notes=""
+    )
 
     current_entry: EmployeeEntry = EmployeeEntry(
         employee_name="",
@@ -32,7 +34,9 @@ class TableState(rx.State):
         notes="",
     )
 
-    stats = PayrollStats(total_entries=0.0, total_hours=0.0, employees_count=0.0)
+    stats = PayrollStats(
+        total_entries=0.0, total_hours=0.0, employees_count=0.0
+    )
 
     date_format: str = ""
 
@@ -58,7 +62,7 @@ class TableState(rx.State):
     hours_error: str = ""
 
     @rx.var(cache=True)
-    def filtered_sorted_items(self) -> List[Employee]:
+    def filtered_sorted_items(self) -> list[Employee]:
         items = self.users
 
         # Filter items based on selected item
@@ -72,7 +76,9 @@ class TableState(rx.State):
             else:
                 items = sorted(
                     items,
-                    key=lambda item: str(getattr(item, self.sort_value)).lower(),
+                    key=lambda item: str(
+                        getattr(item, self.sort_value)
+                    ).lower(),
                     reverse=self.sort_reverse,
                 )
 
@@ -100,7 +106,9 @@ class TableState(rx.State):
 
     @rx.var(cache=True)
     def total_pages(self) -> int:
-        return (self.total_items // self.limit) + (1 if self.total_items % self.limit else 1)
+        return (self.total_items // self.limit) + (
+            1 if self.total_items % self.limit else 1
+        )
 
     @rx.var(cache=True, initial_value=[])
     def get_current_page(self) -> list[Employee]:
@@ -108,17 +116,21 @@ class TableState(rx.State):
         end_index = start_index + self.limit
         return self.filtered_sorted_items[start_index:end_index]
 
+    @rx.event
     def sort_values(self, sort_value: str) -> None:
         self.sort_value = sort_value
         self.load_entries()
 
+    @rx.event
     def filter_values(self, search_value) -> None:
         self.search_value = search_value
         self.load_entries()
 
+    @rx.event
     def get_user(self, user: Employee) -> None:
-        self.date_format = datetime.strptime(user.date, "%m/%d/%Y").strftime("%Y-%m-%d")
-
+        self.date_format = datetime.strptime(user.date, "%m/%d/%Y").strftime(
+            "%Y-%m-%d"
+        )
         self.current_employee = user
         self.current_entry.employee_name = user.employee_name
         self.current_entry.hours_worked = user.hours_worked
@@ -126,14 +138,11 @@ class TableState(rx.State):
         self.current_entry.extra = user.extra
         self.current_entry.notes = user.notes
 
+    @rx.event
     def reset_form_fields(self) -> None:
         """Reset all form fields to their default values."""
         self.current_entry = EmployeeEntry(
-            employee_name="",
-            hours_worked=0.0,
-            date="",
-            extra=0.0,
-            notes="",
+            employee_name="", hours_worked=0.0, date="", extra=0.0, notes=""
         )
         self.date_format = ""
 
@@ -149,47 +158,59 @@ class TableState(rx.State):
         self.date_error = ""
         self.hours_error = ""
 
+    @rx.event
     def prev_page(self) -> None:
         if self.page_number > 1:
             self.offset -= self.limit
 
+    @rx.event
     def next_page(self) -> None:
         if self.page_number < self.total_pages:
             self.offset += self.limit
 
+    @rx.event
     def first_page(self) -> None:
         self.offset = 0
 
+    @rx.event
     def last_page(self) -> None:
         self.offset = (self.total_pages - 1) * self.limit
 
+    @rx.event
     def load_entries(self) -> None:
         entries = fetch_employees()
         if entries:
             self.users = [
                 Employee(**entry)
                 for entry in entries
-                if isinstance(entry, dict) and all(isinstance(k, str) for k in entry.keys())
+                if isinstance(entry, dict)
+                and all((isinstance(k, str) for k in entry.keys()))
             ]
             self.total_items = len(self.users)
             self.stats = calculate_stats(self.users)
         else:
             self.users = []
             self.total_items = len(self.users)
-            self.stats = PayrollStats(total_entries=0.0, total_hours=0.0, employees_count=0.0)
+            self.stats = PayrollStats(
+                total_entries=0.0, total_hours=0.0, employees_count=0.0
+            )
 
+    @rx.event
     def toggle_sort(self) -> None:
         self.sort_reverse = not self.sort_reverse
         self.load_entries()
 
-    @staticmethod
-    def add_employee_entry(employee_entry: EmployeeEntry) -> None:
+    @rx.event
+    def add_employee_entry(self, employee_entry: EmployeeEntry) -> None:
         add_employee(employee_entry=employee_entry)
 
-    @staticmethod
-    def update_employee_entry(employee_id: int, employee_entry: EmployeeEntry) -> None:
+    @rx.event
+    def update_employee_entry(
+        self, employee_id: int, employee_entry: EmployeeEntry
+    ) -> None:
         update_employee(employee_id=employee_id, employee_entry=employee_entry)
 
+    @rx.event
     def delete_entry(self, employee_id: int) -> None:
         delete_employee(employee_id=employee_id)
         self.load_entries()
@@ -202,23 +223,32 @@ class TableState(rx.State):
 
     @rx.event
     async def set_employee_names(self) -> None:
-        self.employee_names = [name for name in fetch_employee_names() if name is not None]
+        names = fetch_employee_names()
+        self.employee_names = [name for name in names if name is not None]
+        self.employee_dict = [
+            {"value": name, "label": name} for name in self.employee_names
+        ]
 
     @rx.event
     def set_date(self, value: str) -> None:
         """Set the date, ensuring it's in the correct format."""
         # Attempt to parse the date and format it to MM/DD/YYYY
         try:
-            formatted = datetime.strptime(value, "%Y-%m-%d").strftime("%m/%d/%Y")
+            formatted = datetime.strptime(value, "%Y-%m-%d").strftime(
+                "%m/%d/%Y"
+            )
             self.current_entry.date = formatted
         except Exception:
+            logging.exception("Unexpected error")
             self.current_entry.date = value
 
     @rx.event
     def set_hours_worked(self, value: str) -> None:
         """Set the hours worked, ensuring it's a valid float."""
         try:
-            self.current_entry.hours_worked = float(value) if value.strip() != "" else 0.0
+            self.current_entry.hours_worked = (
+                float(value) if value.strip() != "" else 0.0
+            )
         except (ValueError, TypeError):
             self.current_entry.hours_worked = 0.0
 
@@ -226,7 +256,9 @@ class TableState(rx.State):
     def set_extra(self, value: str) -> None:
         """Set the extra hours, ensuring it's a valid float."""
         try:
-            self.current_entry.extra = float(value) if value.strip() != "" else 0.0
+            self.current_entry.extra = (
+                float(value) if value.strip() != "" else 0.0
+            )
         except (ValueError, TypeError):
             self.current_entry.extra = 0.0
 
@@ -248,7 +280,9 @@ class TableState(rx.State):
         try:
             hours_worked = float(form_data.get("hours_worked", 0.0))
             if hours_worked <= 0 or hours_worked % 0.5 != 0:
-                self.hours_error = "Hours must be greater than 0 and a multiple of 0.5"
+                self.hours_error = (
+                    "Hours must be greater than 0 and a multiple of 0.5"
+                )
                 is_valid = False
         except (ValueError, TypeError):
             self.hours_error = "Hours worked must be a valid number"
@@ -272,7 +306,9 @@ class TableState(rx.State):
         self.stats = calculate_stats(self.users)
         self.dialog_open = False
         self.edit_dialog_employee_id = None
-        return rx.toast.success("Entry updated successfully! 🎉", position="top-center")
+        return rx.toast.success(
+            "Entry updated successfully! 🎉", position="top-center"
+        )
 
     @rx.event
     async def submit_add_employee(self, form_data: dict):
@@ -292,7 +328,9 @@ class TableState(rx.State):
         try:
             hours_worked = float(form_data.get("hours_worked", 0.0))
             if hours_worked <= 0 or hours_worked % 0.5 != 0:
-                self.hours_error = "Hours must be greater than 0 and a multiple of 0.5"
+                self.hours_error = (
+                    "Hours must be greater than 0 and a multiple of 0.5"
+                )
                 is_valid = False
         except (ValueError, TypeError):
             self.hours_error = "Hours worked must be a valid number"
@@ -314,7 +352,9 @@ class TableState(rx.State):
         self.reset_form_fields()
         self.stats = calculate_stats(self.users)
         self.dialog_open = False
-        return rx.toast.success("Employee added successfully! 🎉", position="top-center")
+        return rx.toast.success(
+            "Employee added successfully! 🎉", position="top-center"
+        )
 
     @rx.event
     def open_add_dialog(self):
@@ -350,8 +390,13 @@ class TableState(rx.State):
         try:
             await sync_table()
             self.loading = False
-            yield rx.toast.success("Sync to Sheets successful", position="top-center")
+            yield rx.toast.success(
+                "Sync to Sheets successful", position="top-center"
+            )
             yield TableState.load_entries
         except Exception as e:
+            logging.exception("Unexpected error")
             self.loading = False
-            yield rx.toast.error(f"Error syncing employees: {e}", position="top-center")
+            yield rx.toast.error(
+                f"Error syncing employees: {e}", position="top-center"
+            )

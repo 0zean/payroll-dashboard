@@ -16,8 +16,12 @@ def table() -> rx.Component:
 
     """
     return rx.vstack(
-        rx.heading("Table", size="5"),
+        rx.heading(
+            "Table",
+            size="5",
+            class_name="w-full tracking-tight text-white",
+        ),
         main_table(),
-        spacing="8",
+        spacing="6",
         width="100%",
     )

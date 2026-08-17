@@ -13,36 +13,40 @@ def stats_card(
     extra_char: str = "",
 ) -> rx.Component:
     return rx.card(
-        rx.vstack(
-            rx.hstack(
-                rx.badge(
-                    rx.icon(tag=icon, size=34),
-                    color_scheme=icon_color,
-                    radius="full",
-                    padding="0.7rem",
-                ),
-                rx.vstack(
-                    rx.heading(
-                        f"{extra_char}{value:,}",
-                        size="6",
-                        weight="bold",
+        rx.hstack(
+            rx.badge(
+                rx.icon(tag=icon, size=22),
+                color_scheme=icon_color,
+                variant="soft",
+                radius="full",
+                padding="0.65rem",
+                class_name="shrink-0",
+            ),
+            rx.vstack(
+                rx.el.span(
+                    stat_name,
+                    class_name=(
+                        "text-[10px] font-semibold uppercase tracking-[0.16em] text-white/45"
                     ),
-                    rx.text(stat_name, size="4", weight="medium"),
-                    spacing="1",
-                    height="100%",
-                    align_items="start",
-                    width="100%",
                 ),
-                height="100%",
-                spacing="4",
-                align="center",
+                rx.el.span(
+                    f"{extra_char}{value:,}",
+                    class_name=(
+                        "tabular text-2xl font-semibold leading-tight tracking-tight text-white"
+                    ),
+                ),
+                spacing="1",
+                align="start",
                 width="100%",
             ),
             spacing="3",
+            align="center",
+            width="100%",
         ),
         size="3",
         width="100%",
         box_shadow=styles.box_shadow_style,
+        class_name="glass-card spotlight rounded-2xl",
     )
 
 
@@ -68,11 +72,11 @@ def stats_cards() -> rx.Component:
         ),
         gap="1rem",
         grid_template_columns=[
-            "1fr",
-            "repeat(1, 1fr)",
-            "repeat(2, 1fr)",
-            "repeat(3, 1fr)",
-            "repeat(3, 1fr)",
+            "minmax(0, 1fr)",
+            "minmax(0, 1fr)",
+            "repeat(2, minmax(0, 1fr))",
+            "repeat(3, minmax(0, 1fr))",
+            "repeat(3, minmax(0, 1fr))",
         ],
         width="100%",
     )

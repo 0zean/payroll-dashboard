@@ -1,3 +1,5 @@
+import logging
+
 import aiohttp
 import httpx
 
@@ -20,8 +22,8 @@ def fetch_employee_names() -> list[str | None]:
         response.raise_for_status()
         data = response.json()
         return data
-    except httpx.RequestError as e:
-        print(f"Error fetching employee names: {e}")
+    except (httpx.HTTPError, ValueError) as e:
+        logging.exception(f"Error fetching employee names: {e}")
         return []
 
 
@@ -38,8 +40,8 @@ def fetch_employees() -> list[Employee | None]:
         response.raise_for_status()
         data = response.json()
         return data
-    except httpx.RequestError as e:
-        print(f"Error fetching employees: {e}")
+    except (httpx.HTTPError, ValueError) as e:
+        logging.exception(f"Error fetching employees: {e}")
         return []
 
 
@@ -52,9 +54,12 @@ def delete_employee(employee_id: int) -> None:
     """
     try:
         client = get_client()
-        response = client.delete(f"{url_base}employees", params={"employee_id": employee_id})
+        response = client.delete(
+            f"{url_base}employees", params={"employee_id": employee_id}
+        )
         response.raise_for_status()
     except httpx.RequestError as e:
+        logging.exception("Unexpected error")
         print(f"Error deleting employee with ID {employee_id}: {e}")
         raise
 
@@ -66,6 +71,7 @@ async def clear_payroll() -> None:
         async with session.post(f"{url_base}clear-payroll") as response:
             response.raise_for_status()
     except aiohttp.ClientError as e:
+        logging.exception("Unexpected error")
         print(f"Error clearing payroll masterlist: {e}")
         raise
 
@@ -81,10 +87,13 @@ def update_employee(employee_id: int, employee_entry: EmployeeEntry) -> None:
     try:
         client = get_client()
         response = client.put(
-            f"{url_base}employees", params={"employee_id": employee_id}, json=employee_entry.model_dump()
+            f"{url_base}employees",
+            params={"employee_id": employee_id},
+            json=employee_entry.model_dump(),
         )
         response.raise_for_status()
     except httpx.RequestError as e:
+        logging.exception("Unexpected error")
         print(f"Error updating employee with ID {employee_id}: {e}")
         raise
 
@@ -98,9 +107,12 @@ def add_employee(employee_entry: EmployeeEntry) -> None:
     """
     try:
         client = get_client()
-        response = client.post(f"{url_base}employees", json=employee_entry.model_dump())
+        response = client.post(
+            f"{url_base}employees", json=employee_entry.model_dump()
+        )
         response.raise_for_status()
     except httpx.RequestError as e:
+        logging.exception("Unexpected error")
         print(f"Error adding employee: {e}")
         raise
 
@@ -114,9 +126,12 @@ async def onboard_employee(new_employee: EmployeeOnboarding) -> None:
     """
     try:
         session = await get_session()
-        async with session.post(f"{url_base}new-employee", json=new_employee.model_dump()) as response:
+        async with session.post(
+            f"{url_base}new-employee", json=new_employee.model_dump()
+        ) as response:
             response.raise_for_status()
     except aiohttp.ClientError as e:
+        logging.exception("Unexpected error")
         print(f"Error adding new employee: {e}")
         raise
 
@@ -127,5 +142,6 @@ async def sync_table() -> None:
         async with session.post(f"{url_base}sync") as response:
             response.raise_for_status()
     except aiohttp.ClientError as e:
+        logging.exception("Unexpected error")
         print(f"Error syncing employees to Sheets: {e}")
         raise

@@ -8,6 +8,7 @@ import reflex as rx
 
 from .. import styles
 from ..backend.auth_state import AuthState
+from ..components.ambient import ambient_background
 from ..components.navbar import navbar
 from ..components.sidebar import sidebar
 from ..views.login import login_view
@@ -39,9 +40,9 @@ def menu_item_link(text, href):
 class ThemeState(rx.State):
     """The state for the theme of the app."""
 
-    accent_color: str = "crimson"
+    accent_color: str = "indigo"
 
-    gray_color: str = "gray"
+    gray_color: str = "slate"
 
     radius: str = "large"
 
@@ -88,43 +89,52 @@ def template(
         all_meta = [*default_meta, *(meta or [])]
 
         def templated_page() -> rx.Component:
-            return rx.flex(
+            return rx.el.div(
                 rx.cond(
                     ~AuthState.is_authenticated,
                     login_view(),
-                    rx.flex(
-                        navbar(),
-                        sidebar(),
+                    rx.el.div(
+                        ambient_background(),
                         rx.flex(
-                            rx.vstack(
-                                page_content(),
+                            navbar(),
+                            sidebar(),
+                            rx.flex(
+                                rx.vstack(
+                                    page_content(),
+                                    width="100%",
+                                    class_name="rise-in",
+                                    **styles.template_content_style,  # type: ignore
+                                ),
                                 width="100%",
-                                **styles.template_content_style,  # type: ignore
+                                min_width="0",
+                                flex="1",
+                                **styles.template_page_style,  # type: ignore
+                                max_width=[
+                                    "100%",
+                                    "100%",
+                                    "100%",
+                                    "100%",
+                                    "100%",
+                                    styles.max_width,
+                                ],
                             ),
-                            width="100%",
-                            **styles.template_page_style,  # type: ignore
-                            max_width=[
-                                "100%",
-                                "100%",
-                                "100%",
-                                "100%",
-                                "100%",
-                                styles.max_width,
+                            flex_direction=[
+                                "column",
+                                "column",
+                                "column",
+                                "column",
+                                "column",
+                                "row",
                             ],
+                            width="100%",
+                            margin="auto",
+                            position="relative",
+                            z_index="1",
                         ),
-                        flex_direction=[
-                            "column",
-                            "column",
-                            "column",
-                            "column",
-                            "column",
-                            "row",
-                        ],
-                        width="100%",
-                        margin="auto",
-                        position="relative",
+                        class_name="app-canvas w-full",
                     ),
                 ),
+                class_name="min-h-screen w-full bg-[#020203] text-white",
             )
 
         @rx.page(
@@ -138,6 +148,7 @@ def template(
         def theme_wrap() -> rx.Component:
             return rx.theme(
                 templated_page(),
+                appearance="dark",
                 has_background=True,
                 accent_color=ThemeState.accent_color,  # type: ignore
                 gray_color=ThemeState.gray_color,  # type: ignore

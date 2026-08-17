@@ -5,6 +5,12 @@ import reflex as rx
 from .. import styles
 from ..backend.auth_state import AuthState
 
+NAV_ITEM_BASE = "nav-item focus-ring flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium"
+NAV_ITEM_ACTIVE = f"{NAV_ITEM_BASE} nav-item-active bg-white/8 text-white"
+NAV_ITEM_IDLE = (
+    f"{NAV_ITEM_BASE} text-white/65 hover:bg-white/5 hover:text-white"
+)
+
 
 def sidebar_header() -> rx.Component:
     """Sidebar header.
@@ -14,16 +20,27 @@ def sidebar_header() -> rx.Component:
 
     """
     return rx.hstack(
-        # The logo.
-        rx.color_mode_cond(
-            rx.image(src="/reflex_black.svg", height="1.5em"),
-            rx.image(src="/reflex_white.svg", height="1.5em"),
+        rx.el.div(
+            rx.icon("badge-dollar-sign", size=18, color="white"),
+            class_name="brand-mark flex h-9 w-9 items-center justify-center rounded-xl",
+        ),
+        rx.vstack(
+            rx.el.span(
+                "Payroll",
+                class_name="text-sm font-semibold tracking-tight text-white",
+            ),
+            rx.el.span(
+                "Operations cockpit",
+                class_name="text-[11px] font-medium uppercase tracking-[0.14em] text-white/40",
+            ),
+            spacing="0",
+            align="start",
         ),
         rx.spacer(),
         align="center",
         width="100%",
         padding="0.35em",
-        margin_bottom="1em",
+        margin_bottom="1.25em",
     )
 
 
@@ -34,33 +51,41 @@ def sidebar_footer() -> rx.Component:
         The sidebar footer component.
 
     """
-    return rx.hstack(
-        rx.link(
-            rx.text("Docs", size="3"),
-            href="https://reflex.dev/docs/getting-started/introduction/",
-            color_scheme="gray",
-            underline="none",
+    return rx.el.div(
+        rx.hstack(
+            rx.link(
+                rx.text("Docs", size="2"),
+                href="https://reflex.dev/docs/getting-started/introduction/",
+                color_scheme="gray",
+                underline="none",
+                class_name="text-white/45 transition-colors duration-200 hover:text-white",
+            ),
+            rx.link(
+                rx.text("Blog", size="2"),
+                href="https://reflex.dev/blog/",
+                color_scheme="gray",
+                underline="none",
+                class_name="text-white/45 transition-colors duration-200 hover:text-white",
+            ),
+            rx.spacer(),
+            rx.el.span("Dark mode", class_name="text-xs text-white/45"),
+            justify="start",
+            align="center",
+            width="100%",
         ),
-        rx.link(
-            rx.text("Blog", size="3"),
-            href="https://reflex.dev/blog/",
-            color_scheme="gray",
-            underline="none",
-        ),
-        rx.spacer(),
-        rx.color_mode.button(style={"opacity": "0.8", "scale": "0.95"}),
-        justify="start",
-        align="center",
-        width="100%",
-        padding="0.35em",
+        class_name="w-full border-t border-white/8 px-1 pt-3",
     )
 
 
 def sidebar_item_icon(icon: str) -> rx.Component:
-    return rx.icon(icon, size=18)
+    return rx.icon(icon, size=17)
 
 
-def sidebar_item(text: str, url: str = "", on_click=None) -> rx.Component:
+def sidebar_item(
+    text: str,
+    url: str = "",
+    on_click: rx.event.EventType | None = None,
+) -> rx.Component:
     """Sidebar item.
 
     Args:
@@ -72,10 +97,12 @@ def sidebar_item(text: str, url: str = "", on_click=None) -> rx.Component:
 
     """
     # Whether the item is active.
-    active = (rx.State.router.page.path == url.lower()) | ((rx.State.router.page.path == "/") & text == "Overview")
+    active = (rx.State.router.page.path == url.lower()) | (
+        (rx.State.router.page.path == "/") & text == "Overview"
+    )
 
     return rx.link(
-        rx.hstack(
+        rx.el.div(
             rx.match(
                 text,
                 ("Overview", sidebar_item_icon("home")),
@@ -85,40 +112,11 @@ def sidebar_item(text: str, url: str = "", on_click=None) -> rx.Component:
                 ("Logout", sidebar_item_icon("log-out")),
                 sidebar_item_icon("layout-dashboard"),
             ),
-            rx.text(text, size="3", weight="regular"),
-            color=rx.cond(
-                active,
-                styles.accent_text_color,
-                styles.text_color,
-            ),
-            style={
-                "_hover": {
-                    "background_color": rx.cond(
-                        active,
-                        styles.accent_bg_color,
-                        styles.gray_bg_color,
-                    ),
-                    "color": rx.cond(
-                        active,
-                        styles.accent_text_color,
-                        styles.text_color,
-                    ),
-                    "opacity": "1",
-                },
-                "opacity": rx.cond(
-                    active,
-                    "1",
-                    "0.95",
-                ),
-            },
-            align="center",
-            border_radius=styles.border_radius,
-            width="100%",
-            spacing="2",
-            padding="0.35em",
+            rx.el.span(text),
+            class_name=rx.cond(active, NAV_ITEM_ACTIVE, NAV_ITEM_IDLE),
         ),
         underline="none",
-        href=url if not on_click else None,
+        href=url,
         width="100%",
         on_click=on_click,
     )
@@ -139,7 +137,11 @@ def sidebar() -> rx.Component:
         "/settings",
     ]
 
-    pages = [page_dict for page_list in DECORATED_PAGES.values() for _, page_dict in page_list]
+    pages = [
+        page_dict
+        for page_list in DECORATED_PAGES.values()
+        for _, page_dict in page_list
+    ]
 
     ordered_pages = sorted(
         pages,
@@ -153,25 +155,35 @@ def sidebar() -> rx.Component:
     return rx.flex(
         rx.vstack(
             sidebar_header(),
+            rx.el.p(
+                "Navigation",
+                class_name="px-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35",
+            ),
             rx.vstack(
                 *[
                     sidebar_item(
-                        text=page.get("title", page["route"].strip("/").capitalize()),
+                        text=page.get(
+                            "title", page["route"].strip("/").capitalize()
+                        ),
                         url=page["route"],
                     )
                     for page in ordered_pages
                 ],
-                sidebar_item("Logout", on_click=AuthState.logout()),  # type: ignore
                 spacing="1",
                 width="100%",
             ),
             rx.spacer(),
-            sidebar_footer(),
-            justify="end",
-            align="end",
+            rx.vstack(
+                sidebar_item("Logout", on_click=AuthState.logout()),  # type: ignore
+                sidebar_footer(),
+                spacing="3",
+                width="100%",
+            ),
+            justify="start",
+            align="start",
             width=styles.sidebar_content_width,
             height="100dvh",
-            padding="1em",
+            padding="1.25em 1em",
         ),
         display=["none", "none", "none", "none", "none", "flex"],
         max_width=styles.sidebar_width,
@@ -182,5 +194,7 @@ def sidebar() -> rx.Component:
         top="0px",
         left="0px",
         flex="1",
-        bg=rx.color("gray", 2),
+        z_index="2",
+        class_name="glass-panel border-y-0 border-l-0 border-r border-white/8",
+        background="linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012))",
     )

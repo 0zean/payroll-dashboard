@@ -1,32 +1,59 @@
 import reflex as rx
 
+from .. import styles
 from ..backend.table_state import Employee, TableState
 from ..backend.utils import header_cell
 from ..components.form_field import form_field
 from ..custom_components.reflex_react_select import react_select
 
+CELL_STRONG_CLASS = "text-[13px] font-semibold text-white"
+CELL_CLASS = "text-[13px] font-medium text-white/70"
+CELL_NUMERIC_CLASS = "tabular text-[13px] font-medium text-white/70"
+MUTED_CLASS = "text-[13px] font-medium text-white/35"
+TACTILE_CLASS = "press focus-ring"
+DIALOG_CLASS = "glass-card rounded-2xl"
+FIELD_LABEL_CLASS = (
+    "text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55"
+)
+
 
 def show_employee(user: Employee):
     """Show an employee in a table row."""
     return rx.table.row(
-        rx.table.cell(user.employee_name),
-        rx.table.cell(user.date),
-        rx.table.cell(user.hours_worked),
-        rx.table.cell(rx.cond(user.extra == 0, "-", user.extra)),
-        rx.table.cell(rx.cond(user.notes == "", "-", user.notes)),
+        rx.table.cell(user.employee_name, class_name=CELL_STRONG_CLASS),
+        rx.table.cell(user.date, class_name=CELL_CLASS),
+        rx.table.cell(user.hours_worked, class_name=CELL_NUMERIC_CLASS),
         rx.table.cell(
-            rx.hstack(
+            rx.cond(
+                user.extra == 0,
+                rx.el.span("-", class_name=MUTED_CLASS),
+                rx.el.span(user.extra, class_name=CELL_NUMERIC_CLASS),
+            ),
+        ),
+        rx.table.cell(
+            rx.cond(
+                user.notes == "",
+                rx.el.span("-", class_name=MUTED_CLASS),
+                rx.el.span(user.notes, class_name=CELL_CLASS),
+            ),
+        ),
+        rx.table.cell(
+            rx.el.div(
                 update_employee_dialog(user),
                 rx.icon_button(
-                    rx.icon("trash-2", size=22),
-                    on_click=lambda: TableState.delete_entry(employee_id=user.id),  # type: ignore
+                    rx.icon("trash-2", size=17),
+                    on_click=lambda: TableState.delete_entry(
+                        employee_id=user.id
+                    ),  # type: ignore
                     size="2",
                     variant="surface",
                     color_scheme="tomato",
+                    radius="large",
+                    class_name=TACTILE_CLASS,
                 ),
-            )
+                class_name="flex items-center justify-start gap-2",
+            ),
         ),
-        style={"_hover": {"bg": rx.color("gray", 3)}},
         align="center",
     )
 
@@ -35,28 +62,36 @@ def add_employee_button() -> rx.Component:
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
-                rx.icon("plus", size=26),
-                rx.text("Add Employee", size="4", display=["none", "none", "block"]),
+                rx.icon("plus", size=18),
+                rx.text(
+                    "Add Employee",
+                    size="3",
+                    display=["none", "none", "block"],
+                ),
                 size="3",
                 variant="surface",
+                class_name=f"{TACTILE_CLASS} font-semibold",
             ),
         ),
         rx.dialog.content(
             rx.hstack(
                 rx.badge(
-                    rx.icon(tag="users", size=34),
+                    rx.icon(tag="users", size=22),
                     color_scheme="grass",
+                    variant="soft",
                     radius="full",
-                    padding="0.65rem",
+                    padding="0.6rem",
                 ),
                 rx.vstack(
                     rx.dialog.title(
                         "Add New Employee",
                         weight="bold",
                         margin="0",
+                        class_name="tracking-tight text-white",
                     ),
                     rx.dialog.description(
                         "Fill the form with the employee's info",
+                        class_name="text-[13px] text-white/55",
                     ),
                     spacing="1",
                     height="100%",
@@ -74,20 +109,13 @@ def add_employee_button() -> rx.Component:
                         # Name
                         rx.vstack(
                             rx.hstack(
-                                rx.icon("user", size=16, stroke_width=1.5),
-                                rx.text("Employee"),
+                                rx.icon("user", size=15, stroke_width=1.5),
+                                rx.el.span(
+                                    "Employee", class_name=FIELD_LABEL_CLASS
+                                ),
                                 align="center",
                                 spacing="2",
                             ),
-                            # rx.select(
-                            #     TableState.employee_names,
-                            #     on_change=TableState.set_name,
-                            #     required=True,
-                            #     placeholder="Select Employee",
-                            #     width="100%",
-                            #     error_message=TableState.name_error,
-                            #     name="employee_name",
-                            # ),
                             react_select(
                                 options=TableState.employee_dict,
                                 required=True,
@@ -148,10 +176,14 @@ def add_employee_button() -> rx.Component:
                                 "Cancel",
                                 variant="soft",
                                 color_scheme="gray",
+                                class_name=TACTILE_CLASS,
                             ),
                         ),
                         rx.form.submit(
-                            rx.button("Submit Employee"),
+                            rx.button(
+                                "Submit Employee",
+                                class_name=f"{TACTILE_CLASS} font-semibold",
+                            ),
                             as_child=True,
                         ),
                         padding_top="2em",
@@ -168,8 +200,7 @@ def add_employee_button() -> rx.Component:
             ),
             max_width="450px",
             padding="1.5em",
-            border=f"2px solid {rx.color('accent', 7)}",
-            border_radius="25px",
+            class_name=DIALOG_CLASS,
         ),
         open=TableState.dialog_open,
         on_open_change=lambda open: rx.cond(
@@ -184,29 +215,33 @@ def update_employee_dialog(user: Employee):
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
-                rx.icon("square-pen", size=22),
-                # rx.text("Edit", size="3"),
+                rx.icon("square-pen", size=17),
                 color_scheme="blue",
                 size="2",
                 variant="surface",
+                radius="large",
+                class_name=TACTILE_CLASS,
             ),
         ),
         rx.dialog.content(
             rx.hstack(
                 rx.badge(
-                    rx.icon(tag="square-pen", size=34),
+                    rx.icon(tag="square-pen", size=22),
                     color_scheme="grass",
+                    variant="soft",
                     radius="full",
-                    padding="0.65rem",
+                    padding="0.6rem",
                 ),
                 rx.vstack(
                     rx.dialog.title(
                         "Edit Employee",
                         weight="bold",
                         margin="0",
+                        class_name="tracking-tight text-white",
                     ),
                     rx.dialog.description(
                         "Edit the Employee's info",
+                        class_name="text-[13px] text-white/55",
                     ),
                     spacing="1",
                     height="100%",
@@ -224,19 +259,13 @@ def update_employee_dialog(user: Employee):
                         # Name
                         rx.vstack(
                             rx.hstack(
-                                rx.icon("user", size=16, stroke_width=1.5),
-                                rx.text("Employee"),
+                                rx.icon("user", size=15, stroke_width=1.5),
+                                rx.el.span(
+                                    "Employee", class_name=FIELD_LABEL_CLASS
+                                ),
                                 align="center",
                                 spacing="2",
                             ),
-                            # rx.select(
-                            #     TableState.employee_names,
-                            #     default_value=user.employee_name,
-                            #     on_change=TableState.set_name,
-                            #     required=True,
-                            #     placeholder="Select Employee",
-                            #     width="100%",
-                            # ),
                             react_select(
                                 input_id="update_id",
                                 options=TableState.employee_dict,
@@ -303,10 +332,14 @@ def update_employee_dialog(user: Employee):
                                 "Cancel",
                                 variant="soft",
                                 color_scheme="gray",
+                                class_name=TACTILE_CLASS,
                             ),
                         ),
                         rx.form.submit(
-                            rx.button("Update Employee"),
+                            rx.button(
+                                "Update Employee",
+                                class_name=f"{TACTILE_CLASS} font-semibold",
+                            ),
                             as_child=True,
                         ),
                         padding_top="2em",
@@ -325,8 +358,7 @@ def update_employee_dialog(user: Employee):
             ),
             max_width="450px",
             padding="1.5em",
-            border=f"2px solid {rx.color('accent', 7)}",
-            border_radius="25px",
+            class_name=DIALOG_CLASS,
             key=f"edit-dialog-{user.id}",
         ),
         open=TableState.edit_dialog_employee_id == user.id,
@@ -338,123 +370,148 @@ def update_employee_dialog(user: Employee):
     )
 
 
-def _pagination_view() -> rx.Component:
-    return rx.hstack(
-        rx.text(
-            "Page ",
-            rx.code(TableState.page_number),
-            f" of {TableState.total_pages}",
-            justify="end",
-        ),
-        rx.hstack(
-            rx.icon_button(
-                rx.icon("chevrons-left", size=18),
-                on_click=TableState.first_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
-                color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
-                variant="soft",
-            ),
-            rx.icon_button(
-                rx.icon("chevron-left", size=18),
-                on_click=TableState.prev_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
-                color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
-                variant="soft",
-            ),
-            rx.icon_button(
-                rx.icon("chevron-right", size=18),
-                on_click=TableState.next_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
-                color_scheme=rx.cond(
-                    TableState.page_number == TableState.total_pages,
-                    "gray",
-                    "accent",
-                ),
-                variant="soft",
-            ),
-            rx.icon_button(
-                rx.icon("chevrons-right", size=18),
-                on_click=TableState.last_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
-                color_scheme=rx.cond(
-                    TableState.page_number == TableState.total_pages,
-                    "gray",
-                    "accent",
-                ),
-                variant="soft",
-            ),
-            align="center",
-            spacing="2",
-            justify="end",
-        ),
-        spacing="5",
-        margin_top="1em",
-        align="center",
-        width="100%",
-        justify="end",
+def _pager_button(
+    icon: str, event: rx.event.EventType, dimmed: rx.Var
+) -> rx.Component:
+    return rx.icon_button(
+        rx.icon(icon, size=16),
+        on_click=event,
+        opacity=rx.cond(dimmed, 0.45, 1),
+        color_scheme=rx.cond(dimmed, "gray", "accent"),
+        variant="soft",
+        radius="large",
+        class_name=TACTILE_CLASS,
     )
 
 
-def main_table() -> rx.Component:
-    return rx.fragment(
-        rx.flex(
-            add_employee_button(),
-            rx.spacer(),
-            rx.cond(
-                TableState.sort_reverse,
-                rx.icon(
-                    "arrow-down-z-a",
-                    size=28,
-                    stroke_width=1.5,
-                    cursor="pointer",
-                    on_click=TableState.toggle_sort,  # type: ignore
-                ),
-                rx.icon(
-                    "arrow-down-a-z",
-                    size=28,
-                    stroke_width=1.5,
-                    cursor="pointer",
-                    on_click=TableState.toggle_sort,  # type: ignore
-                ),
+def _pagination_view() -> rx.Component:
+    return rx.el.div(
+        rx.el.p(
+            "Page ",
+            rx.el.span(
+                TableState.page_number,
+                class_name="tabular font-semibold text-white",
             ),
+            f" of {TableState.total_pages}",
+            class_name="text-xs font-medium text-white/50",
+        ),
+        rx.el.div(
+            _pager_button(
+                "chevrons-left",
+                TableState.first_page,  # type: ignore
+                TableState.page_number == 1,
+            ),
+            _pager_button(
+                "chevron-left",
+                TableState.prev_page,  # type: ignore
+                TableState.page_number == 1,
+            ),
+            _pager_button(
+                "chevron-right",
+                TableState.next_page,  # type: ignore
+                TableState.page_number == TableState.total_pages,
+            ),
+            _pager_button(
+                "chevrons-right",
+                TableState.last_page,  # type: ignore
+                TableState.page_number == TableState.total_pages,
+            ),
+            class_name="flex items-center gap-2",
+        ),
+        class_name=(
+            "flex w-full flex-col items-start gap-3 sm:flex-row sm:items-center "
+            "sm:justify-end sm:gap-5"
+        ),
+    )
+
+
+def _sort_toggle() -> rx.Component:
+    return rx.el.button(
+        rx.cond(
+            TableState.sort_reverse,
+            rx.icon("arrow-down-z-a", size=17, stroke_width=1.5),
+            rx.icon("arrow-down-a-z", size=17, stroke_width=1.5),
+        ),
+        on_click=TableState.toggle_sort,  # type: ignore
+        aria_label="Toggle sort direction",
+        class_name=(
+            "press focus-ring flex h-10 w-10 shrink-0 items-center justify-center "
+            "rounded-xl border border-white/10 bg-white/5 text-white/70 "
+            "transition-colors duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white"
+        ),
+    )
+
+
+def table_toolbar() -> rx.Component:
+    return rx.el.div(
+        rx.el.div(
+            add_employee_button(),
+            class_name="flex shrink-0 items-center",
+        ),
+        rx.el.div(
+            _sort_toggle(),
             rx.select(
                 {"employee_name", "date", "hours_worked", "extra", "notes"},
                 placeholder="Sort By: ...",
                 size="3",
+                radius="large",
                 on_change=lambda sort_value: TableState.sort_values(sort_value),  # type: ignore
+                class_name="min-w-[10rem] flex-1 sm:flex-none",
             ),
             rx.input(
-                rx.input.slot(rx.icon("search")),
+                rx.input.slot(rx.icon("search", size=16), padding_left="0"),
                 placeholder="Search here...",
                 size="3",
-                max_width="225px",
                 width="100%",
-                variant="surface",
+                radius="large",
+                style=styles.ghost_input_style,
                 on_change=lambda value: TableState.filter_values(value),  # type: ignore
+                class_name="w-full sm:max-w-[240px]",
             ),
-            justify="end",
-            align="center",
-            spacing="3",
-            wrap="wrap",
-            width="100%",
-            padding_bottom="1em",
+            class_name=(
+                "flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center "
+                "sm:justify-end"
+            ),
         ),
-        rx.table.root(
-            rx.table.header(
-                rx.table.row(
-                    header_cell("Employee", "user"),
-                    header_cell("Date", "calendar-days"),
-                    header_cell("Hours", "clock"),
-                    header_cell("Extra Hours", "clock-arrow-up"),
-                    header_cell("Notes", "notebook-pen"),
-                    header_cell("Actions", "cog"),
+        class_name=(
+            "glass-card spotlight control-bar flex w-full flex-col gap-3 p-3 "
+            "sm:flex-row sm:items-center sm:justify-between"
+        ),
+    )
+
+
+def main_table() -> rx.Component:
+    return rx.el.div(
+        table_toolbar(),
+        rx.el.div(
+            rx.el.div(
+                rx.table.root(
+                    rx.table.header(
+                        rx.table.row(
+                            header_cell("Employee", "user"),
+                            header_cell("Date", "calendar-days"),
+                            header_cell("Hours", "clock"),
+                            header_cell("Extra Hours", "clock-arrow-up"),
+                            header_cell("Notes", "notebook-pen"),
+                            header_cell("Actions", "cog"),
+                        ),
+                    ),
+                    rx.table.body(
+                        rx.foreach(TableState.get_current_page, show_employee)
+                    ),
+                    variant="surface",
+                    size="2",
+                    width="100%",
+                    on_mount=TableState.load_entries,  # type: ignore
+                    class_name="min-w-[880px]",
                 ),
+                class_name="data-table table-shell w-full overflow-x-auto",
             ),
-            rx.table.body(rx.foreach(TableState.get_current_page, show_employee)),
-            variant="surface",
-            size="3",
-            width="100%",
-            on_mount=TableState.load_entries,  # type: ignore
+            rx.el.div(
+                _pagination_view(),
+                class_name="w-full border-t border-white/8 px-3 py-3 sm:px-4",
+            ),
+            class_name="glass-card spotlight w-full overflow-hidden rounded-2xl",
         ),
-        _pagination_view(),
+        class_name="flex w-full flex-col gap-4",
     )
