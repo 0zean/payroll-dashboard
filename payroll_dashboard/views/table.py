@@ -6,15 +6,13 @@ from ..backend.utils import header_cell
 from ..components.form_field import form_field
 from ..custom_components.reflex_react_select import react_select
 
-CELL_STRONG_CLASS = "text-[13px] font-semibold text-white"
-CELL_CLASS = "text-[13px] font-medium text-white/70"
-CELL_NUMERIC_CLASS = "tabular text-[13px] font-medium text-white/70"
-MUTED_CLASS = "text-[13px] font-medium text-white/35"
-TACTILE_CLASS = "press focus-ring"
-DIALOG_CLASS = "glass-card rounded-2xl"
-FIELD_LABEL_CLASS = (
-    "text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55"
-)
+CELL_STRONG_CLASS = "md-cell-primary"
+CELL_CLASS = "md-cell"
+CELL_NUMERIC_CLASS = "md-cell-numeric"
+MUTED_CLASS = "md-cell-empty"
+TACTILE_CLASS = "md-press focus-ring"
+DIALOG_CLASS = "md-dialog"
+FIELD_LABEL_CLASS = "md-label-large md-on-surface-variant"
 
 
 def show_employee(user: Employee):
@@ -46,9 +44,10 @@ def show_employee(user: Employee):
                         employee_id=user.id
                     ),  # type: ignore
                     size="2",
-                    variant="surface",
-                    color_scheme="tomato",
-                    radius="large",
+                    variant="soft",
+                    color_scheme="red",
+                    radius="full",
+                    aria_label="Delete entry",
                     class_name=TACTILE_CLASS,
                 ),
                 class_name="flex items-center justify-start gap-2",
@@ -63,35 +62,31 @@ def add_employee_button() -> rx.Component:
         rx.dialog.trigger(
             rx.button(
                 rx.icon("plus", size=18),
-                rx.text(
+                rx.el.span(
                     "Add Employee",
-                    size="3",
-                    display=["none", "none", "block"],
+                    class_name="md-label-large hidden sm:inline",
                 ),
                 size="3",
-                variant="surface",
-                class_name=f"{TACTILE_CLASS} font-semibold",
+                variant="solid",
+                radius="full",
+                class_name=TACTILE_CLASS,
             ),
         ),
         rx.dialog.content(
             rx.hstack(
-                rx.badge(
-                    rx.icon(tag="users", size=22),
-                    color_scheme="grass",
-                    variant="soft",
-                    radius="full",
-                    padding="0.6rem",
+                rx.el.div(
+                    rx.icon("users", size=20),
+                    class_name="md-icon-container h-11 w-11 rounded-full",
                 ),
                 rx.vstack(
                     rx.dialog.title(
                         "Add New Employee",
-                        weight="bold",
                         margin="0",
-                        class_name="tracking-tight text-white",
+                        class_name="md-dialog-headline",
                     ),
                     rx.dialog.description(
                         "Fill the form with the employee's info",
-                        class_name="text-[13px] text-white/55",
+                        class_name="md-body-medium md-on-surface-variant",
                     ),
                     spacing="1",
                     height="100%",
@@ -126,6 +121,22 @@ def add_employee_button() -> rx.Component:
                                 is_searchable=True,
                                 class_name_prefix="react-select-add",
                             ),
+                            rx.cond(
+                                TableState.name_error != "",
+                                rx.el.p(
+                                    rx.icon("circle-alert", size=13),
+                                    rx.el.span(TableState.name_error),
+                                    role="alert",
+                                    class_name="md-error-text",
+                                ),
+                                rx.el.p(
+                                    "Pick an onboarded employee.",
+                                    class_name="md-supporting-text",
+                                ),
+                            ),
+                            spacing="2",
+                            width="100%",
+                            align_items="start",
                         ),
                         # Date
                         form_field(
@@ -148,6 +159,7 @@ def add_employee_button() -> rx.Component:
                             on=TableState.set_hours_worked,
                             required=True,
                             error_message=TableState.hours_error,
+                            supporting_text="Multiples of 0.5 only.",
                         ),
                         # Extra Hours
                         form_field(
@@ -157,6 +169,7 @@ def add_employee_button() -> rx.Component:
                             "extra",
                             "clock-arrow-up",
                             on=TableState.set_extra,
+                            supporting_text="Optional.",
                         ),
                         # Notes
                         form_field(
@@ -166,23 +179,31 @@ def add_employee_button() -> rx.Component:
                             "notes",
                             "notebook-pen",
                             on=TableState.set_notes,
+                            supporting_text="Optional.",
                         ),
                         direction="column",
-                        spacing="3",
+                        spacing="4",
                     ),
                     rx.flex(
                         rx.dialog.close(
                             rx.button(
-                                "Cancel",
-                                variant="soft",
+                                rx.el.span(
+                                    "Cancel", class_name="md-label-large"
+                                ),
+                                variant="ghost",
                                 color_scheme="gray",
-                                class_name=TACTILE_CLASS,
+                                radius="full",
+                                class_name=f"{TACTILE_CLASS} px-4",
                             ),
                         ),
                         rx.form.submit(
                             rx.button(
-                                "Submit Employee",
-                                class_name=f"{TACTILE_CLASS} font-semibold",
+                                rx.el.span(
+                                    "Submit Employee",
+                                    class_name="md-label-large",
+                                ),
+                                radius="full",
+                                class_name=TACTILE_CLASS,
                             ),
                             as_child=True,
                         ),
@@ -216,32 +237,29 @@ def update_employee_dialog(user: Employee):
         rx.dialog.trigger(
             rx.button(
                 rx.icon("square-pen", size=17),
-                color_scheme="blue",
+                color_scheme="indigo",
                 size="2",
-                variant="surface",
-                radius="large",
+                variant="soft",
+                radius="full",
+                aria_label="Edit entry",
                 class_name=TACTILE_CLASS,
             ),
         ),
         rx.dialog.content(
             rx.hstack(
-                rx.badge(
-                    rx.icon(tag="square-pen", size=22),
-                    color_scheme="grass",
-                    variant="soft",
-                    radius="full",
-                    padding="0.6rem",
+                rx.el.div(
+                    rx.icon("square-pen", size=20),
+                    class_name="md-icon-container h-11 w-11 rounded-full",
                 ),
                 rx.vstack(
                     rx.dialog.title(
                         "Edit Employee",
-                        weight="bold",
                         margin="0",
-                        class_name="tracking-tight text-white",
+                        class_name="md-dialog-headline",
                     ),
                     rx.dialog.description(
                         "Edit the Employee's info",
-                        class_name="text-[13px] text-white/55",
+                        class_name="md-body-medium md-on-surface-variant",
                     ),
                     spacing="1",
                     height="100%",
@@ -278,6 +296,13 @@ def update_employee_dialog(user: Employee):
                                 is_searchable=True,
                                 class_name_prefix="react-select-update",
                             ),
+                            rx.el.p(
+                                "Change the employee for this entry.",
+                                class_name="md-supporting-text",
+                            ),
+                            spacing="2",
+                            width="100%",
+                            align_items="start",
                         ),
                         # Date
                         form_field(
@@ -302,6 +327,7 @@ def update_employee_dialog(user: Employee):
                             on=TableState.set_hours_worked,
                             required=True,
                             error_message=TableState.hours_error,
+                            supporting_text="Multiples of 0.5 only.",
                         ),
                         # Extra Hours
                         form_field(
@@ -312,6 +338,7 @@ def update_employee_dialog(user: Employee):
                             "clock-arrow-up",
                             f"{user.extra}",
                             on=TableState.set_extra,
+                            supporting_text="Optional.",
                         ),
                         # Notes
                         form_field(
@@ -322,23 +349,31 @@ def update_employee_dialog(user: Employee):
                             "notebook-pen",
                             user.notes,
                             on=TableState.set_notes,
+                            supporting_text="Optional.",
                         ),
                         direction="column",
-                        spacing="3",
+                        spacing="4",
                     ),
                     rx.flex(
                         rx.dialog.close(
                             rx.button(
-                                "Cancel",
-                                variant="soft",
+                                rx.el.span(
+                                    "Cancel", class_name="md-label-large"
+                                ),
+                                variant="ghost",
                                 color_scheme="gray",
-                                class_name=TACTILE_CLASS,
+                                radius="full",
+                                class_name=f"{TACTILE_CLASS} px-4",
                             ),
                         ),
                         rx.form.submit(
                             rx.button(
-                                "Update Employee",
-                                class_name=f"{TACTILE_CLASS} font-semibold",
+                                rx.el.span(
+                                    "Update Employee",
+                                    class_name="md-label-large",
+                                ),
+                                radius="full",
+                                class_name=TACTILE_CLASS,
                             ),
                             as_child=True,
                         ),
@@ -379,7 +414,8 @@ def _pager_button(
         opacity=rx.cond(dimmed, 0.45, 1),
         color_scheme=rx.cond(dimmed, "gray", "accent"),
         variant="soft",
-        radius="large",
+        radius="full",
+        aria_label=icon,
         class_name=TACTILE_CLASS,
     )
 
@@ -390,10 +426,10 @@ def _pagination_view() -> rx.Component:
             "Page ",
             rx.el.span(
                 TableState.page_number,
-                class_name="tabular font-semibold text-white",
+                class_name="tabular md-label-large md-on-surface",
             ),
             f" of {TableState.total_pages}",
-            class_name="text-xs font-medium text-white/50",
+            class_name="md-label-medium md-on-surface-variant",
         ),
         rx.el.div(
             _pager_button(
@@ -434,11 +470,8 @@ def _sort_toggle() -> rx.Component:
         ),
         on_click=TableState.toggle_sort,  # type: ignore
         aria_label="Toggle sort direction",
-        class_name=(
-            "press focus-ring flex h-10 w-10 shrink-0 items-center justify-center "
-            "rounded-xl border border-white/10 bg-white/5 text-white/70 "
-            "transition-colors duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white"
-        ),
+        type="button",
+        class_name="md-icon-button-outlined md-press focus-ring",
     )
 
 
@@ -456,7 +489,7 @@ def table_toolbar() -> rx.Component:
                 size="3",
                 radius="large",
                 on_change=lambda sort_value: TableState.sort_values(sort_value),  # type: ignore
-                class_name="min-w-[10rem] flex-1 sm:flex-none",
+                class_name="md-press focus-ring min-w-[10rem] flex-1 sm:flex-none",
             ),
             rx.input(
                 rx.input.slot(rx.icon("search", size=16), padding_left="0"),
@@ -466,7 +499,7 @@ def table_toolbar() -> rx.Component:
                 radius="large",
                 style=styles.ghost_input_style,
                 on_change=lambda value: TableState.filter_values(value),  # type: ignore
-                class_name="w-full sm:max-w-[240px]",
+                class_name="w-full sm:max-w-[260px]",
             ),
             class_name=(
                 "flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center "
@@ -474,7 +507,7 @@ def table_toolbar() -> rx.Component:
             ),
         ),
         class_name=(
-            "glass-card spotlight control-bar flex w-full flex-col gap-3 p-3 "
+            "md-toolbar md-elevate flex w-full flex-col gap-3 p-3 "
             "sm:flex-row sm:items-center sm:justify-between"
         ),
     )
@@ -509,9 +542,9 @@ def main_table() -> rx.Component:
             ),
             rx.el.div(
                 _pagination_view(),
-                class_name="w-full border-t border-white/8 px-3 py-3 sm:px-4",
+                class_name="md-table-footer w-full px-3 py-3 sm:px-4",
             ),
-            class_name="glass-card spotlight w-full overflow-hidden rounded-2xl",
+            class_name="md-table-card md-elevate w-full",
         ),
         class_name="flex w-full flex-col gap-4",
     )

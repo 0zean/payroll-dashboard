@@ -23,17 +23,10 @@ def stats_card(
                 class_name="shrink-0",
             ),
             rx.vstack(
-                rx.el.span(
-                    stat_name,
-                    class_name=(
-                        "text-[10px] font-semibold uppercase tracking-[0.16em] text-white/45"
-                    ),
-                ),
+                rx.el.span(stat_name, class_name="md-eyebrow"),
                 rx.el.span(
                     f"{extra_char}{value:,}",
-                    class_name=(
-                        "tabular text-2xl font-semibold leading-tight tracking-tight text-white"
-                    ),
+                    class_name="md-metric-value",
                 ),
                 spacing="1",
                 align="start",
@@ -46,7 +39,7 @@ def stats_card(
         size="3",
         width="100%",
         box_shadow=styles.box_shadow_style,
-        class_name="glass-card spotlight rounded-2xl",
+        class_name="md-card md-elevate rounded-[var(--md-sys-shape-corner-medium)]",
     )
 
 

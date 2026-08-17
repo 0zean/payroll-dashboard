@@ -1,27 +1,62 @@
-"""Styles for the app — cinematic dark "payroll operations cockpit" system."""
+"""Styles for the app — Material Design 3 token system.
+
+Color, shape, motion and elevation values mirror the M3 tokens declared in
+`assets/m3.css` so Python-side styles stay in sync with the CSS layer.
+"""
 
 import reflex as rx
 
-# Core canvas + accent tokens
-canvas_deep = "#020203"
-canvas = "#050506"
-accent_hex = "#5E6AD2"
-accent_soft_hex = "#8B93E8"
-accent_bright_hex = "#A5AEFF"
+# --- M3 color roles (referenced through CSS custom properties) -------------
+surface = "var(--md-sys-color-surface)"
+surface_container_low = "var(--md-sys-color-surface-container-low)"
+surface_container = "var(--md-sys-color-surface-container)"
+surface_container_high = "var(--md-sys-color-surface-container-high)"
+surface_container_highest = "var(--md-sys-color-surface-container-highest)"
+on_surface = "var(--md-sys-color-on-surface)"
+on_surface_variant = "var(--md-sys-color-on-surface-variant)"
+outline = "var(--md-sys-color-outline)"
+outline_variant = "var(--md-sys-color-outline-variant)"
+primary = "var(--md-sys-color-primary)"
+on_primary = "var(--md-sys-color-on-primary)"
+primary_container = "var(--md-sys-color-primary-container)"
+on_primary_container = "var(--md-sys-color-on-primary-container)"
+secondary_container = "var(--md-sys-color-secondary-container)"
+on_secondary_container = "var(--md-sys-color-on-secondary-container)"
+error = "var(--md-sys-color-error)"
 
-border_radius = "12px"
-border = "1px solid rgba(255, 255, 255, 0.08)"
-border_strong = "1px solid rgba(255, 255, 255, 0.14)"
+# --- M3 shape scale (4px -> 28px) -----------------------------------------
+shape_extra_small = "var(--md-sys-shape-corner-extra-small)"
+shape_small = "var(--md-sys-shape-corner-small)"
+shape_medium = "var(--md-sys-shape-corner-medium)"
+shape_large = "var(--md-sys-shape-corner-large)"
+shape_extra_large = "var(--md-sys-shape-corner-extra-large)"
+shape_full = "var(--md-sys-shape-corner-full)"
 
-text_color = "rgba(233, 234, 240, 0.72)"
-text_color_strong = "#F4F5F8"
-gray_color = "rgba(233, 234, 240, 0.5)"
-gray_bg_color = "rgba(255, 255, 255, 0.06)"
+# --- M3 elevation ---------------------------------------------------------
+elevation_0 = "var(--md-sys-elevation-level0)"
+elevation_1 = "var(--md-sys-elevation-level1)"
+elevation_2 = "var(--md-sys-elevation-level2)"
+elevation_3 = "var(--md-sys-elevation-level3)"
 
-accent_text_color = accent_bright_hex
-accent_color = accent_hex
-accent_bg_color = "rgba(94, 106, 210, 0.18)"
-accent_glow = "rgba(94, 106, 210, 0.45)"
+# --- M3 motion ------------------------------------------------------------
+easing_standard = "var(--md-sys-motion-easing-standard)"
+easing_emphasized = "var(--md-sys-motion-easing-emphasized)"
+duration_short = "var(--md-sys-motion-duration-short4)"
+duration_medium = "var(--md-sys-motion-duration-medium2)"
+
+# --- Backwards compatible aliases used across views -----------------------
+border_radius = shape_medium
+border = f"1px solid {outline_variant}"
+border_strong = f"1px solid {outline}"
+
+text_color = on_surface_variant
+text_color_strong = on_surface
+gray_color = on_surface_variant
+gray_bg_color = surface_container
+
+accent_text_color = primary
+accent_color = primary
+accent_bg_color = primary_container
 
 hover_accent_color = {"_hover": {"color": accent_text_color}}
 hover_accent_bg = {"_hover": {"background_color": accent_bg_color}}
@@ -32,14 +67,7 @@ sidebar_content_width = "17em"
 max_width = "1480px"
 color_box_size = ["2.25rem", "2.25rem", "2.5rem"]
 
-transition = "all 240ms cubic-bezier(0.22, 1, 0.36, 1)"
-
-glass_surface = {
-    "background": "linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018))",
-    "backdrop_filter": "blur(20px) saturate(150%)",
-    "border": border,
-    "border_radius": "16px",
-}
+transition = f"all {duration_short} {easing_standard}"
 
 template_page_style = {
     "padding_top": ["1em", "1em", "2em"],
@@ -60,8 +88,8 @@ link_style = {
 }
 
 overlapping_button_style = {
-    "background_color": "rgba(255, 255, 255, 0.06)",
-    "border_radius": border_radius,
+    "background_color": surface_container,
+    "border_radius": shape_full,
 }
 
 markdown_style = {
@@ -89,54 +117,53 @@ notification_badge_style = {
     "top": "-0.35rem",
 }
 
+# M3 filled text field surface treatment.
 ghost_input_style = {
     "--text-field-selection-color": "",
-    "--text-field-focus-color": accent_hex,
+    "--text-field-focus-color": primary,
     "--text-field-border-width": "1px",
     "background_clip": "content-box",
-    "background_color": "rgba(255, 255, 255, 0.035)",
-    "box_shadow": "inset 0 0 0 var(--text-field-border-width) rgba(255,255,255,0.08)",
-    "color": text_color_strong,
+    "background_color": surface_container_highest,
+    "box_shadow": f"inset 0 0 0 var(--text-field-border-width) {outline_variant}",
+    "color": on_surface,
     "transition": transition,
     "_hover": {
-        "box_shadow": "inset 0 0 0 var(--text-field-border-width) rgba(255,255,255,0.16)",
+        "box_shadow": f"inset 0 0 0 var(--text-field-border-width) {outline}",
     },
     "_focus_within": {
-        "box_shadow": f"inset 0 0 0 1px {accent_hex}, 0 0 0 4px rgba(94, 106, 210, 0.18)",
+        "box_shadow": f"inset 0 0 0 2px {primary}",
     },
 }
 
-box_shadow_style = (
-    "inset 0 1px 0 rgba(255,255,255,0.06), 0 28px 60px -38px rgba(2,2,3,0.95)"
-)
+box_shadow_style = elevation_1
 
 color_picker_style = {
-    "border_radius": "max(var(--radius-3), var(--radius-full))",
-    "box_shadow": box_shadow_style,
+    "border_radius": shape_full,
+    "box_shadow": elevation_1,
     "cursor": "pointer",
     "display": "flex",
     "align_items": "center",
     "justify_content": "center",
-    "transition": "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1)",
+    "transition": f"transform {duration_short} {easing_standard}",
     "_hover": {
-        "transform": "translateY(-2px) scale(1.04)",
+        "transform": "scale(1.04)",
     },
     "_active": {
-        "transform": "translateY(2px) scale(0.95)",
+        "transform": "scale(0.96)",
     },
 }
 
 
 base_stylesheets = [
-    "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
-    "/styles.css",
+    "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap",
+    "/m3.css",
 ]
 
 base_style = {
     "font_family": (
-        "Inter, 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
+        "Roboto, 'Roboto Flex', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
     ),
-    "background_color": canvas_deep,
-    "color": text_color_strong,
-    "letter_spacing": "-0.011em",
+    "background_color": surface,
+    "color": on_surface,
+    "letter_spacing": "0",
 }

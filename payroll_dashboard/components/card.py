@@ -10,6 +10,6 @@ def card(*children, **props):
         box_shadow=styles.box_shadow_style,
         size="3",
         width="100%",
-        class_name=f"glass-card spotlight rounded-2xl {extra_class}",
+        class_name=f"md-card md-elevate {extra_class}",
         **props,
     )

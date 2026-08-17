@@ -14,14 +14,14 @@ app = rx.App(
         appearance="light",
         accent_color="indigo",
         gray_color="slate",
-        radius="large",
+        radius="medium",
     ),
     head_components=[
         rx.el.link(rel="preconnect", href="https://fonts.googleapis.com"),
         rx.el.link(
             rel="preconnect", href="https://fonts.gstatic.com", cross_origin=""
         ),
-        rx.el.meta(name="color-scheme", content="dark"),
-        rx.el.meta(name="theme-color", content="#050506"),
+        rx.el.meta(name="color-scheme", content="light dark"),
+        rx.el.meta(name="theme-color", content="#FCF8FF"),
     ],
 )

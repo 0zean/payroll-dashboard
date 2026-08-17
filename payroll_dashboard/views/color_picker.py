@@ -5,7 +5,7 @@ from reflex_components_radix.themes.base import (
 )
 
 from .. import styles
-from ..templates.template import ThemeState
+from payroll_dashboard.states.theme_state import ThemeState
 
 primary_color_dict: dict[str, str] = {
     color.capitalize(): f"linear-gradient(45deg, {rx.color(color, 10)}, {rx.color(color, 8)})"
@@ -24,7 +24,7 @@ class ColorPickerState(rx.State):
     secondary_color_options: dict[str, str] = secondary_color_dict
 
 
-SWATCH_WRAPPER_CLASS = "focus-ring press rounded-full"
+SWATCH_WRAPPER_CLASS = "focus-ring md-press rounded-full"
 
 
 def _display_primary_color(color: list) -> rx.Component:
@@ -37,15 +37,15 @@ def _display_primary_color(color: list) -> rx.Component:
                     bg=color[1],
                     height=styles.color_box_size,
                     width=styles.color_box_size,
-                    border="2px solid rgba(255, 255, 255, 0.85)",
                     style=styles.color_picker_style,
+                    class_name="md-swatch md-swatch-selected",
                 ),
                 rx.box(
                     bg=color[1],
                     height=styles.color_box_size,
                     width=styles.color_box_size,
-                    border="1px solid rgba(255, 255, 255, 0.12)",
                     style=styles.color_picker_style,
+                    class_name="md-swatch",
                 ),
             ),
             on_click=ThemeState.setvar("accent_color", color[0].lower()),
@@ -66,15 +66,15 @@ def _display_secondary_color(colors: list) -> rx.Component:
                     bg=colors[1],
                     height=styles.color_box_size,
                     width=styles.color_box_size,
-                    border="2px solid rgba(255, 255, 255, 0.85)",
                     style=styles.color_picker_style,
+                    class_name="md-swatch md-swatch-selected",
                 ),
                 rx.box(
                     bg=colors[1],
                     height=styles.color_box_size,
                     width=styles.color_box_size,
-                    border="1px solid rgba(255, 255, 255, 0.12)",
                     style=styles.color_picker_style,
+                    class_name="md-swatch",
                 ),
             ),
             on_click=ThemeState.setvar("gray_color", colors[0].lower()),

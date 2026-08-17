@@ -1,8 +1,8 @@
 import reflex as rx
 
-from ..templates.template import ThemeState
+from payroll_dashboard.states.theme_state import ThemeState
 
-PICKER_SELECT_CLASS = "press focus-ring w-full sm:max-w-[16rem]"
+PICKER_SELECT_CLASS = "md-press focus-ring w-full sm:max-w-[16rem]"
 
 
 def radius_picker() -> rx.Component:
@@ -22,12 +22,9 @@ def radius_picker() -> rx.Component:
             class_name=PICKER_SELECT_CLASS,
         ),
         rx.el.p(
-            "Current: ",
-            rx.el.span(
-                ThemeState.radius,
-                class_name="font-semibold text-white",
-            ),
-            class_name="text-xs font-medium text-white/45",
+            "Current:",
+            rx.el.strong(ThemeState.radius),
+            class_name="md-value-chip",
         ),
-        class_name="flex w-full flex-col gap-2",
+        class_name="flex w-full flex-col items-start gap-3",
     )

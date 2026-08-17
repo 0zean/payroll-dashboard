@@ -7,11 +7,11 @@ from typing import Callable
 import reflex as rx
 
 from .. import styles
-from ..backend.auth_state import AuthState
-from ..components.ambient import ambient_background
-from ..components.navbar import navbar
-from ..components.sidebar import sidebar
-from ..views.login import login_view
+from payroll_dashboard.backend.auth_state import AuthState
+from payroll_dashboard.components.navbar import navbar
+from payroll_dashboard.components.sidebar import sidebar
+from payroll_dashboard.states.theme_state import ThemeState
+from payroll_dashboard.views.login import login_view
 
 # Meta tags for the app.
 default_meta = [
@@ -35,18 +35,6 @@ def menu_item_link(text, href):
             "background_color": styles.accent_text_color,
         },
     )
-
-
-class ThemeState(rx.State):
-    """The state for the theme of the app."""
-
-    accent_color: str = "indigo"
-
-    gray_color: str = "slate"
-
-    radius: str = "large"
-
-    scaling: str = "100%"
 
 
 ALL_PAGES = []
@@ -94,7 +82,6 @@ def template(
                     ~AuthState.is_authenticated,
                     login_view(),
                     rx.el.div(
-                        ambient_background(),
                         rx.flex(
                             navbar(),
                             sidebar(),
@@ -131,10 +118,10 @@ def template(
                             position="relative",
                             z_index="1",
                         ),
-                        class_name="app-canvas w-full",
+                        class_name="md-app-canvas w-full",
                     ),
                 ),
-                class_name="min-h-screen w-full bg-[#020203] text-white",
+                class_name=ThemeState.shell_class,
             )
 
         @rx.page(
@@ -148,7 +135,7 @@ def template(
         def theme_wrap() -> rx.Component:
             return rx.theme(
                 templated_page(),
-                appearance="dark",
+                appearance=ThemeState.appearance,  # type: ignore
                 has_background=True,
                 accent_color=ThemeState.accent_color,  # type: ignore
                 gray_color=ThemeState.gray_color,  # type: ignore

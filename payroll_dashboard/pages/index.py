@@ -22,10 +22,18 @@ def index() -> rx.Component:
 
     """
     return rx.vstack(
-        rx.heading(
-            f"Welcome, {AuthState.user.name.split(' ')[0]}",  # type: ignore
-            size="5",
-            class_name="w-full tracking-tight text-white",
+        rx.el.div(
+            rx.el.p("Payroll operations", class_name="md-eyebrow"),
+            rx.el.h1(
+                f"Welcome, {AuthState.user.name.split(' ')[0]}",  # type: ignore
+                class_name="md-headline-small md-on-surface",
+            ),
+            rx.el.p(
+                "Review payroll totals, clean the master list and sync the latest "
+                "entries to Sheets.",
+                class_name="md-supporting max-w-[62ch]",
+            ),
+            class_name="flex w-full flex-col gap-1",
         ),
         rx.el.div(
             rx.input(
@@ -54,7 +62,7 @@ def index() -> rx.Component:
                 class_name="flex shrink-0 items-center justify-start gap-3 sm:justify-end",
             ),
             class_name=(
-                "glass-card spotlight control-bar flex w-full flex-col gap-3 p-3 "
+                "md-toolbar md-elevate flex w-full flex-col gap-3 p-3 "
                 "sm:flex-row sm:items-center sm:justify-between"
             ),
         ),
@@ -65,22 +73,21 @@ def index() -> rx.Component:
                     "Go to Payroll Entry",
                     href="/table",
                     underline="none",
-                    class_name=(
-                        "focus-ring text-sm font-semibold text-[#A5AEFF] "
-                        "transition-colors duration-200 hover:text-white"
-                    ),
+                    class_name="md-button-text focus-ring",
                 ),
                 rx.button(
                     rx.icon("sheet", size=16),
-                    "Sync to Sheets",
+                    rx.el.span("Sync to Sheets", class_name="md-label-large"),
                     type="submit",
-                    variant="surface",
+                    size="3",
+                    variant="soft",
+                    radius="full",
                     loading=TableState.loading,
                     on_click=TableState.start_sync,
                     disabled=rx.cond(
                         TableState.users.length() > 0, False, True
                     ),  # type: ignore
-                    class_name="press focus-ring w-full font-semibold sm:w-auto",
+                    class_name="md-press focus-ring w-full sm:w-auto",
                 ),
                 class_name=(
                     "flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center "

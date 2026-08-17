@@ -16,10 +16,18 @@ def table() -> rx.Component:
 
     """
     return rx.vstack(
-        rx.heading(
-            "Table",
-            size="5",
-            class_name="w-full tracking-tight text-white",
+        rx.el.div(
+            rx.el.p("Payroll entry", class_name="md-eyebrow"),
+            rx.el.h1(
+                "Hours & Entries",
+                class_name="md-headline-small md-on-surface",
+            ),
+            rx.el.p(
+                "Add, edit and review payroll entries. Sort, search and paginate the "
+                "masterlist without leaving the page.",
+                class_name="md-supporting max-w-[62ch]",
+            ),
+            class_name="flex w-full flex-col gap-1",
         ),
         main_table(),
         spacing="6",

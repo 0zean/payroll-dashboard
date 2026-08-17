@@ -4,10 +4,10 @@ from ..backend.schemas import Employee
 from ..backend.table_state import TableState
 from ..backend.utils import header_cell
 
-CELL_STRONG_CLASS = "text-[13px] font-semibold text-white"
-CELL_CLASS = "text-[13px] font-medium text-white/70"
-CELL_NUMERIC_CLASS = "tabular text-[13px] font-medium text-white/70"
-PAGER_BUTTON_CLASS = "press focus-ring"
+CELL_STRONG_CLASS = "md-cell-primary"
+CELL_CLASS = "md-cell"
+CELL_NUMERIC_CLASS = "md-cell-numeric"
+PAGER_BUTTON_CLASS = "md-press focus-ring"
 
 
 def show_employee(user: Employee):
@@ -29,8 +29,9 @@ def _pager_button(
         opacity=rx.cond(dimmed, 0.45, 1),
         color_scheme=rx.cond(dimmed, "gray", "accent"),
         variant="soft",
-        radius="large",
+        radius="full",
         class_name=PAGER_BUTTON_CLASS,
+        aria_label=icon,
     )
 
 
@@ -40,10 +41,10 @@ def _pagination_view() -> rx.Component:
             "Page ",
             rx.el.span(
                 TableState.page_number,
-                class_name="tabular font-semibold text-white",
+                class_name="tabular md-label-large md-on-surface",
             ),
             f" of {TableState.total_pages}",
-            class_name="text-xs font-medium text-white/50",
+            class_name="md-label-medium md-on-surface-variant",
         ),
         rx.el.div(
             _pager_button(
@@ -69,7 +70,7 @@ def _pagination_view() -> rx.Component:
             class_name="flex items-center gap-2",
         ),
         class_name=(
-            "mt-4 flex w-full flex-col items-start gap-3 border-t border-white/8 pt-4 "
+            "md-divider-top mt-4 flex w-full flex-col items-start gap-3 pt-4 "
             "sm:flex-row sm:items-center sm:justify-end sm:gap-5"
         ),
     )
