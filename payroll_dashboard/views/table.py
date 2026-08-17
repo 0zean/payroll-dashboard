@@ -3,6 +3,7 @@ import reflex as rx
 from ..backend.table_state import Employee, TableState
 from ..backend.utils import header_cell
 from ..components.form_field import form_field
+from ..components.icon import icon
 from ..custom_components.reflex_react_select import react_select
 
 
@@ -18,16 +19,144 @@ def show_employee(user: Employee):
             rx.hstack(
                 update_employee_dialog(user),
                 rx.icon_button(
-                    rx.icon("trash-2", size=22),
+                    icon("trash-2", size=20),
                     on_click=lambda: TableState.delete_entry(employee_id=user.id),  # type: ignore
                     size="2",
-                    variant="surface",
+                    variant="ghost",
                     color_scheme="tomato",
+                    aria_label="Delete entry",
                 ),
+                spacing="1",
             )
         ),
-        style={"_hover": {"bg": rx.color("gray", 3)}},
         align="center",
+    )
+
+
+def _dialog_header(icon_tag: str, title: str, description: str) -> rx.Component:
+    """M3 dialog header: tonal icon container, headline-small title, body description."""
+    return rx.hstack(
+        rx.flex(
+            icon(icon_tag, size=24, color="var(--md-sys-color-on-secondary-container)"),
+            background="var(--md-sys-color-secondary-container)",
+            border_radius="var(--md-sys-shape-corner-full)",
+            min_width="3rem",
+            height="3rem",
+            align="center",
+            justify="center",
+        ),
+        rx.vstack(
+            rx.dialog.title(title, margin="0"),
+            rx.dialog.description(description),
+            spacing="1",
+            align_items="start",
+        ),
+        spacing="4",
+        margin_bottom="1.5em",
+        align="center",
+        width="100%",
+    )
+
+
+def _employee_form_fields(user: Employee | None = None) -> rx.Component:
+    """The shared add/edit field set.
+
+    Args:
+        user: The employee being edited, or None when adding.
+
+    Returns:
+        The stacked form fields.
+
+    """
+    editing = user is not None
+    return rx.flex(
+        rx.vstack(
+            rx.hstack(
+                icon("user", size=18),
+                rx.text("Employee", font="var(--md-sys-typescale-body-small)"),
+                align="center",
+                spacing="2",
+            ),
+            react_select(
+                options=TableState.employee_dict,
+                required=True,
+                placeholder="Select Employee",
+                width="100%",
+                name="employee_name",
+                is_clearable=True,
+                is_searchable=True,
+                **(
+                    {
+                        "input_id": "update_id",
+                        "default_input_value": user.employee_name,
+                        "class_name_prefix": "react-select-update",
+                    }
+                    if editing
+                    else {"class_name_prefix": "react-select-add"}
+                ),
+            ),
+            spacing="1",
+            align_items="start",
+            width="100%",
+        ),
+        form_field(
+            "Date",
+            "Date Worked",
+            "date",
+            "date",
+            "calendar-days",
+            TableState.date_format if editing else "",
+            on=TableState.set_date,
+            required=True,
+            error_message=TableState.date_error,
+        ),
+        form_field(
+            "Hours",
+            "Hours worked",
+            "number",
+            "hours_worked",
+            "clock",
+            f"{user.hours_worked}" if editing else "",
+            on=TableState.set_hours_worked,
+            required=True,
+            error_message=TableState.hours_error,
+        ),
+        form_field(
+            "Extra Hours",
+            "Extra hours worked",
+            "number",
+            "extra",
+            "clock-arrow-up",
+            f"{user.extra}" if editing else "",
+            on=TableState.set_extra,
+        ),
+        form_field(
+            "Notes",
+            "Employee Notes",
+            "text",
+            "notes",
+            "notebook-pen",
+            user.notes if editing else "",
+            on=TableState.set_notes,
+        ),
+        direction="column",
+        spacing="3",
+    )
+
+
+def _dialog_actions(submit_label: str) -> rx.Component:
+    """M3 dialog actions: text buttons, trailing aligned."""
+    return rx.flex(
+        rx.dialog.close(
+            rx.button("Cancel", variant="ghost", color_scheme="gray"),
+        ),
+        rx.form.submit(
+            rx.button(submit_label, variant="ghost"),
+            as_child=True,
+        ),
+        padding_top="1.5em",
+        spacing="2",
+        justify="end",
     )
 
 
@@ -35,141 +164,21 @@ def add_employee_button() -> rx.Component:
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
-                rx.icon("plus", size=26),
-                rx.text("Add Employee", size="4", display=["none", "none", "block"]),
+                icon("plus", size=20),
+                rx.text("Add Employee", display=["none", "none", "block"]),
                 size="3",
-                variant="surface",
+                variant="solid",
             ),
         ),
         rx.dialog.content(
-            rx.hstack(
-                rx.badge(
-                    rx.icon(tag="users", size=34),
-                    color_scheme="grass",
-                    radius="full",
-                    padding="0.65rem",
-                ),
-                rx.vstack(
-                    rx.dialog.title(
-                        "Add New Employee",
-                        weight="bold",
-                        margin="0",
-                    ),
-                    rx.dialog.description(
-                        "Fill the form with the employee's info",
-                    ),
-                    spacing="1",
-                    height="100%",
-                    align_items="start",
-                ),
-                height="100%",
-                spacing="4",
-                margin_bottom="1.5em",
-                align_items="center",
-                width="100%",
-            ),
-            rx.flex(
-                rx.form.root(
-                    rx.flex(
-                        # Name
-                        rx.vstack(
-                            rx.hstack(
-                                rx.icon("user", size=16, stroke_width=1.5),
-                                rx.text("Employee"),
-                                align="center",
-                                spacing="2",
-                            ),
-                            # rx.select(
-                            #     TableState.employee_names,
-                            #     on_change=TableState.set_name,
-                            #     required=True,
-                            #     placeholder="Select Employee",
-                            #     width="100%",
-                            #     error_message=TableState.name_error,
-                            #     name="employee_name",
-                            # ),
-                            react_select(
-                                options=TableState.employee_dict,
-                                required=True,
-                                placeholder="Select Employee",
-                                width="100%",
-                                name="employee_name",
-                                is_clearable=True,
-                                is_searchable=True,
-                                class_name_prefix="react-select-add",
-                            ),
-                        ),
-                        # Date
-                        form_field(
-                            "Date",
-                            "Date Worked",
-                            "date",
-                            "date",
-                            "calendar-days",
-                            on=TableState.set_date,
-                            required=True,
-                            error_message=TableState.date_error,
-                        ),
-                        # Hours
-                        form_field(
-                            "Hours",
-                            "Hours worked",
-                            "number",
-                            "hours_worked",
-                            "clock",
-                            on=TableState.set_hours_worked,
-                            required=True,
-                            error_message=TableState.hours_error,
-                        ),
-                        # Extra Hours
-                        form_field(
-                            "Extra Hours",
-                            "Extra hours worked",
-                            "number",
-                            "extra",
-                            "clock-arrow-up",
-                            on=TableState.set_extra,
-                        ),
-                        # Notes
-                        form_field(
-                            "Notes",
-                            "Employee Notes",
-                            "text",
-                            "notes",
-                            "notebook-pen",
-                            on=TableState.set_notes,
-                        ),
-                        direction="column",
-                        spacing="3",
-                    ),
-                    rx.flex(
-                        rx.dialog.close(
-                            rx.button(
-                                "Cancel",
-                                variant="soft",
-                                color_scheme="gray",
-                            ),
-                        ),
-                        rx.form.submit(
-                            rx.button("Submit Employee"),
-                            as_child=True,
-                        ),
-                        padding_top="2em",
-                        spacing="3",
-                        mt="4",
-                        justify="end",
-                    ),
-                    on_submit=TableState.submit_add_employee,
-                    reset_on_submit=False,
-                ),
-                width="100%",
-                direction="column",
-                spacing="4",
+            _dialog_header("users", "Add New Employee", "Fill the form with the employee's info"),
+            rx.form.root(
+                _employee_form_fields(),
+                _dialog_actions("Submit Employee"),
+                on_submit=TableState.submit_add_employee,
+                reset_on_submit=False,
             ),
             max_width="450px",
-            padding="1.5em",
-            border=f"2px solid {rx.color('accent', 7)}",
-            border_radius="25px",
         ),
         open=TableState.dialog_open,
         on_open_change=lambda open: rx.cond(
@@ -184,149 +193,22 @@ def update_employee_dialog(user: Employee):
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
-                rx.icon("square-pen", size=22),
-                # rx.text("Edit", size="3"),
-                color_scheme="blue",
+                icon("square-pen", size=20),
                 size="2",
-                variant="surface",
+                variant="ghost",
+                aria_label="Edit entry",
             ),
         ),
         rx.dialog.content(
-            rx.hstack(
-                rx.badge(
-                    rx.icon(tag="square-pen", size=34),
-                    color_scheme="grass",
-                    radius="full",
-                    padding="0.65rem",
-                ),
-                rx.vstack(
-                    rx.dialog.title(
-                        "Edit Employee",
-                        weight="bold",
-                        margin="0",
-                    ),
-                    rx.dialog.description(
-                        "Edit the Employee's info",
-                    ),
-                    spacing="1",
-                    height="100%",
-                    align_items="start",
-                ),
-                height="100%",
-                spacing="4",
-                margin_bottom="1.5em",
-                align_items="center",
-                width="100%",
-            ),
-            rx.flex(
-                rx.form.root(
-                    rx.flex(
-                        # Name
-                        rx.vstack(
-                            rx.hstack(
-                                rx.icon("user", size=16, stroke_width=1.5),
-                                rx.text("Employee"),
-                                align="center",
-                                spacing="2",
-                            ),
-                            # rx.select(
-                            #     TableState.employee_names,
-                            #     default_value=user.employee_name,
-                            #     on_change=TableState.set_name,
-                            #     required=True,
-                            #     placeholder="Select Employee",
-                            #     width="100%",
-                            # ),
-                            react_select(
-                                input_id="update_id",
-                                options=TableState.employee_dict,
-                                required=True,
-                                default_input_value=user.employee_name,
-                                placeholder="Select Employee",
-                                width="100%",
-                                name="employee_name",
-                                is_clearable=True,
-                                is_searchable=True,
-                                class_name_prefix="react-select-update",
-                            ),
-                        ),
-                        # Date
-                        form_field(
-                            "Date",
-                            "Date Worked",
-                            "date",
-                            "date",
-                            "calendar-days",
-                            TableState.date_format,
-                            on=TableState.set_date,
-                            required=True,
-                            error_message=TableState.date_error,
-                        ),
-                        # Hours
-                        form_field(
-                            "Hours",
-                            "Enter Hours Worked",
-                            "number",
-                            "hours_worked",
-                            "clock",
-                            f"{user.hours_worked}",
-                            on=TableState.set_hours_worked,
-                            required=True,
-                            error_message=TableState.hours_error,
-                        ),
-                        # Extra Hours
-                        form_field(
-                            "Extra Hours",
-                            "Extra hours worked",
-                            "number",
-                            "extra",
-                            "clock-arrow-up",
-                            f"{user.extra}",
-                            on=TableState.set_extra,
-                        ),
-                        # Notes
-                        form_field(
-                            "Notes",
-                            "Employee Notes",
-                            "text",
-                            "notes",
-                            "notebook-pen",
-                            user.notes,
-                            on=TableState.set_notes,
-                        ),
-                        direction="column",
-                        spacing="3",
-                    ),
-                    rx.flex(
-                        rx.dialog.close(
-                            rx.button(
-                                "Cancel",
-                                variant="soft",
-                                color_scheme="gray",
-                            ),
-                        ),
-                        rx.form.submit(
-                            rx.button("Update Employee"),
-                            as_child=True,
-                        ),
-                        padding_top="2em",
-                        spacing="3",
-                        mt="4",
-                        justify="end",
-                    ),
-                    on_submit=TableState.submit_update_employee,
-                    reset_on_submit=False,
-                    key=f"edit-form-{user.id}",
-                ),
-                width="100%",
-                direction="column",
-                spacing="4",
+            _dialog_header("square-pen", "Edit Employee", "Edit the Employee's info"),
+            rx.form.root(
+                _employee_form_fields(user),
+                _dialog_actions("Update Employee"),
+                on_submit=TableState.submit_update_employee,
+                reset_on_submit=False,
                 key=f"edit-form-{user.id}",
             ),
             max_width="450px",
-            padding="1.5em",
-            border=f"2px solid {rx.color('accent', 7)}",
-            border_radius="25px",
             key=f"edit-dialog-{user.id}",
         ),
         open=TableState.edit_dialog_employee_id == user.id,
@@ -338,56 +220,35 @@ def update_employee_dialog(user: Employee):
     )
 
 
+def _page_button(icon_tag: str, on_click, disabled) -> rx.Component:
+    return rx.icon_button(
+        icon(icon_tag, size=20),
+        on_click=on_click,
+        disabled=disabled,
+        variant="ghost",
+        size="2",
+    )
+
+
 def _pagination_view() -> rx.Component:
+    first = TableState.page_number == 1
+    last = TableState.page_number == TableState.total_pages
     return rx.hstack(
         rx.text(
-            "Page ",
-            rx.code(TableState.page_number),
-            f" of {TableState.total_pages}",
-            justify="end",
+            f"Page {TableState.page_number} of {TableState.total_pages}",
+            font="var(--md-sys-typescale-body-medium)",
+            color="var(--md-sys-color-on-surface-variant)",
         ),
         rx.hstack(
-            rx.icon_button(
-                rx.icon("chevrons-left", size=18),
-                on_click=TableState.first_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
-                color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
-                variant="soft",
-            ),
-            rx.icon_button(
-                rx.icon("chevron-left", size=18),
-                on_click=TableState.prev_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == 1, 0.6, 1),
-                color_scheme=rx.cond(TableState.page_number == 1, "gray", "accent"),
-                variant="soft",
-            ),
-            rx.icon_button(
-                rx.icon("chevron-right", size=18),
-                on_click=TableState.next_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
-                color_scheme=rx.cond(
-                    TableState.page_number == TableState.total_pages,
-                    "gray",
-                    "accent",
-                ),
-                variant="soft",
-            ),
-            rx.icon_button(
-                rx.icon("chevrons-right", size=18),
-                on_click=TableState.last_page,  # type: ignore
-                opacity=rx.cond(TableState.page_number == TableState.total_pages, 0.6, 1),
-                color_scheme=rx.cond(
-                    TableState.page_number == TableState.total_pages,
-                    "gray",
-                    "accent",
-                ),
-                variant="soft",
-            ),
+            _page_button("chevrons-left", TableState.first_page, first),
+            _page_button("chevron-left", TableState.prev_page, first),
+            _page_button("chevron-right", TableState.next_page, last),
+            _page_button("chevrons-right", TableState.last_page, last),
             align="center",
-            spacing="2",
+            spacing="1",
             justify="end",
         ),
-        spacing="5",
+        spacing="4",
         margin_top="1em",
         align="center",
         width="100%",
@@ -400,22 +261,16 @@ def main_table() -> rx.Component:
         rx.flex(
             add_employee_button(),
             rx.spacer(),
-            rx.cond(
-                TableState.sort_reverse,
-                rx.icon(
-                    "arrow-down-z-a",
-                    size=28,
-                    stroke_width=1.5,
-                    cursor="pointer",
-                    on_click=TableState.toggle_sort,  # type: ignore
+            rx.icon_button(
+                rx.cond(
+                    TableState.sort_reverse,
+                    icon("arrow-down-z-a", size=20),
+                    icon("arrow-down-a-z", size=20),
                 ),
-                rx.icon(
-                    "arrow-down-a-z",
-                    size=28,
-                    stroke_width=1.5,
-                    cursor="pointer",
-                    on_click=TableState.toggle_sort,  # type: ignore
-                ),
+                on_click=TableState.toggle_sort,  # type: ignore
+                variant="ghost",
+                size="3",
+                aria_label="Toggle sort direction",
             ),
             rx.select(
                 {"employee_name", "date", "hours_worked", "extra", "notes"},
@@ -424,7 +279,7 @@ def main_table() -> rx.Component:
                 on_change=lambda sort_value: TableState.sort_values(sort_value),  # type: ignore
             ),
             rx.input(
-                rx.input.slot(rx.icon("search")),
+                rx.input.slot(icon("search", size=20)),
                 placeholder="Search here...",
                 size="3",
                 max_width="225px",

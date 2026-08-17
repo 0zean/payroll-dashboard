@@ -2,12 +2,12 @@
 
 import reflex as rx
 
-from .. import styles
 from ..backend.auth_state import AuthState
 from ..backend.index_state import IndexState
 from ..backend.table_state import TableState
 from ..components.buttons import clean_button, download_button
 from ..components.card import card
+from ..components.icon import icon
 from ..templates import template
 from ..views.overview_table import overview_table
 from ..views.stats_cards import stats_cards
@@ -28,55 +28,53 @@ def index() -> rx.Component:
         ),
         rx.flex(
             rx.input(
-                rx.input.slot(rx.icon("search"), padding_left="0"),
+                rx.input.slot(icon("search", size=20), padding_left="0"),
                 placeholder="Search here...",
                 size="3",
                 width="100%",
                 max_width="450px",
-                radius="large",
-                style=styles.ghost_input_style,
             ),
             rx.flex(
                 clean_button(
                     "brush-cleaning",
-                    "cyan",
                     event=IndexState.start_clean,
                     loading=IndexState.clear_loading,
                 ),
                 download_button(
                     "download",
-                    "plum",
                     "Download Master List",
                     event=IndexState.start_download,
                     loading=IndexState.download_loading,
                 ),
-                spacing="4",
-                width="100%",
+                spacing="3",
                 wrap="nowrap",
                 justify="end",
             ),
             justify="between",
             align="center",
+            gap="1rem",
             width="100%",
         ),
         stats_cards(),
         rx.vstack(
             rx.hstack(
-                rx.box(rx.link("Go to Payroll Entry", href="/table", font_weight="medium"), align="start"),
+                rx.link("Go to Payroll Entry", href="/table"),
                 rx.button(
-                    rx.icon("sheet"),
+                    icon("sheet", size=20),
                     "Sync to Sheets",
-                    align="end",
                     type="submit",
-                    variant="surface",
+                    variant="soft",
+                    size="3",
                     loading=TableState.loading,
                     on_click=TableState.start_sync,
                     disabled=rx.cond(TableState.users.length() > 0, False, True),  # type: ignore
                 ),
                 width="100%",
                 justify="between",
+                align="center",
             ),
             card(overview_table()),
+            spacing="4",
             width="100%",
         ),
         spacing="8",

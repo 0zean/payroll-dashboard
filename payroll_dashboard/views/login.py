@@ -1,7 +1,34 @@
 import reflex as rx
 
 from ..backend.auth_state import AuthState
+from ..components.icon import icon
 from ..components.spline import scene, spline
+
+
+def _field(label: str, placeholder: str, icon_tag: str, value, on_change, type: str = "text") -> rx.Component:
+    """An M3 filled field for the auth form."""
+    return rx.vstack(
+        rx.text(
+            label,
+            rx.cond(AuthState.show_signup, rx.text.span(" *", color="var(--md-sys-color-error)")),
+            font="var(--md-sys-typescale-body-small)",
+            color="var(--md-sys-color-on-surface-variant)",
+            width="100%",
+        ),
+        rx.input(
+            rx.input.slot(icon(icon_tag, size=20)),
+            placeholder=placeholder,
+            type=type,
+            size="3",
+            width="100%",
+            on_change=on_change,
+            value=value,
+            style={"pointer-events": "auto"},
+            required=True,
+        ),
+        spacing="1",
+        width="100%",
+    )
 
 
 def login_view() -> rx.Component:
@@ -20,7 +47,7 @@ def login_view() -> rx.Component:
             rx.card(
                 rx.vstack(
                     rx.center(
-                        rx.icon(tag="badge-dollar-sign", size=28),
+                        icon("badge-dollar-sign", size=32, color="var(--md-sys-color-primary)"),
                         rx.heading(
                             rx.cond(AuthState.show_signup, "Create an account", "Sign in to your account"),
                             size="6",
@@ -29,90 +56,29 @@ def login_view() -> rx.Component:
                             width="100%",
                         ),
                         direction="column",
-                        spacing="5",
+                        spacing="4",
                         width="100%",
                     ),
-                    # Name field (only for signup)
                     rx.cond(
                         AuthState.show_signup,
-                        rx.vstack(
-                            rx.text(
-                                "Full name",
-                                rx.text.span(" *", color="tomato"),
-                                size="3",
-                                weight="medium",
-                                text_align="left",
-                                width="100%",
-                            ),
-                            rx.input(
-                                rx.input.slot(rx.icon("user")),
-                                placeholder="Enter your full name",
-                                size="3",
-                                width="100%",
-                                on_change=AuthState.set_name,
-                                value=AuthState.name,
-                                style={"pointer-events": "auto"},
-                                required=True,
-                            ),
-                            spacing="2",
-                            width="100%",
-                        ),
+                        _field("Full name", "Enter your full name", "user", AuthState.name, AuthState.set_name),
                     ),
-                    rx.vstack(
-                        rx.text(
-                            "Email address",
-                            rx.cond(
-                                AuthState.show_signup,
-                                rx.text.span(" *", color="tomato"),
-                            ),
-                            size="3",
-                            weight="medium",
-                            text_align="left",
-                            width="100%",
-                        ),
-                        rx.input(
-                            rx.input.slot(rx.icon("mail")),
-                            placeholder="user@reflex.dev",
-                            type="email",
-                            size="3",
-                            width="100%",
-                            on_change=AuthState.set_email,
-                            value=AuthState.email,
-                            style={"pointer-events": "auto"},
-                            required=True,
-                        ),
-                        spacing="2",
-                        width="100%",
+                    _field(
+                        "Email address",
+                        "user@reflex.dev",
+                        "mail",
+                        AuthState.email,
+                        AuthState.set_email,
+                        type="email",
                     ),
-                    rx.vstack(
-                        rx.hstack(
-                            rx.text(
-                                "Password",
-                                rx.cond(
-                                    AuthState.show_signup,
-                                    rx.text.span(" *", color="tomato"),
-                                ),
-                                size="3",
-                                weight="medium",
-                            ),
-                            justify="between",
-                            width="100%",
-                        ),
-                        rx.input(
-                            rx.input.slot(rx.icon("lock")),
-                            placeholder="Enter your password",
-                            type="password",
-                            size="3",
-                            width="100%",
-                            on_change=AuthState.set_password,
-                            value=AuthState.password,
-                            style={"pointer-events": "auto"},
-                            required=True,
-                        ),
-                        spacing="2",
-                        width="100%",
+                    _field(
+                        "Password",
+                        "Enter your password",
+                        "lock",
+                        AuthState.password,
+                        AuthState.set_password,
+                        type="password",
                     ),
-                    # Terms checkbox (only for signup)
                     rx.cond(
                         AuthState.show_signup,
                         rx.box(
@@ -130,23 +96,25 @@ def login_view() -> rx.Component:
                         size="3",
                         width="100%",
                         on_click=rx.cond(AuthState.show_signup, AuthState.handle_signup, AuthState.handle_login),
-                        is_loading=AuthState.is_loading,
+                        loading=AuthState.is_loading,
                         style={"pointer-events": "auto"},
                     ),
                     rx.center(
-                        rx.text(rx.cond(AuthState.show_signup, "Already have an account?", "New here?"), size="3"),
+                        rx.text(
+                            rx.cond(AuthState.show_signup, "Already have an account?", "New here?"),
+                            font="var(--md-sys-typescale-body-medium)",
+                            color="var(--md-sys-color-on-surface-variant)",
+                        ),
                         rx.link(
                             rx.cond(AuthState.show_signup, "Sign in", "Sign up"),
                             on_click=AuthState.toggle_auth_mode,  # type: ignore
-                            size="3",
                             style={"pointer-events": "auto"},
                         ),
-                        opacity="0.8",
                         spacing="2",
                         direction="row",
                         style={"pointer-events": "auto"},
                     ),
-                    spacing="6",
+                    spacing="5",
                     width="100%",
                 ),
                 max_width="28em",
@@ -154,9 +122,12 @@ def login_view() -> rx.Component:
                 width="100%",
                 z_index=1,
                 style={
+                    # Let the 3D scene behind stay interactive; inputs opt back in.
                     "pointer-events": "none",
-                    "background": "rgba(35, 33, 54, 0.2)",
-                    "box-shadow": "0 4px 32px rgba(0,0,0,0.10)",
+                    # Tokenised translucency, so the card reads correctly in both themes.
+                    "background": "color-mix(in srgb, var(--md-sys-color-surface-container-high) 80%, transparent)",
+                    "backdrop-filter": "blur(12px)",
+                    "box-shadow": "var(--md-sys-elevation-3)",
                 },
             ),
             height="100vh",

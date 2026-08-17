@@ -82,20 +82,24 @@ class ReactSelect(NoSSRComponent):
     on_input_change: rx.EventHandler[lambda entered_text: [entered_text]]
     on_change: rx.EventHandler[lambda option: [option]]
 
-    # Container of the control itself (but not the menu below)
+    # Styled as an M3 filled text field so it matches the rest of the form.
     control_style: rx.Var[rx.Style | dict | None] = rx.Style(
         {
-            "background-color": rx.color("gray", 1),
-            "color": rx.color("gray", 12),
-            "border-color": rx.color("gray", 3),
-            "border-width": "2px",
+            "background-color": "var(--md-sys-color-surface-container-highest)",
+            "color": "var(--md-sys-color-on-surface)",
+            "border": "none",
+            "border-bottom": "1px solid var(--md-sys-color-on-surface-variant)",
+            "border-radius": "var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) 0 0",
+            "box-shadow": "none",
+            "min-height": "56px",
         }
     )
 
-    # Container of the control itself when it has focus
+    # Focus swaps the 1dp indicator for a 2dp primary one.
     control_focused_style: rx.Var[rx.Style | dict | None] = rx.Style(
         {
-            "border-color": rx.color("accent", 2),
+            "border-bottom": "2px solid var(--md-sys-color-primary)",
+            "box-shadow": "none",
         }
     )
 
@@ -103,7 +107,7 @@ class ReactSelect(NoSSRComponent):
     # Do not set the background color or it will obscure the selected value
     input_container_style: rx.Var[rx.Style | dict | None] = rx.Style(
         {
-            "color": rx.color("gray", 12),
+            "color": "var(--md-sys-color-on-surface)",
         }
     )
 
@@ -111,53 +115,48 @@ class ReactSelect(NoSSRComponent):
     # different than the one that accepts user input).
     single_value_style: rx.Var[rx.Style | dict | None] = rx.Style(
         {
-            "color": rx.color("gray", 12),
+            "color": "var(--md-sys-color-on-surface)",
         }
     )
 
-    # This is the container that displays a selected value of multiple
-    # The color is only applied to the x for close icon
+    # A selected value in multi-select mode, rendered as an M3 input chip.
     multi_value_style: rx.Var[rx.Style | dict | None] = rx.Style(
         {
-            "color": rx.color("orange", 8),
-            "background-color": rx.color("gray", 3),
-            "border-radius": "5px",
+            "color": "var(--md-sys-color-on-secondary-container)",
+            "background-color": "var(--md-sys-color-secondary-container)",
+            "border-radius": "var(--md-sys-shape-corner-small)",
         }
     )
 
     # This styles the text in the multiple selections
     multi_value_label_style: rx.Var[rx.Style | dict | None] = rx.Style(
         {
-            "color": rx.color("gray", 12),
+            "color": "var(--md-sys-color-on-secondary-container)",
         }
     )
 
-    # This is the container for the overall drop down menu
+    # M3 menu: 4dp corner, level-2 elevation, surface-container.
     menu_style: rx.Var[rx.Style | dict | None] = rx.Style(
         {
-            "background-color": rx.color("gray", 1),
-            "color": rx.color("gray", 12),
-            "padding": "0.4em 0.5em",
-            "border-color": rx.color("gray", 3),
-            "border-width": "1px",
-            "border-radius": "8px",
+            "background-color": "var(--md-sys-color-surface-container)",
+            "color": "var(--md-sys-color-on-surface)",
+            "padding": "8px 0",
+            "border": "none",
+            "border-radius": "var(--md-sys-shape-corner-extra-small)",
+            "box-shadow": "var(--md-sys-elevation-2)",
         }
     )
 
     option_selected_style: rx.Var[rx.Style | dict | None] = rx.Style(
         {
-            "background-color": rx.color("gray", 1),
-            "color": rx.color("gray", 12),
-            "font-style": "italic",
-            "font-weight": "bold",
-            "border-radius": "4px",
+            "background-color": "var(--md-sys-color-secondary-container)",
+            "color": "var(--md-sys-color-on-secondary-container)",
         }
     )
     option_focused_style: rx.Var[rx.Style | dict | None] = rx.Style(
         {
-            "background-color": rx.color("accent", 9),
-            "color": rx.color("accent", 1),
-            "border-radius": "4px",
+            "background-color": "color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent)",
+            "color": "var(--md-sys-color-on-surface)",
         }
     )
 

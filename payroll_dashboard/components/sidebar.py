@@ -1,20 +1,28 @@
-"""Sidebar component for the app."""
+"""M3 navigation drawer for the app."""
 
 import reflex as rx
 
 from .. import styles
 from ..backend.auth_state import AuthState
+from .icon import icon
+
+# Route -> (label, icon). Drives both the drawer and the mobile modal drawer.
+NAV_ITEMS = [
+    ("/", "Overview", "home"),
+    ("/table", "Table", "table-2"),
+    ("/onboard", "Onboard", "user-plus"),
+    ("/settings", "Settings", "settings"),
+]
 
 
 def sidebar_header() -> rx.Component:
-    """Sidebar header.
+    """Drawer header.
 
     Returns:
-        The sidebar header component.
+        The drawer header component.
 
     """
     return rx.hstack(
-        # The logo.
         rx.color_mode_cond(
             rx.image(src="/reflex_black.svg", height="1.5em"),
             rx.image(src="/reflex_white.svg", height="1.5em"),
@@ -22,100 +30,73 @@ def sidebar_header() -> rx.Component:
         rx.spacer(),
         align="center",
         width="100%",
-        padding="0.35em",
-        margin_bottom="1em",
+        padding="0 16px",
+        height="64px",
+        flex_shrink="0",
     )
 
 
 def sidebar_footer() -> rx.Component:
-    """Sidebar footer.
+    """Drawer footer.
 
     Returns:
-        The sidebar footer component.
+        The drawer footer component.
 
     """
     return rx.hstack(
         rx.link(
-            rx.text("Docs", size="3"),
+            rx.text("Docs", size="2"),
             href="https://reflex.dev/docs/getting-started/introduction/",
-            color_scheme="gray",
             underline="none",
+            color="var(--md-sys-color-on-surface-variant)",
         ),
         rx.link(
-            rx.text("Blog", size="3"),
+            rx.text("Blog", size="2"),
             href="https://reflex.dev/blog/",
-            color_scheme="gray",
             underline="none",
+            color="var(--md-sys-color-on-surface-variant)",
         ),
         rx.spacer(),
         rx.color_mode.button(style={"opacity": "0.8", "scale": "0.95"}),
         justify="start",
         align="center",
         width="100%",
-        padding="0.35em",
+        padding="0 12px",
     )
 
 
-def sidebar_item_icon(icon: str) -> rx.Component:
-    return rx.icon(icon, size=18)
-
-
-def sidebar_item(text: str, url: str = "", on_click=None) -> rx.Component:
-    """Sidebar item.
+def nav_item(text: str, url: str = "", icon_tag: str = "layout-dashboard", on_click=None) -> rx.Component:
+    """An M3 navigation drawer item: 56dp pill, tonal indicator when active.
 
     Args:
-        text: The text of the item.
-        url: The URL of the item.
+        text: The label.
+        url: The route, when the item navigates.
+        icon_tag: The Material Symbols icon.
+        on_click: Event handler, for items that act instead of navigating.
 
     Returns:
-        rx.Component: The sidebar item component.
+        The navigation item component.
 
     """
-    # Whether the item is active.
-    active = (rx.State.router.page.path == url.lower()) | ((rx.State.router.page.path == "/") & text == "Overview")
+    active = rx.State.router.page.path == url
 
     return rx.link(
         rx.hstack(
-            rx.match(
-                text,
-                ("Overview", sidebar_item_icon("home")),
-                ("Table", sidebar_item_icon("table-2")),
-                ("Onboard", sidebar_item_icon("user-plus")),
-                ("Settings", sidebar_item_icon("settings")),
-                ("Logout", sidebar_item_icon("log-out")),
-                sidebar_item_icon("layout-dashboard"),
-            ),
-            rx.text(text, size="3", weight="regular"),
+            icon(icon_tag, size=24, fill=active),
+            rx.text(text, font="var(--md-sys-typescale-label-large)"),
+            align="center",
+            width="100%",
+            spacing="3",
+            height="56px",
+            padding="0 24px",
+            border_radius="var(--md-sys-shape-corner-full)",
+            background_color=rx.cond(active, "var(--md-sys-color-secondary-container)", "transparent"),
             color=rx.cond(
                 active,
-                styles.accent_text_color,
-                styles.text_color,
+                "var(--md-sys-color-on-secondary-container)",
+                "var(--md-sys-color-on-surface-variant)",
             ),
-            style={
-                "_hover": {
-                    "background_color": rx.cond(
-                        active,
-                        styles.accent_bg_color,
-                        styles.gray_bg_color,
-                    ),
-                    "color": rx.cond(
-                        active,
-                        styles.accent_text_color,
-                        styles.text_color,
-                    ),
-                    "opacity": "1",
-                },
-                "opacity": rx.cond(
-                    active,
-                    "1",
-                    "0.95",
-                ),
-            },
-            align="center",
-            border_radius=styles.border_radius,
-            width="100%",
-            spacing="2",
-            padding="0.35em",
+            class_name="m3-nav-item",
         ),
         underline="none",
         href=url if not on_click else None,
@@ -125,53 +106,27 @@ def sidebar_item(text: str, url: str = "", on_click=None) -> rx.Component:
 
 
 def sidebar() -> rx.Component:
-    """The sidebar.
+    """The navigation drawer.
 
     Returns:
-        The sidebar component.
+        The drawer component.
+
     """
-    from reflex.page import DECORATED_PAGES
-
-    ordered_page_routes = [
-        "/",
-        "/table",
-        "/onboard",
-        "/settings",
-    ]
-
-    pages = [page_dict for page_list in DECORATED_PAGES.values() for _, page_dict in page_list]
-
-    ordered_pages = sorted(
-        pages,
-        key=lambda page: (
-            ordered_page_routes.index(page["route"])
-            if page["route"] in ordered_page_routes
-            else len(ordered_page_routes)
-        ),
-    )
-
     return rx.flex(
         rx.vstack(
             sidebar_header(),
             rx.vstack(
-                *[
-                    sidebar_item(
-                        text=page.get("title", page["route"].strip("/").capitalize()),
-                        url=page["route"],
-                    )
-                    for page in ordered_pages
-                ],
-                sidebar_item("Logout", on_click=AuthState.logout()),  # type: ignore
+                *[nav_item(text=label, url=route, icon_tag=tag) for route, label, tag in NAV_ITEMS],
+                nav_item("Logout", icon_tag="log-out", on_click=AuthState.logout()),  # type: ignore
                 spacing="1",
                 width="100%",
             ),
             rx.spacer(),
             sidebar_footer(),
-            justify="end",
-            align="end",
+            align="start",
             width=styles.sidebar_content_width,
             height="100dvh",
-            padding="1em",
+            padding="0 12px 12px",
         ),
         display=["none", "none", "none", "none", "none", "flex"],
         max_width=styles.sidebar_width,
@@ -182,5 +137,5 @@ def sidebar() -> rx.Component:
         top="0px",
         left="0px",
         flex="1",
-        bg=rx.color("gray", 2),
+        background_color="var(--md-sys-color-surface-container-low)",
     )

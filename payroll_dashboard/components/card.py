@@ -1,12 +1,10 @@
 import reflex as rx
 
-from payroll_dashboard import styles
-
 
 def card(*children, **props):
+    """An M3 elevated card. Elevation and shape come from the M3 component sheet."""
     return rx.card(
         *children,
-        box_shadow=styles.box_shadow_style,
         size="3",
         width="100%",
         **props,

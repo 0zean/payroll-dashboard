@@ -1,133 +1,27 @@
-"""Navbar component for the app."""
+"""M3 top app bar and modal navigation drawer (compact windows)."""
 
 import reflex as rx
 
-from payroll_dashboard import styles
-
 from ..backend.auth_state import AuthState
-
-
-def menu_item_icon(icon: str) -> rx.Component:
-    return rx.icon(icon, size=20)
-
-
-def menu_item(text: str, url: str = "", on_click=None) -> rx.Component:
-    """Menu item.
-
-    Args:
-        text: The text of the item.
-        url: The URL of the item.
-
-    Returns:
-        rx.Component: The menu item component.
-
-    """
-    # Whether the item is active.
-    active = (rx.State.router.page.path == url.lower()) | ((rx.State.router.page.path == "/") & text == "Overview")
-
-    return rx.link(
-        rx.hstack(
-            rx.match(
-                text,
-                ("Overview", menu_item_icon("home")),
-                ("Table", menu_item_icon("table-2")),
-                ("Onboard", menu_item_icon("user-plus")),
-                ("Settings", menu_item_icon("settings")),
-                ("Logout", menu_item_icon("log-out")),
-                menu_item_icon("layout-dashboard"),
-            ),
-            rx.text(text, size="4", weight="regular"),
-            color=rx.cond(
-                active,
-                styles.accent_text_color,
-                styles.text_color,
-            ),
-            style={
-                "_hover": {
-                    "background_color": rx.cond(
-                        active,
-                        styles.accent_bg_color,
-                        styles.gray_bg_color,
-                    ),
-                    "color": rx.cond(
-                        active,
-                        styles.accent_text_color,
-                        styles.text_color,
-                    ),
-                    "opacity": "1",
-                },
-                "opacity": rx.cond(
-                    active,
-                    "1",
-                    "0.95",
-                ),
-            },
-            align="center",
-            border_radius=styles.border_radius,
-            width="100%",
-            spacing="2",
-            padding="0.35em",
-        ),
-        underline="none",
-        href=url if not on_click else None,
-        width="100%",
-        on_click=on_click,
-    )
-
-
-def navbar_footer() -> rx.Component:
-    """Navbar footer.
-
-    Returns:
-        The navbar footer component.
-
-    """
-    return rx.hstack(
-        rx.link(
-            rx.text("Docs", size="3"),
-            href="https://reflex.dev/docs/getting-started/introduction/",
-            color_scheme="gray",
-            underline="none",
-        ),
-        rx.link(
-            rx.text("Blog", size="3"),
-            href="https://reflex.dev/blog/",
-            color_scheme="gray",
-            underline="none",
-        ),
-        rx.spacer(),
-        rx.color_mode.button(style={"opacity": "0.8", "scale": "0.95"}),
-        justify="start",
-        align="center",
-        width="100%",
-        padding="0.35em",
-    )
+from .icon import icon
+from .sidebar import NAV_ITEMS, nav_item, sidebar_footer
 
 
 def menu_button() -> rx.Component:
-    from reflex.page import DECORATED_PAGES
+    """The modal navigation drawer, opened from the top app bar.
 
-    ordered_page_routes = [
-        "/",
-        "/table",
-        "/onboard",
-        "/settings",
-    ]
+    Returns:
+        The drawer component.
 
-    pages = [page_dict for page_list in DECORATED_PAGES.values() for _, page_dict in page_list]
-
-    ordered_pages = sorted(
-        pages,
-        key=lambda page: (
-            ordered_page_routes.index(page["route"])
-            if page["route"] in ordered_page_routes
-            else len(ordered_page_routes)
-        ),
-    )
-
+    """
     return rx.drawer.root(
         rx.drawer.trigger(
-            rx.icon("align-justify"),
+            rx.icon_button(
+                icon("align-justify", size=24),
+                variant="ghost",
+                size="3",
+                aria_label="Open navigation",
+            ),
         ),
         rx.drawer.overlay(z_index="5"),
         rx.drawer.portal(
@@ -135,30 +29,35 @@ def menu_button() -> rx.Component:
                 rx.vstack(
                     rx.hstack(
                         rx.spacer(),
-                        rx.drawer.close(rx.icon(tag="x")),
+                        rx.drawer.close(
+                            rx.icon_button(
+                                icon("x", size=24),
+                                variant="ghost",
+                                size="3",
+                                aria_label="Close navigation",
+                            )
+                        ),
                         justify="end",
                         width="100%",
+                        height="64px",
+                        align="center",
                     ),
-                    rx.divider(),
-                    *[
-                        menu_item(
-                            text=page.get("title", page["route"].strip("/").capitalize()),
-                            url=page["route"],
-                        )
-                        for page in ordered_pages
-                    ],
-                    menu_item("Logout", on_click=AuthState.logout()),  # type: ignore
+                    *[nav_item(text=label, url=route, icon_tag=tag) for route, label, tag in NAV_ITEMS],
+                    nav_item("Logout", icon_tag="log-out", on_click=AuthState.logout()),  # type: ignore
                     rx.spacer(),
-                    navbar_footer(),
-                    spacing="4",
+                    sidebar_footer(),
+                    spacing="1",
                     width="100%",
+                    height="100%",
                 ),
                 top="auto",
                 left="auto",
                 height="100%",
                 width="20em",
-                padding="1em",
-                bg=rx.color("gray", 1),
+                padding="0 12px 12px",
+                background_color="var(--md-sys-color-surface-container-low)",
+                # M3 modal drawer: rounded on the inner edge only.
+                border_radius="var(--md-sys-shape-corner-large) 0 0 var(--md-sys-shape-corner-large)",
             ),
             width="100%",
         ),
@@ -167,15 +66,14 @@ def menu_button() -> rx.Component:
 
 
 def navbar() -> rx.Component:
-    """The navbar.
+    """The M3 small top app bar.
 
     Returns:
-        The navbar component.
+        The top app bar component.
 
     """
     return rx.el.nav(
         rx.hstack(
-            # The logo.
             rx.color_mode_cond(
                 rx.image(src="/reflex_black.svg", height="1em"),
                 rx.image(src="/reflex_white.svg", height="1em"),
@@ -184,13 +82,12 @@ def navbar() -> rx.Component:
             menu_button(),
             align="center",
             width="100%",
-            padding_y="1.25em",
+            height="64px",
             padding_x=["1em", "1em", "2em"],
         ),
         display=["block", "block", "block", "block", "block", "none"],
         position="sticky",
-        background_color=rx.color("gray", 1),
+        background_color="var(--md-sys-color-surface)",
         top="0px",
         z_index="5",
-        border_bottom=styles.border,
     )

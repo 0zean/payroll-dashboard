@@ -44,10 +44,12 @@ def calculate_stats(data: list[Employee]) -> PayrollStats:
     return PayrollStats(total_entries=len(data), total_hours=total_hours, employees_count=unique_employees)
 
 
-def header_cell(text: str, icon: str) -> rx.Component:
+def header_cell(text: str, icon_tag: str) -> rx.Component:
+    from ..components.icon import icon
+
     return rx.table.column_header_cell(
         rx.hstack(
-            rx.icon(icon, size=18),
+            icon(icon_tag, size=18),
             rx.text(text),
             align="center",
             spacing="2",

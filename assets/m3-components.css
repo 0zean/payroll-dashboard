@@ -1,0 +1,456 @@
+/* M3 component styling over Radix Themes primitives.
+   Radix keeps its behaviour (focus traps, portals, a11y); this file supplies
+   M3 shape, size, colour and state layers. Selectors are scoped under
+   .radix-themes so they outrank Radix's own :where()-wrapped rules. */
+
+/* ============================================================
+   State layers
+   M3 paints an 8%/10%/12% overlay of the *content* colour on hover/focus/press.
+   linear-gradient composites over background-color without needing a pseudo
+   element, so it never collides with Radix's ::before/::after usage.
+   ============================================================ */
+.radix-themes .rt-BaseButton,
+.radix-themes .rt-TableRow,
+.radix-themes .rt-BaseMenuItem {
+  --m3-state: transparent;
+  background-image: linear-gradient(var(--m3-state), var(--m3-state));
+}
+
+/* ============================================================
+   Buttons  (M3: filled / tonal / outlined / text / elevated)
+   ============================================================ */
+.radix-themes .rt-BaseButton {
+  border-radius: var(--md-sys-shape-corner-full);
+  font: var(--md-sys-typescale-label-large);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  gap: 8px;
+  transition:
+    background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    background-image var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.radix-themes .rt-BaseButton:where(:hover):not(:disabled, [data-disabled]) {
+  --m3-state: color-mix(in srgb, currentColor var(--md-sys-state-hover-opacity), transparent);
+}
+.radix-themes .rt-BaseButton:where(:focus-visible):not(:disabled, [data-disabled]) {
+  --m3-state: color-mix(in srgb, currentColor var(--md-sys-state-focus-opacity), transparent);
+}
+.radix-themes .rt-BaseButton:where(:active):not(:disabled, [data-disabled]) {
+  --m3-state: color-mix(in srgb, currentColor var(--md-sys-state-pressed-opacity), transparent);
+}
+
+/* M3 button heights: XS 32, S/standard 40, M 56. */
+.radix-themes .rt-Button.rt-r-size-1 { --base-button-height: 32px; padding-inline: 16px; }
+.radix-themes .rt-Button.rt-r-size-2 { --base-button-height: 40px; padding-inline: 24px; }
+.radix-themes .rt-Button.rt-r-size-3 { --base-button-height: 40px; padding-inline: 24px; }
+.radix-themes .rt-Button.rt-r-size-4 {
+  --base-button-height: 56px;
+  padding-inline: 32px;
+  font: var(--md-sys-typescale-title-medium);
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+}
+/* Leading icon tightens the leading edge to 16dp. */
+.radix-themes .rt-Button:has(> svg:first-child, > .m3-icon:first-child):where(.rt-r-size-2, .rt-r-size-3) {
+  padding-inline: 16px 24px;
+}
+
+/* Filled */
+.radix-themes .rt-Button.rt-variant-solid,
+.radix-themes .rt-IconButton.rt-variant-solid {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  box-shadow: var(--md-sys-elevation-0);
+}
+.radix-themes .rt-Button.rt-variant-solid:where(:hover),
+.radix-themes .rt-IconButton.rt-variant-solid:where(:hover) {
+  background-color: var(--md-sys-color-primary);
+  box-shadow: var(--md-sys-elevation-1);
+}
+
+/* Filled tonal */
+.radix-themes .rt-Button.rt-variant-soft,
+.radix-themes .rt-IconButton.rt-variant-soft {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+.radix-themes .rt-Button.rt-variant-soft:where(:hover),
+.radix-themes .rt-IconButton.rt-variant-soft:where(:hover) {
+  background-color: var(--md-sys-color-secondary-container);
+  box-shadow: var(--md-sys-elevation-1);
+}
+
+/* Outlined */
+.radix-themes .rt-Button:is(.rt-variant-surface, .rt-variant-outline),
+.radix-themes .rt-IconButton:is(.rt-variant-surface, .rt-variant-outline) {
+  background-color: transparent;
+  color: var(--md-sys-color-primary);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-outline);
+}
+
+/* Text */
+.radix-themes .rt-Button.rt-variant-ghost,
+.radix-themes .rt-IconButton.rt-variant-ghost {
+  background-color: transparent;
+  color: var(--md-sys-color-primary);
+}
+
+/* Elevated */
+.radix-themes .rt-Button.rt-variant-classic,
+.radix-themes .rt-IconButton.rt-variant-classic {
+  background-color: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-primary);
+  box-shadow: var(--md-sys-elevation-1);
+}
+.radix-themes .rt-Button.rt-variant-classic:where(:hover),
+.radix-themes .rt-IconButton.rt-variant-classic:where(:hover) {
+  box-shadow: var(--md-sys-elevation-2);
+}
+
+/* Disabled: 38% content over a 12% container, no elevation. */
+.radix-themes .rt-BaseButton:where(:disabled, [data-disabled]) {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) var(--md-sys-state-disabled-container-opacity),
+    transparent
+  );
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+  box-shadow: none;
+  cursor: var(--cursor-disabled);
+}
+.radix-themes .rt-Button:where(:disabled, [data-disabled]):is(.rt-variant-ghost, .rt-variant-surface, .rt-variant-outline),
+.radix-themes .rt-IconButton:where(:disabled, [data-disabled]):is(.rt-variant-ghost, .rt-variant-surface, .rt-variant-outline) {
+  background-color: transparent;
+}
+
+/* Icon buttons: M3 uses a 40dp target around a 24dp glyph. */
+.radix-themes .rt-IconButton { border-radius: var(--md-sys-shape-corner-full); }
+.radix-themes .rt-IconButton.rt-r-size-1 { --base-button-height: 32px; width: 32px; }
+.radix-themes .rt-IconButton.rt-r-size-2 { --base-button-height: 40px; width: 40px; }
+.radix-themes .rt-IconButton.rt-r-size-3 { --base-button-height: 40px; width: 40px; }
+.radix-themes .rt-IconButton.rt-r-size-4 { --base-button-height: 56px; width: 56px; }
+
+/* ============================================================
+   Cards
+   Radix `surface` -> M3 elevated, `classic` -> filled, `ghost` -> outlined.
+   Depth is carried by the tonal surface; the shadow only lifts it off the page.
+   ============================================================ */
+.radix-themes .rt-Card {
+  --card-border-radius: var(--md-sys-shape-corner-medium);
+  --card-border-width: 0px;
+  --base-card-surface-box-shadow: none;
+  --base-card-surface-hover-box-shadow: none;
+  --base-card-surface-active-box-shadow: none;
+  transition:
+    box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.radix-themes .rt-Card.rt-variant-surface {
+  --card-background-color: var(--md-sys-color-surface-container-low);
+  box-shadow: var(--md-sys-elevation-1);
+}
+.radix-themes .rt-Card.rt-variant-classic {
+  --card-background-color: var(--md-sys-color-surface-container-highest);
+  box-shadow: var(--md-sys-elevation-0);
+}
+.radix-themes .rt-Card.rt-variant-ghost {
+  --card-background-color: var(--md-sys-color-surface);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-outline-variant);
+  /* Radix pulls ghost cards outward by their padding so they sit flush with
+     surrounding text. An M3 outlined card is a bounded container, so drop the
+     offset -- otherwise it sits 24px above and left of anything beside it. */
+  margin: 0;
+}
+
+/* M3 card padding steps (16dp is the default). */
+.radix-themes .rt-Card.rt-r-size-1 { --card-padding: 12px; }
+.radix-themes .rt-Card.rt-r-size-2 { --card-padding: 16px; }
+.radix-themes .rt-Card.rt-r-size-3 { --card-padding: 16px; }
+.radix-themes .rt-Card.rt-r-size-4 { --card-padding: 24px; }
+.radix-themes .rt-Card.rt-r-size-5 { --card-padding: 32px; }
+
+/* ============================================================
+   Navigation drawer items
+   ============================================================ */
+.radix-themes .m3-nav-item {
+  --m3-state: transparent;
+  background-image: linear-gradient(var(--m3-state), var(--m3-state));
+  transition:
+    background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+.radix-themes .m3-nav-item:where(:hover) {
+  --m3-state: color-mix(in srgb, var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity), transparent);
+}
+.radix-themes .m3-nav-item:where(:active) {
+  --m3-state: color-mix(in srgb, var(--md-sys-color-on-surface) var(--md-sys-state-pressed-opacity), transparent);
+}
+/* ============================================================
+   Data table
+   M3 has no formal data-table component; this follows the list/table
+   conventions: 56dp header, 52dp rows, outline-variant dividers,
+   on-surface state layer on hover.
+   ============================================================ */
+.radix-themes .rt-TableRoot {
+  --table-border-radius: var(--md-sys-shape-corner-medium);
+  --table-cell-padding: 16px;
+  --table-cell-min-height: 52px;
+}
+.radix-themes .rt-TableRootTable {
+  --table-row-background-color: transparent;
+  --table-row-box-shadow: inset 0 -1px var(--md-sys-color-outline-variant);
+  /* Without this the table squeezes columns to fit and the trailing ones get
+     clipped. max-content makes it overflow instead, so the root can scroll it;
+     on wide windows width:100% still wins and nothing scrolls. */
+  min-width: max-content;
+}
+.radix-themes .rt-TableRoot.rt-variant-surface {
+  background-color: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-medium);
+  /* Narrow windows scroll the table rather than clipping columns.
+     overflow-x alone still rounds the corners; `hidden` would kill the scroll. */
+  overflow-x: auto;
+}
+
+/* Header: title-small on-surface-variant, 56dp.
+   The label is wrapped in an rx.text (.rt-Text), which carries its own weight,
+   so the type role has to be set on the inner element too. */
+.radix-themes .rt-TableColumnHeaderCell,
+.radix-themes .rt-TableColumnHeaderCell .rt-Text {
+  font: var(--md-sys-typescale-title-small);
+  letter-spacing: var(--md-sys-typescale-title-small-tracking);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.radix-themes .rt-TableColumnHeaderCell {
+  height: 56px;
+  background-color: var(--md-sys-color-surface-container);
+}
+
+/* Header cells carry both classes, so exclude them here rather than relying on
+   source order to keep title-small from being overwritten by body-medium. */
+.radix-themes .rt-TableCell:not(.rt-TableColumnHeaderCell) {
+  font: var(--md-sys-typescale-body-medium);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+  color: var(--md-sys-color-on-surface);
+}
+
+.radix-themes .rt-TableBody .rt-TableRow {
+  transition: background-image var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+.radix-themes .rt-TableBody .rt-TableRow:where(:hover) {
+  --m3-state: color-mix(in srgb, var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity), transparent);
+}
+/* The last row sits on the container edge, so it needs no divider. */
+.radix-themes .rt-TableBody .rt-TableRow:last-child .rt-TableCell {
+  --table-row-box-shadow: none;
+}
+
+/* ============================================================
+   Text fields (M3 filled)
+   Filled rather than outlined: the app already renders labels above the
+   input, so filled needs no notched-outline geometry.
+   ponytail: outlined + floating notch is the upgrade if labels ever move inline.
+   ============================================================ */
+.radix-themes .rt-TextFieldRoot {
+  --text-field-border-width: 0px;
+  --text-field-border-radius: var(--md-sys-shape-corner-extra-small)
+    var(--md-sys-shape-corner-extra-small) 0 0;
+  font: var(--md-sys-typescale-body-large);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  transition: box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+.radix-themes .rt-TextFieldRoot.rt-r-size-1 { --text-field-height: 40px; --text-field-padding: 12px; }
+.radix-themes .rt-TextFieldRoot.rt-r-size-2 { --text-field-height: 48px; --text-field-padding: 16px; }
+.radix-themes .rt-TextFieldRoot.rt-r-size-3 { --text-field-height: 56px; --text-field-padding: 16px; }
+
+.radix-themes .rt-TextFieldRoot:is(.rt-variant-surface, .rt-variant-classic, .rt-variant-soft) {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  /* The bottom indicator is the whole border in a filled field. */
+  box-shadow: inset 0 -1px var(--md-sys-color-on-surface-variant);
+}
+.radix-themes .rt-TextFieldRoot:where(:hover):not(:focus-within) {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity),
+    var(--md-sys-color-surface-container-highest)
+  );
+}
+.radix-themes .rt-TextFieldRoot:where(:focus-within) {
+  box-shadow: inset 0 -2px var(--md-sys-color-primary);
+  outline: none;
+}
+.radix-themes .rt-TextFieldRoot:where([data-invalid], [aria-invalid='true']) {
+  box-shadow: inset 0 -2px var(--md-sys-color-error);
+}
+.radix-themes .rt-TextFieldInput::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+}
+.radix-themes .rt-TextFieldSlot {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Form labels and validation messages. */
+.radix-themes .rt-FormLabel,
+.radix-themes label {
+  font: var(--md-sys-typescale-body-small);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.radix-themes .rt-FormMessage {
+  font: var(--md-sys-typescale-body-small);
+  color: var(--md-sys-color-error);
+}
+
+/* ============================================================
+   Select + menus (M3 menu: 4dp corner, level-2 elevation, 48dp items)
+   ============================================================ */
+.radix-themes .rt-SelectTrigger {
+  border-radius: var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) 0 0;
+  font: var(--md-sys-typescale-body-large);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+}
+.radix-themes .rt-SelectTrigger.rt-r-size-1 { --select-trigger-height: 40px; }
+.radix-themes .rt-SelectTrigger.rt-r-size-2 { --select-trigger-height: 48px; }
+.radix-themes .rt-SelectTrigger.rt-r-size-3 { --select-trigger-height: 56px; }
+.radix-themes .rt-SelectTrigger:is(.rt-variant-surface, .rt-variant-classic, .rt-variant-soft) {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  box-shadow: inset 0 -1px var(--md-sys-color-on-surface-variant);
+}
+.radix-themes .rt-SelectTrigger:where(:focus-visible, [data-state='open']) {
+  box-shadow: inset 0 -2px var(--md-sys-color-primary);
+}
+
+.radix-themes :is(.rt-SelectContent, .rt-BaseMenuContent) {
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  box-shadow: var(--md-sys-elevation-2);
+  padding: 8px 0;
+}
+.radix-themes :is(.rt-SelectItem, .rt-BaseMenuItem) {
+  --select-item-height: 48px;
+  height: 48px;
+  border-radius: 0;
+  padding-inline: 12px;
+  font: var(--md-sys-typescale-label-large);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  color: var(--md-sys-color-on-surface);
+}
+.radix-themes :is(.rt-SelectItem, .rt-BaseMenuItem):where([data-highlighted], :hover) {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) var(--md-sys-state-hover-opacity),
+    transparent
+  );
+  color: var(--md-sys-color-on-surface);
+}
+
+/* ============================================================
+   Checkbox (M3: 18dp box, 2dp corner)
+   ============================================================ */
+.radix-themes .rt-CheckboxRoot {
+  --checkbox-size: 18px;
+  --checkbox-border-radius: 2px;
+}
+.radix-themes .rt-CheckboxRoot:where([data-state='checked']) {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+/* ============================================================
+   Segmented button (M3: 40dp, full radius, outlined, tonal selection)
+   ============================================================ */
+.radix-themes .rt-SegmentedControlRoot {
+  --segmented-control-border-radius: var(--md-sys-shape-corner-full);
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-sys-shape-corner-full);
+  height: 40px;
+  overflow: hidden;
+}
+.radix-themes .rt-SegmentedControlItem {
+  font: var(--md-sys-typescale-label-large);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  color: var(--md-sys-color-on-surface);
+}
+.radix-themes .rt-SegmentedControlIndicator {
+  --segmented-control-indicator-background-color: var(--md-sys-color-secondary-container);
+  border-radius: 0;
+  box-shadow: none;
+}
+.radix-themes .rt-SegmentedControlItem:where([data-state='on']) {
+  color: var(--md-sys-color-on-secondary-container);
+}
+.radix-themes .rt-SegmentedControlItemSeparator { background-color: var(--md-sys-color-outline); }
+
+/* ============================================================
+   Dialogs (M3 basic dialog: surface-container-high, 28dp, 24dp padding)
+   ============================================================ */
+.radix-themes :is(.rt-DialogContent, .rt-AlertDialogContent) {
+  --dialog-content-padding: 24px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  box-shadow: var(--md-sys-elevation-3);
+  border: none;
+}
+.radix-themes :is(.rt-DialogTitle, .rt-AlertDialogTitle) {
+  font: var(--md-sys-typescale-headline-small);
+  color: var(--md-sys-color-on-surface);
+}
+.radix-themes :is(.rt-DialogDescription, .rt-AlertDialogDescription) {
+  font: var(--md-sys-typescale-body-medium);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.radix-themes .rt-DialogOverlay::before,
+.radix-themes .rt-AlertDialogOverlay::before {
+  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
+}
+
+/* ============================================================
+   Tooltip (M3 plain tooltip: inverse surface, 4dp, body-small)
+   ============================================================ */
+.radix-themes .rt-TooltipContent {
+  background-color: var(--md-sys-color-inverse-surface);
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  padding: 4px 8px;
+}
+.radix-themes .rt-TooltipText {
+  font: var(--md-sys-typescale-body-small);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+  color: var(--md-sys-color-inverse-on-surface);
+}
+.radix-themes .rt-TooltipArrow { fill: var(--md-sys-color-inverse-surface); }
+
+/* ============================================================
+   Badges as M3 chips (32dp, 8dp corner, label-large)
+   ============================================================ */
+.radix-themes .rt-Badge {
+  border-radius: var(--md-sys-shape-corner-small);
+  font: var(--md-sys-typescale-label-large);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  gap: 8px;
+  padding: 6px 12px;
+}
+
+/* ============================================================
+   Typography roles
+   ============================================================ */
+/* .rt-Text and .rt-Heading deliberately get no colour rule here. Radix leaves
+   them inheriting, and --gray-12 is already bridged to on-surface, so they
+   resolve correctly on their own. Forcing on-surface would override the
+   content colour of any coloured container they sit in -- a filled button
+   label would render on-surface on top of primary (1.35:1). */
+.radix-themes .rt-Link {
+  color: var(--md-sys-color-primary);
+  text-decoration-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+}
+.radix-themes .rt-Link:where(:hover) {
+  text-decoration-color: var(--md-sys-color-primary);
+}

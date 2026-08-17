@@ -6,5 +6,4 @@ config = rx.Config(
     disable_plugins=[rx.plugins.sitemap.SitemapPlugin],
     frontend_port=3001,
     backend_port=8001,
-    state_auto_setters=True,
 )

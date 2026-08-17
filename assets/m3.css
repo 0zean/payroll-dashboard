@@ -1,0 +1,186 @@
+/* Material Design 3 token layer.
+   Colour tokens live in the generated m3-theme.css; this file holds everything
+   seed-independent (type, shape, elevation, motion) plus the Radix Themes bridge
+   for those. Component styling is layered on top in m3-components.css.
+
+   Every Radix override doubles .radix-themes: Radix's own sheet loads after ours
+   (it rides the JS bundle) and sits at (0,1,0) behind :where(), so (0,2,0) wins
+   without !important. */
+
+.radix-themes.radix-themes {
+  /* ---- Typography ---- */
+  --md-sys-typescale-font: "Roboto Flex", "Roboto", system-ui, sans-serif;
+
+  --md-sys-typescale-display-large: 400 57px/64px var(--md-sys-typescale-font);
+  --md-sys-typescale-display-medium: 400 45px/52px var(--md-sys-typescale-font);
+  --md-sys-typescale-display-small: 400 36px/44px var(--md-sys-typescale-font);
+  --md-sys-typescale-headline-large: 400 32px/40px var(--md-sys-typescale-font);
+  --md-sys-typescale-headline-medium: 400 28px/36px var(--md-sys-typescale-font);
+  --md-sys-typescale-headline-small: 400 24px/32px var(--md-sys-typescale-font);
+  --md-sys-typescale-title-large: 400 22px/28px var(--md-sys-typescale-font);
+  --md-sys-typescale-title-medium: 500 16px/24px var(--md-sys-typescale-font);
+  --md-sys-typescale-title-small: 500 14px/20px var(--md-sys-typescale-font);
+  --md-sys-typescale-body-large: 400 16px/24px var(--md-sys-typescale-font);
+  --md-sys-typescale-body-medium: 400 14px/20px var(--md-sys-typescale-font);
+  --md-sys-typescale-body-small: 400 12px/16px var(--md-sys-typescale-font);
+  --md-sys-typescale-label-large: 500 14px/20px var(--md-sys-typescale-font);
+  --md-sys-typescale-label-medium: 500 12px/16px var(--md-sys-typescale-font);
+  --md-sys-typescale-label-small: 500 11px/16px var(--md-sys-typescale-font);
+
+  /* Tracking is not expressible inside the `font` shorthand above. */
+  --md-sys-typescale-title-medium-tracking: 0.15px;
+  --md-sys-typescale-title-small-tracking: 0.1px;
+  --md-sys-typescale-body-large-tracking: 0.5px;
+  --md-sys-typescale-body-medium-tracking: 0.25px;
+  --md-sys-typescale-body-small-tracking: 0.4px;
+  --md-sys-typescale-label-large-tracking: 0.1px;
+  --md-sys-typescale-label-medium-tracking: 0.5px;
+  --md-sys-typescale-label-small-tracking: 0.5px;
+
+  /* ---- Shape ---- */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-large-increased: 20px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-extra-large-increased: 32px;
+  --md-sys-shape-corner-full: 9999px;
+
+  /* ---- Elevation (tonal surfaces carry depth; shadows only separate from busy bg) ---- */
+  --md-sys-elevation-0: none;
+  --md-sys-elevation-1: 0 1px 2px 0 color-mix(in srgb, var(--md-sys-color-shadow) 30%, transparent),
+    0 1px 3px 1px color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent);
+  --md-sys-elevation-2: 0 1px 2px 0 color-mix(in srgb, var(--md-sys-color-shadow) 30%, transparent),
+    0 2px 6px 2px color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent);
+  --md-sys-elevation-3: 0 1px 3px 0 color-mix(in srgb, var(--md-sys-color-shadow) 30%, transparent),
+    0 4px 8px 3px color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent);
+  --md-sys-elevation-4: 0 2px 3px 0 color-mix(in srgb, var(--md-sys-color-shadow) 30%, transparent),
+    0 6px 10px 4px color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent);
+  --md-sys-elevation-5: 0 4px 4px 0 color-mix(in srgb, var(--md-sys-color-shadow) 30%, transparent),
+    0 8px 12px 6px color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent);
+
+  /* ---- State layers ---- */
+  --md-sys-state-hover-opacity: 0.08;
+  --md-sys-state-focus-opacity: 0.10;
+  --md-sys-state-pressed-opacity: 0.12;
+  --md-sys-state-dragged-opacity: 0.16;
+  --md-sys-state-disabled-content-opacity: 0.38;
+  --md-sys-state-disabled-container-opacity: 0.12;
+
+  /* ---- Motion ---- */
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --md-sys-motion-duration-short: 200ms;
+  --md-sys-motion-duration-medium: 300ms;
+  --md-sys-motion-duration-long: 400ms;
+  --md-sys-motion-duration-emphasized: 500ms;
+
+  /* ================= Radix Themes bridge ================= */
+
+  --default-font-family: var(--md-sys-typescale-font);
+  --heading-font-family: var(--md-sys-typescale-font);
+  --code-font-family: "Roboto Mono", ui-monospace, monospace;
+  --strong-font-family: var(--md-sys-typescale-font);
+  --em-font-family: var(--md-sys-typescale-font);
+  --quote-font-family: var(--md-sys-typescale-font);
+
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  /* Radix size="1".."9" mapped onto the M3 type scale. */
+  --font-size-1: 12px;  --line-height-1: 16px;  --letter-spacing-1: 0.4px;
+  --font-size-2: 14px;  --line-height-2: 20px;  --letter-spacing-2: 0.25px;
+  --font-size-3: 16px;  --line-height-3: 24px;  --letter-spacing-3: 0.5px;
+  --font-size-4: 18px;  --line-height-4: 26px;  --letter-spacing-4: 0.15px;
+  --font-size-5: 22px;  --line-height-5: 28px;  --letter-spacing-5: 0px;
+  --font-size-6: 24px;  --line-height-6: 32px;  --letter-spacing-6: 0px;
+  --font-size-7: 28px;  --line-height-7: 36px;  --letter-spacing-7: 0px;
+  --font-size-8: 32px;  --line-height-8: 40px;  --letter-spacing-8: 0px;
+  --font-size-9: 57px;  --line-height-9: 64px;  --letter-spacing-9: -0.25px;
+
+  /* Radix radius steps -> M3 shape scale. */
+  --radius-factor: 1;
+  --radius-1: var(--md-sys-shape-corner-extra-small);
+  --radius-2: var(--md-sys-shape-corner-small);
+  --radius-3: var(--md-sys-shape-corner-medium);
+  --radius-4: var(--md-sys-shape-corner-large);
+  --radius-5: var(--md-sys-shape-corner-large-increased);
+  --radius-6: var(--md-sys-shape-corner-extra-large);
+  --radius-full: var(--md-sys-shape-corner-full);
+  --radius-thumb: var(--md-sys-shape-corner-full);
+
+  --shadow-1: var(--md-sys-elevation-1);
+  --shadow-2: var(--md-sys-elevation-1);
+  --shadow-3: var(--md-sys-elevation-2);
+  --shadow-4: var(--md-sys-elevation-3);
+  --shadow-5: var(--md-sys-elevation-4);
+  --shadow-6: var(--md-sys-elevation-5);
+
+  --cursor-button: pointer;
+  --cursor-link: pointer;
+  --cursor-menu-item: pointer;
+  --cursor-switch: pointer;
+  --cursor-checkbox: pointer;
+  --cursor-radio: pointer;
+  --cursor-disabled: not-allowed;
+}
+
+body,
+.radix-themes.radix-themes {
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-font);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Material Symbols ---- */
+.m3-icon {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  flex-shrink: 0;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" var(--m3-icon-fill, 0), "wght" var(--m3-icon-weight, 400),
+    "GRAD" 0, "opsz" 24;
+  transition: font-variation-settings var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+/* M3 focus indicator: 3dp secondary ring, 2dp offset. */
+.radix-themes.radix-themes :focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+/* Filled text fields and selects signal focus with their bottom indicator
+   instead, so they opt out of the ring. */
+.radix-themes.radix-themes
+  :is(.rt-TextFieldInput, .rt-TextFieldRoot, .rt-SelectTrigger, .react-select__input):focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radix-themes.radix-themes *,
+  .radix-themes.radix-themes *::before,
+  .radix-themes.radix-themes *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+}

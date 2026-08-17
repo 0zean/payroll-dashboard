@@ -21,31 +21,26 @@ default_meta = [
 ]
 
 
-def menu_item_link(text, href):
-    return rx.menu.item(
-        rx.link(
-            text,
-            href=href,
-            width="100%",
-            color="inherit",
-        ),
-        _hover={
-            "color": styles.accent_color,
-            "background_color": styles.accent_text_color,
-        },
-    )
+# Generated palettes available in assets/m3-theme.css. Keep in sync with
+# SEEDS in scripts/gen_m3_theme.py; the first entry is the default.
+SEEDS = ("teal", "purple", "blue", "green", "crimson")
 
 
 class ThemeState(rx.State):
     """The state for the theme of the app."""
 
-    accent_color: str = "crimson"
+    seed: str = SEEDS[0]
 
-    gray_color: str = "gray"
+    @rx.event
+    def set_seed(self, value: str):
+        """Select the M3 seed palette.
 
-    radius: str = "large"
+        Args:
+            value: Seed name; ignored if it has no generated palette.
 
-    scaling: str = "100%"
+        """
+        if value in SEEDS:
+            self.seed = value
 
 
 ALL_PAGES = []
@@ -139,10 +134,9 @@ def template(
             return rx.theme(
                 templated_page(),
                 has_background=True,
-                accent_color=ThemeState.accent_color,  # type: ignore
-                gray_color=ThemeState.gray_color,  # type: ignore
-                radius=ThemeState.radius,  # type: ignore
-                scaling=ThemeState.scaling,  # type: ignore
+                # Colour, radius and scaling all come from the M3 token layer;
+                # the seed attribute selects which generated palette applies.
+                custom_attrs={"data-m3-seed": ThemeState.seed},
             )
 
         ALL_PAGES.append(
