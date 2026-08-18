@@ -1,8 +1,8 @@
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
+import aiohttp
 import httpx
 import pytest
-from aioresponses import aioresponses
 
 from payroll_dashboard.backend.api_routes import (
     add_employee,
@@ -15,7 +15,7 @@ from payroll_dashboard.backend.api_routes import (
     update_employee,
 )
 from payroll_dashboard.backend.schemas import EmployeeEntry, EmployeeOnboarding
-from tests.mock_utils import make_mock_handler
+from tests.mock_utils import MockAsyncSession, make_mock_handler
 
 
 def test_fetch_employee_names_success(mock_httpx_client):
@@ -101,21 +101,35 @@ def test_update_employee_success(mock_httpx_client):
 
 @pytest.mark.asyncio
 async def test_clear_payroll_success():
-    with aioresponses() as m:
-        m.post("http://127.0.0.1:8000/api/clear-payroll", status=204)
-        await clear_payroll()  # Should not raise
+    session = MockAsyncSession(status=204)
+    with patch("payroll_dashboard.backend.api_routes.get_session", AsyncMock(return_value=session)):
+        await clear_payroll()
+    assert session.calls == [("http://127.0.0.1:8000/api/clear-payroll", None)]
 
 
 @pytest.mark.asyncio
 async def test_sync_table_success():
-    with aioresponses() as m:
-        m.post("http://127.0.0.1:8000/api/sync", status=204)
+    session = MockAsyncSession(status=204)
+    with patch("payroll_dashboard.backend.api_routes.get_session", AsyncMock(return_value=session)):
         await sync_table()
+    assert session.calls == [("http://127.0.0.1:8000/api/sync", None)]
 
 
 @pytest.mark.asyncio
 async def test_onboard_employee_success():
     employee = EmployeeOnboarding(employee_name="Test", pay_rate=20.0)
-    with aioresponses() as m:
-        m.post("http://127.0.0.1:8000/api/new-employee", status=201)
+    session = MockAsyncSession(status=201)
+    with patch("payroll_dashboard.backend.api_routes.get_session", AsyncMock(return_value=session)):
         await onboard_employee(employee)
+    assert session.calls == [("http://127.0.0.1:8000/api/new-employee", employee.model_dump())]
+
+
+@pytest.mark.asyncio
+async def test_sync_table_raises_on_error_status():
+    """Guards the mock itself."""
+    session = MockAsyncSession(status=500)
+    with (
+        patch("payroll_dashboard.backend.api_routes.get_session", AsyncMock(return_value=session)),
+        pytest.raises(aiohttp.ClientError),
+    ):
+        await sync_table()

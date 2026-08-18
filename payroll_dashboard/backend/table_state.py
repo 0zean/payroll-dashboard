@@ -1,5 +1,4 @@
-from datetime import datetime
-from typing import List
+from datetime import date, datetime
 
 import reflex as rx
 
@@ -58,7 +57,7 @@ class TableState(rx.State):
     hours_error: str = ""
 
     @rx.var(cache=True)
-    def filtered_sorted_items(self) -> List[Employee]:
+    def filtered_sorted_items(self) -> list[Employee]:
         items = self.users
 
         # Filter items based on selected item
@@ -100,7 +99,8 @@ class TableState(rx.State):
 
     @rx.var(cache=True)
     def total_pages(self) -> int:
-        return (self.total_items // self.limit) + (1 if self.total_items % self.limit else 1)
+        # Ceiling division, floored at one so an empty table still reads "Page 1 of 1".
+        return max(1, (self.total_items + self.limit - 1) // self.limit)
 
     @rx.var(cache=True, initial_value=[])
     def get_current_page(self) -> list[Employee]:
@@ -117,7 +117,9 @@ class TableState(rx.State):
         self.load_entries()
 
     def get_user(self, user: Employee) -> None:
-        self.date_format = datetime.strptime(user.date, "%m/%d/%Y").strftime("%Y-%m-%d")
+        # A payroll date is a calendar day, not an instant, so there is no timezone
+        # to attach. strptime is still needed here because MM/DD/YYYY is not ISO.
+        self.date_format = datetime.strptime(user.date, "%m/%d/%Y").strftime("%Y-%m-%d")  # noqa: DTZ007
 
         self.current_employee = user
         self.current_entry.employee_name = user.employee_name
@@ -169,7 +171,7 @@ class TableState(rx.State):
             self.users = [
                 Employee(**entry)
                 for entry in entries
-                if isinstance(entry, dict) and all(isinstance(k, str) for k in entry.keys())
+                if isinstance(entry, dict) and all(isinstance(k, str) for k in entry)
             ]
             self.total_items = len(self.users)
             self.stats = calculate_stats(self.users)
@@ -209,7 +211,7 @@ class TableState(rx.State):
         """Set the date, ensuring it's in the correct format."""
         # Attempt to parse the date and format it to MM/DD/YYYY
         try:
-            formatted = datetime.strptime(value, "%Y-%m-%d").strftime("%m/%d/%Y")
+            formatted = date.fromisoformat(value).strftime("%m/%d/%Y")
             self.current_entry.date = formatted
         except Exception:
             self.current_entry.date = value

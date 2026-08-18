@@ -18,7 +18,8 @@ class IndexState(rx.State):
     @rx.event
     async def finish_download(self):
         try:
-            response = httpx.get(f"{url_base}download-payroll")
+            async with httpx.AsyncClient() as client:
+                response = await client.get(f"{url_base}download-payroll")
 
             if response.status_code != 200:
                 raise Exception("Failed to fetch file")

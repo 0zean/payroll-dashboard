@@ -39,7 +39,7 @@ def close_session_on_exit():
 
 def calculate_stats(data: list[Employee]) -> PayrollStats:
     total_hours = sum(employee.hours_worked for employee in data)
-    unique_employees = len(set(employee.employee_name for employee in data))
+    unique_employees = len({e.employee_name for e in data})
 
     return PayrollStats(total_entries=len(data), total_hours=total_hours, employees_count=unique_employees)
 

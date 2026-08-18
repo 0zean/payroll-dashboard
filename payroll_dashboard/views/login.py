@@ -2,7 +2,6 @@ import reflex as rx
 
 from ..backend.auth_state import AuthState
 from ..components.icon import icon
-from ..components.spline import scene, spline
 
 
 def _field(label: str, placeholder: str, icon_tag: str, value, on_change, type: str = "text") -> rx.Component:
@@ -33,16 +32,6 @@ def _field(label: str, placeholder: str, icon_tag: str, value, on_change, type: 
 
 def login_view() -> rx.Component:
     return rx.box(
-        rx.box(
-            spline(scene=scene),
-            position="absolute",
-            top=0,
-            left=0,
-            width="100%",
-            height="100vh",
-            z_index=0,
-            style={"transform": "scale(1.25)"},
-        ),
         rx.center(
             rx.card(
                 rx.vstack(

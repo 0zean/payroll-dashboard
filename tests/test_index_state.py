@@ -13,16 +13,33 @@ async def test_start_download_sets_loading():
     assert state.download_loading is True
 
 
+class _MockResponse:
+    def __init__(self, status_code: int):
+        self.status_code = status_code
+        self.content = b"fake_excel_data"
+
+
+def _mock_async_client(monkeypatch, status_code: int):
+    """Stand in for httpx.AsyncClient used as an async context manager."""
+
+    class MockAsyncClient:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *exc):
+            return False
+
+        async def get(self, url):
+            return _MockResponse(status_code)
+
+    monkeypatch.setattr("payroll_dashboard.backend.index_state.url_base", "/test/")
+    monkeypatch.setattr("payroll_dashboard.backend.index_state.httpx.AsyncClient", MockAsyncClient)
+
+
 @pytest.mark.asyncio
 async def test_finish_download_success(monkeypatch):
     state = IndexState()
-    monkeypatch.setattr("payroll_dashboard.backend.index_state.url_base", "/test/")
-
-    class MockResponse:
-        status_code = 200
-        content = b"fake_excel_data"
-
-    monkeypatch.setattr("payroll_dashboard.backend.index_state.httpx.get", lambda url: MockResponse())
+    _mock_async_client(monkeypatch, 200)
 
     result = []
     async for x in state.finish_download():
@@ -34,13 +51,7 @@ async def test_finish_download_success(monkeypatch):
 @pytest.mark.asyncio
 async def test_finish_download_error(monkeypatch):
     state = IndexState()
-    monkeypatch.setattr("payroll_dashboard.backend.index_state.url_base", "/test/")
-
-    class MockResponse:
-        status_code = 500
-        content = b"fake_excel_data"
-
-    monkeypatch.setattr("payroll_dashboard.backend.index_state.httpx.get", lambda url: MockResponse())
+    _mock_async_client(monkeypatch, 500)
 
     result = []
     async for x in state.finish_download():

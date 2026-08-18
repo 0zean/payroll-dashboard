@@ -10,8 +10,6 @@
     "@radix-ui/react-form": "0.1.14",
     "@radix-ui/themes": "3.3.0",
     "@react-router/node": "7.18.2",
-    "@splinetool/react-spline": "^4.1.0",
-    "@splinetool/runtime": "1.5.5",
     "isbot": "5.2.1",
     "lucide-react": "1.26.0",
     "react": "19.2.8",

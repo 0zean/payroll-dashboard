@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 import httpx
 import pytest
 
-from payroll_dashboard.backend.schemas import Employee
-from payroll_dashboard.backend.table_state import TableState
+from payroll_dashboard.backend.schemas import Employee, PayrollStats
+from payroll_dashboard.backend.table_state import TableState, calculate_stats
 
 
 @pytest.fixture(autouse=True)

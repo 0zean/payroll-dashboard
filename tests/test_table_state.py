@@ -18,7 +18,18 @@ def test_pagination_logic(table_state):
     table_state.limit = 10
     table_state.offset = 20
     assert table_state.page_number == 3
-    assert table_state.total_pages == 6
+    # 50 items at 10 per page is exactly 5 pages; a 6th would be empty.
+    assert table_state.total_pages == 5
+
+
+@pytest.mark.parametrize(
+    ("total_items", "expected_pages"),
+    [(0, 1), (1, 1), (10, 1), (11, 2), (20, 2), (21, 3)],
+)
+def test_total_pages_boundaries(table_state, total_items, expected_pages):
+    table_state.limit = 10
+    table_state.total_items = total_items
+    assert table_state.total_pages == expected_pages
 
 
 def test_filter_and_sort(table_state, sample_employee):
