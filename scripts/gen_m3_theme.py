@@ -75,7 +75,7 @@ ACCENT_TONES_DARK = [10, 14, 30, 34, 38, 44, 52, 62, 80, 86, 80, 90]
 NEUTRAL_TONES_LIGHT = [98, 96, 94, 92, 90, 80, 70, 60, 50, 44, 30, 10]
 NEUTRAL_TONES_DARK = [6, 10, 12, 17, 22, 30, 40, 50, 60, 70, 80, 90]
 
-# ponytail: Radix's alpha scale drives hover/pressed fills, so a1-a8 are just M3
+# Radix's alpha scale drives hover/pressed fills, so a1-a8 are just M3
 # state-layer opacities over the "on" color. a9-a12 alias the solid steps -- they
 # back solid fills where the alpha never showed. Exact Radix alpha math if it ever shows.
 STATE_LAYER_ALPHA = [3, 5, 8, 12, 16, 20, 28, 38]
@@ -143,16 +143,31 @@ def block(seed: int, dark: bool) -> list[str]:
 
 
 def selectors(name: str, dark: bool) -> str:
-    # Radix themes CSS loads after ours and its rules sit at (0,1,0) behind :where().
-    # Doubling .radix-themes puts every override above it without !important.
-    #
-    # Reflex renders two .radix-themes elements (an app-level root plus the page's
-    # own rx.theme) and only the inner one can carry data-m3-seed. The :has() arm
-    # lets the outer root pick up the same palette, so the page background matches.
-    base = ".radix-themes.radix-themes"
-    if name != next(iter(SEEDS)):
-        base += f':is([data-m3-seed="{name}"], :has([data-m3-seed="{name}"]))'
-    return f":is(.dark, .dark-theme) {base}" if dark else base
+    """Build the selector for one seed/mode block.
+
+    Radix's own sheet loads after ours and sits at (0,1,0) behind :where(), so
+    doubling .radix-themes puts every override above it without !important.
+
+    Seed blocks are anchored at :root rather than at the themed element itself.
+    Dialogs, drawers and tooltips render through React portals attached to
+    <body>, so their .radix-themes wrapper is a *sibling* of the app tree and
+    never a descendant of the element carrying data-m3-seed. Matching from the
+    root means any .radix-themes in the document picks up the active seed.
+
+    Resulting specificity, in ascending order so each layer wins correctly:
+    light default (0,2,0) < dark default (0,3,0) < light seed (0,4,0) < dark seed (0,5,0).
+    """
+    themed = ".radix-themes.radix-themes"
+    if name == next(iter(SEEDS)):
+        return f":is(.dark, .dark-theme) {themed}" if dark else themed
+
+    seeded = f':root:has([data-m3-seed="{name}"])'
+    if not dark:
+        return f"{seeded} {themed}"
+    # Two arms so dark matching is exactly as permissive as the default rule
+    # above: .dark can sit on <html> itself (first arm) or on any element below
+    # it (second arm, which is how Radix marks a dark subtree).
+    return f"{seeded}:is(.dark, .dark-theme) {themed}, {seeded} :is(.dark, .dark-theme) {themed}"
 
 
 def swatches(dark: bool) -> list[str]:

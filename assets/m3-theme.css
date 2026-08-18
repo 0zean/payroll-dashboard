@@ -208,7 +208,7 @@
 }
 
 /* purple / light */
-.radix-themes.radix-themes:is([data-m3-seed="purple"], :has([data-m3-seed="purple"])) {
+:root:has([data-m3-seed="purple"]) .radix-themes.radix-themes {
   --md-sys-color-primary: #655789;
   --md-sys-color-on-primary: #fdf7ff;
   --md-sys-color-primary-container: #d4c3fd;
@@ -311,7 +311,7 @@
 }
 
 /* purple / dark */
-:is(.dark, .dark-theme) .radix-themes.radix-themes:is([data-m3-seed="purple"], :has([data-m3-seed="purple"])) {
+:root:has([data-m3-seed="purple"]):is(.dark, .dark-theme) .radix-themes.radix-themes, :root:has([data-m3-seed="purple"]) :is(.dark, .dark-theme) .radix-themes.radix-themes {
   --md-sys-color-primary: #cdc0ec;
   --md-sys-color-on-primary: #443a5f;
   --md-sys-color-primary-container: #574d72;
@@ -414,7 +414,7 @@
 }
 
 /* blue / light */
-.radix-themes.radix-themes:is([data-m3-seed="blue"], :has([data-m3-seed="blue"])) {
+:root:has([data-m3-seed="blue"]) .radix-themes.radix-themes {
   --md-sys-color-primary: #3f6188;
   --md-sys-color-on-primary: #f7f9ff;
   --md-sys-color-primary-container: #accffc;
@@ -517,7 +517,7 @@
 }
 
 /* blue / dark */
-:is(.dark, .dark-theme) .radix-themes.radix-themes:is([data-m3-seed="blue"], :has([data-m3-seed="blue"])) {
+:root:has([data-m3-seed="blue"]):is(.dark, .dark-theme) .radix-themes.radix-themes, :root:has([data-m3-seed="blue"]) :is(.dark, .dark-theme) .radix-themes.radix-themes {
   --md-sys-color-primary: #afc9eb;
   --md-sys-color-on-primary: #28425e;
   --md-sys-color-primary-container: #3b5472;
@@ -620,7 +620,7 @@
 }
 
 /* green / light */
-.radix-themes.radix-themes:is([data-m3-seed="green"], :has([data-m3-seed="green"])) {
+:root:has([data-m3-seed="green"]) .radix-themes.radix-themes {
   --md-sys-color-primary: #486738;
   --md-sys-color-on-primary: #ecffdc;
   --md-sys-color-primary-container: #c9edb2;
@@ -723,7 +723,7 @@
 }
 
 /* green / dark */
-:is(.dark, .dark-theme) .radix-themes.radix-themes:is([data-m3-seed="green"], :has([data-m3-seed="green"])) {
+:root:has([data-m3-seed="green"]):is(.dark, .dark-theme) .radix-themes.radix-themes, :root:has([data-m3-seed="green"]) :is(.dark, .dark-theme) .radix-themes.radix-themes {
   --md-sys-color-primary: #b3cfa1;
   --md-sys-color-on-primary: #304624;
   --md-sys-color-primary-container: #415934;
@@ -826,7 +826,7 @@
 }
 
 /* crimson / light */
-.radix-themes.radix-themes:is([data-m3-seed="crimson"], :has([data-m3-seed="crimson"])) {
+:root:has([data-m3-seed="crimson"]) .radix-themes.radix-themes {
   --md-sys-color-primary: #8b4d55;
   --md-sys-color-on-primary: #fff7f7;
   --md-sys-color-primary-container: #f7a9b2;
@@ -929,7 +929,7 @@
 }
 
 /* crimson / dark */
-:is(.dark, .dark-theme) .radix-themes.radix-themes:is([data-m3-seed="crimson"], :has([data-m3-seed="crimson"])) {
+:root:has([data-m3-seed="crimson"]):is(.dark, .dark-theme) .radix-themes.radix-themes, :root:has([data-m3-seed="crimson"]) :is(.dark, .dark-theme) .radix-themes.radix-themes {
   --md-sys-color-primary: #f7b6bc;
   --md-sys-color-on-primary: #603339;
   --md-sys-color-primary-container: #75454a;
