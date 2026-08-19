@@ -440,6 +440,44 @@
 }
 
 /* ============================================================
+   Status chips (ecas email state)
+   Tonal containers rather than raw colour, so every state stays
+   readable in both themes and follows the active seed.
+   ============================================================ */
+.radix-themes .m3-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--md-sys-shape-corner-small);
+  font: var(--md-sys-typescale-label-small);
+  letter-spacing: var(--md-sys-typescale-label-small-tracking);
+  white-space: nowrap;
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
+}
+/* Already delivered by ecas. */
+.radix-themes .m3-status-chip[data-status="sent"] {
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+/* Will go out on the next ecas run. */
+.radix-themes .m3-status-chip[data-status="due"] {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+/* Window closed without a send -- needs attention. */
+.radix-themes .m3-status-chip[data-status="missed"] {
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+/* Cancellation that was never requested: nothing to show. */
+.radix-themes .m3-status-chip[data-status="inactive"] {
+  display: none;
+}
+
+/* ============================================================
    Typography roles
    ============================================================ */
 /* .rt-Text and .rt-Heading deliberately get no colour rule here. Radix leaves

@@ -11,6 +11,7 @@ NAV_ITEMS = [
     ("/", "Overview", "home"),
     ("/table", "Table", "table-2"),
     ("/onboard", "Onboard", "user-plus"),
+    ("/events", "Events", "event"),
     ("/settings", "Settings", "settings"),
 ]
 
